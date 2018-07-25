@@ -10,6 +10,19 @@ by leveraging the modern web.
 
 ---
 
+## Installation
+This app can be run locally by following the following simple steps:
+
+- Clone the repo: Run `git clone https://github.com/andela/elven-ah.git` in the folder where you want the repo to be saved.
+- Navigate into the newly created folder and install the dependencies: `cd elven-ah && npm install`
+- Copy .env.example to .env: `cp .env.example .env`
+- Provision a PostreSQL database and add the credentials to the .env file. Also add your preferred port to the .env file
+- Supply other environment variables you may need.
+- Then start the server using any of the following:
+  - `npm start` to start the server normally without automatic restarting.
+  - `npm run dev` to start with auto-restarting on file change powered by `nodemon`
+  - For tests, run `npm run test`
+
 ## API Spec
 The preferred JSON object to be returned by the API should be structured as follows:
 
