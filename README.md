@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/andela/elven-ah.svg?branch=develop)](https://travis-ci.org/andela/elven-ah) [![Coverage Status](https://coveralls.io/repos/github/andela/elven-ah/badge.svg?branch=master)](https://coveralls.io/github/andela/elven-ah?branch=master)
+
+
 Authors Haven - A Social platform for the creative at heart.
 =======
 
