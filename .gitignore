@@ -35,3 +35,8 @@ node_modules
 # Optional REPL history
 .node_repl_history
 
+# Package lock
+package-lock.json
+
+# Environment Variables
+.env
