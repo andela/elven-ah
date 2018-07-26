@@ -33,13 +33,14 @@ app.use(
   }),
 );
 
+app.use('/api', router);
+
 app.use('/', (req, res) => {
   res.status(200).send({
     status: 'success',
     message: 'Yay!!!! ES6 is working fine',
   });
 });
-app.use('/api', router);
 
 // / catch 404 and forward to error handler
 app.use((req, res, next) => {
