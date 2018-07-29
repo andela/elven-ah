@@ -3,6 +3,7 @@ logs
 *.log
 .DS_Store
 .nyc_output
+.vs
 
 npm-debug.log*
 
