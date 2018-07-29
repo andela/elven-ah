@@ -1,7 +1,9 @@
 import bcrypt from 'bcrypt';
 import models from '../models';
 
-const { User } = models;
+const {
+  User
+} = models;
 
 /**
  * This class handles all authentication operations
@@ -55,10 +57,20 @@ class AuthController {
    */
   static signUpUser(req, res) {
     const {
-      email, username, firstName, lastName, password,
+      email,
+      username,
+      firstName,
+      lastName,
+      password,
     } = req.body;
     User.findOrCreate({
-      where: { $or: [{ email }, { username }] },
+      where: {
+        $or: [{
+          email
+        }, {
+          username
+        }]
+      },
       defaults: {
         email,
         username,
@@ -80,6 +92,45 @@ class AuthController {
         message: 'User signup successful',
       });
     });
+  }
+
+  static googleCallback(accessToken, refreshToken, profile, done) {
+    User.findOrCreate({
+      where: {
+        email: profile.emails[0].value,
+      },
+      defaults: {
+        username: profile.displayName,
+        googleId: profile.id,
+        email: profile.emails[0].value,
+        image: profile.photos[0].value,
+      },
+    })
+      .spread((user, created) => {
+        if (created) {
+          return done(null, user);
+        }
+        return done(null, user);
+      });
+  }
+
+  static facebookCallback(accessToken, refreshToken, profile, done) {
+    User.findOrCreate({
+      where: {
+        email: profile.emails[0].value,
+      },
+      defaults: {
+        username: profile.name.givenName,
+        facebookId: profile.id,
+        email: profile.emails[0].value,
+      },
+    })
+      .spread((user, created) => {
+        if (created) {
+          return done(null, user);
+        }
+        return done(null, user);
+      });
   }
 }
 

@@ -10,12 +10,12 @@ import JwtHelper from '../helpers/JwtHelper';
   */
 export default class UserController {
   /**
-  * This is just a method to create a test user to test that database connection
-  * is working as expected.
-  * @param {object} req the request object
-  * @param {object} res the response object
-  * @returns {user} the user object
-  */
+   * This is just a method to create a test user to test that database connection
+   * is working as expected.
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns {user} the user object
+   */
   static createTestUser(req, res) {
     const { username, email, password } = req.body;
 
@@ -35,22 +35,11 @@ export default class UserController {
   }
 
   /**
-  * Signs up a user by creating the user in the database, creating a profile
-  * for the user, then logs in the user and return a user with jwt token
-  * @param {object} req the request object
-  * @param {object} res the response object
-  * @returns {user} the user object
-  */
-  static signup(req, res) {
-    // to be implemented
-  }
-
-  /**
-  * Logs in the user and return a user with jwt token.
-  * @param {object} req the request object
-  * @param {object} res the response object
-  * @returns {user} the user object
-  */
+   * Logs in the user and return a user with jwt token.
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns {user} the user object
+   */
   static login(req, res) {
     // to be implemented
   }
@@ -77,11 +66,11 @@ export default class UserController {
   }
 
   /**
-  * Updates the currently logged in user and returns a user object.
-  * @param {object} req the request object
-  * @param {object} res the response object
-  * @returns {user} the user object
-  */
+   * Updates the currently logged in user and returns a user object.
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns {user} the user object
+   */
   static updateUser(req, res) {
     // to be implemented
   }
