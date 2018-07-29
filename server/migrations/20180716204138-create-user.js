@@ -60,6 +60,12 @@ export function up(queryInterface, Sequelize) {
       allowNull: false,
       type: Sequelize.DATE,
     },
+<<<<<<< HEAD
   });
 }
 export function down(queryInterface /* , Sequelize */) { queryInterface.dropTable('Users'); }
+=======
+  }),
+  down: (queryInterface/* , Sequelize */) => { queryInterface.dropTable('Users'); },
+};
+>>>>>>> feat(social-login): enable social login
