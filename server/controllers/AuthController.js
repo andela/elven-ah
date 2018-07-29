@@ -4,7 +4,9 @@ import JwtHelper from '../helpers/JwtHelper';
 import Mailer from '../helpers/Mailer';
 import emails from '../helpers/emailMessages';
 
-const { User } = models;
+const {
+  User
+} = models;
 
 /**
  * This class handles all authentication operations
@@ -58,10 +60,20 @@ class AuthController {
    */
   static signUpUser(req, res, next) {
     const {
-      email, username, firstName, lastName, password,
+      email,
+      username,
+      firstName,
+      lastName,
+      password,
     } = req.body;
     User.findOrCreate({
-      where: { $or: [{ email }, { username }] },
+      where: {
+        $or: [{
+          email
+        }, {
+          username
+        }]
+      },
       defaults: {
         email,
         username,
