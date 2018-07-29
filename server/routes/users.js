@@ -1,17 +1,18 @@
 import { Router } from 'express';
-import UsersController from '../controllers/UsersController';
+import UserController from '../controllers/UserController';
+import isLoggedIn from '../middlewares/isLoggedIn';
 
 const userRouter = Router();
 
 // Just to test the database connection
-userRouter.post('/testUser', UsersController.createTestUser);
+userRouter.post('/testUser', UserController.createTestUser);
 
-userRouter.post('/', UsersController.signup);
+userRouter.post('/', UserController.signup);
 
-userRouter.get('/', UsersController.FindUserById);
+userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
 
-userRouter.put('/', UsersController.updateUser);
+userRouter.put('/', UserController.updateUser);
 
-userRouter.post('/login', UsersController.login);
+userRouter.post('/login', UserController.login);
 
 export default userRouter;

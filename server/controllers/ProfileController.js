@@ -3,7 +3,7 @@
   * user profiles on the app
   * It is made up static methods which can be called from anywhere in the app.
   */
-export default class ProfilesController {
+export default class ProfileController {
   /**
   * Create a profile for the user and returns it.
   * @param {object} req the request object
