@@ -1,5 +1,8 @@
 import bcrypt from 'bcrypt';
 import models from '../models';
+import JwtHelper from '../helpers/JwtHelper';
+import Mailer from '../helpers/Mailer';
+import emails from '../helpers/emailMessages';
 
 const { User } = models;
 
@@ -53,7 +56,7 @@ class AuthController {
    * @param {Object} res The HTTP response payload object
    * @param {Object} next The next middleware to handle email verification
    */
-  static signUpUser(req, res) {
+  static signUpUser(req, res, next) {
     const {
       email, username, firstName, lastName, password,
     } = req.body;
@@ -74,12 +77,116 @@ class AuthController {
         });
       }
       req.user = AuthController.stripeUser(newUser);
-      return res.status(201).json({
-        status: 'success',
-        user: AuthController.stripeUser(newUser),
-        message: 'User signup successful',
-      });
+      req.emailVerificationMessage = 'User signup successful and verification email sent.';
+      next();
     });
+  }
+
+  /**
+   * Sends an email verification email to the user with a verification url
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns null
+   */
+  static verifyEmail(req, res, next) {
+    const { email } = req.user || req.body;
+    const payload = { email };
+    const token = JwtHelper.createToken(payload, '24h');
+    const url = `${req.protocol}://${req.headers.host}/api/auth/verify?evc=${token}`;
+    const msg = emails.emailVerification(email, url);
+    Mailer.sendMail(msg)
+      .then((response) => {
+        if (response[0].statusCode === 202) {
+          return res.status(201).json({
+            status: 'success',
+            message: req.emailVerificationMessage,
+            url,
+            token,
+          });
+        }
+        res.status(400).send('Unable to send email');
+      })
+      .catch(err => next(err));
+  }
+
+  /**
+   * Verifies a user account
+   * @param {object} req the request object
+   * @param {object} res the response object
+   */
+  static activateUser(req, res, next) {
+    const token = req.query.evc;
+    if (token) {
+      const decoded = JwtHelper.verifyToken(token);
+      if (decoded) {
+        AuthController.updateVerifiedStatus(decoded, req, res, next);
+      } else {
+        res.status(401).send({
+          status: 'fail',
+          message: 'This verification link is invalid or expired. Please try again'
+        });
+      }
+    } else {
+      res.status(401).send({
+        status: 'fail',
+        message: 'Please click the link sent to your email to verify your account.'
+      });
+    }
+  }
+
+  /**
+   * Sets verified status in user table to true
+   * @param {object} decoded the decoded jwt payload
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @param {object} next the next middleware function
+   */
+  static updateVerifiedStatus(decoded, req, res, next) {
+    User.update({ verified: true }, { where: { email: decoded.email, verified: false } })
+      .then((rowsUpdated) => {
+        if (!rowsUpdated) {
+          return res.status(400).json({
+            status: 'error',
+            message: 'The account has already been verified.',
+          });
+        }
+        const { email } = decoded;
+        const loginToken = JwtHelper.createToken({ email }, '720h');
+        res.status(200).send({
+          status: 'success',
+          token: loginToken,
+          message: 'Account successfully verified.',
+        });
+      })
+      .catch(err => next(err));
+  }
+
+  /**
+   * Re-sends a verification email to the user
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @param {object} next the next middleware function
+   */
+  static resendVerificationEmail(req, res, next) {
+    // get the email from the user
+    // call the sendMail method with the email and message
+    const { email } = req.body;
+    User.find({ where: { email, verified: false } })
+      .then((user) => {
+        if (user) {
+          req.emailVerificationMessage = 'Email verification link re-sent successfully';
+          return AuthController.verifyEmail(req, res, next);
+        }
+        return res.status(400).json({
+          status: 'error',
+          errors: {
+            user: [
+              'Invalid email or the account has already been verified.'
+            ],
+          },
+        });
+      })
+      .catch(err => next(err));
   }
 }
 

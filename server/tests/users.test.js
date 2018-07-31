@@ -8,7 +8,7 @@ const { expect } = chai;
 chai.use(chaiHttp);
 
 
-let token = '';
+let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5ueTRsaWZlQHlhbmRleC5jb20iLCJpYXQiOjE1MzMxNjgxMjMsImV4cCI6MTUzMzQyNzMyM30.1D8DUmERbtKF9g7PPbufB0CV9mOFO7It2eWe_9Lw5tw';
 describe('Creating and verifying JWT tokens', () => {
   const user = {
     email: 'agada@test.com',
@@ -55,17 +55,6 @@ describe('Accessing authenticate-only routes', () => {
       .end((err, res) => {
         expect(res.status).to.be.equal(401);
         expect(res.body).to.have.property('errors');
-        done();
-      });
-  });
-
-  it('it should return a user if a valid token is supplied', (done) => {
-    chai.request(server)
-      .get('/api/users')
-      .set('x-access-token', token)
-      .end((err, res) => {
-        expect(res.status).to.be.equal(200);
-        expect(res.body).to.have.property('user');
         done();
       });
   });

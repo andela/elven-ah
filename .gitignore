@@ -40,3 +40,6 @@ package-lock.json
 
 # Environment Variables
 .env
+
+# ID
+.vscode
