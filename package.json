@@ -4,10 +4,13 @@
   "description": "A Social platform for the creative at heart",
   "main": "server/index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test nyc mocha --exit --timeout 6000 ./server/tests/**.test.js",
+    "test": "npm run migrate:test && cross-env NODE_ENV=test   nyc --reporter=html --reporter=text mocha --timeout 50000 --exit --require babel-register ./server/tests/**/*.test.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "start": "babel-node server/index.js --presets babel-preset-env",
-    "dev": "nodemon server/index.js --exec babel-node --presets babel-preset-env"
+    "dev": "nodemon server/index.js --exec babel-node --presets babel-preset-env",
+    "migrate": "sequelize db:migrate",
+    "migrate:undo": "sequelize db:migrate:undo:all",
+    "migrate:test": "sequelize db:migrate:undo:all --env=test && sequelize db:migrate --env=test"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
@@ -17,6 +20,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
+    "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
     "chai": "^4.1.2",
     "chai-http": "^4.0.0",
@@ -43,7 +47,8 @@
     "request": "^2.87.0",
     "sequelize": "^4.38.0",
     "slug": "^0.9.1",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "validatorjs": "^3.14.2"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
