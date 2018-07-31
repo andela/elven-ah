@@ -8,15 +8,16 @@ services:
 addons:
   chrome: stable
 before_script:
-  - npm install nyc
+  - npm install -g sequelize-cli
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
-  - psql -c 'drop database if exists travis;' -U postgres
-  - psql -c 'create database travis;' -U postgres
+  - psql -c 'drop database if exists elven_ah_test;' -U postgres
+  - psql -c 'create database elven_ah_test;' -U postgres
+  - sequelize db:migrate --env test
 
 script:
-  - nyc --reporter=lcov --reporter=text-lcov npm test
+  - npm run test
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
@@ -25,4 +26,3 @@ notifications:
   email: true
 
 after_success: 'npm run coverage'
-after_fail: 'npm run coverage'

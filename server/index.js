@@ -37,6 +37,7 @@ app.use('/api', router);
 
 app.use('/', (req, res) => {
   res.status(200).send({
+    url: `${req.protocol}://${req.headers.host}`,
     status: 'success',
     message: 'Yay!!!! ES6 is working fine',
   });

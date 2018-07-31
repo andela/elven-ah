@@ -1,4 +1,4 @@
-import 'dotenv/config';
+require('dotenv/config');
 
 /**
  * This config file bootstraps the sequelize database connection
@@ -18,7 +18,7 @@ module.exports = {
     dialect: 'postgres',
     username: process.env.DB_USERNAME || 'postgres',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'elven_ah_test',
+    database: process.env.TEST_DB_NAME || 'elven_ah_test',
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || '5432',
   },
