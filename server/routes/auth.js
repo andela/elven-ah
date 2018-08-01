@@ -33,13 +33,13 @@ authRouter.get('/google/callback', (req, res, next) => {
       return res.redirect('/');
     }
     if (!user) {
-      return res.status(401).send({ status: 401, success: false, message: 'authentication failed' });
+      return res.status(401).send({ status: 401, success: false, message: 'Google Authentication Failed' });
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
         return next(loginErr);
       }
-      return res.send({ success: true, message: 'authentication succeeded' });
+      return res.status(200).send({ status: 200, success: true, message: 'Google Authentication Succeeded' });
     });
   })(req, res, next);
 });
@@ -52,13 +52,13 @@ authRouter.get('/facebook/callback',(req, res, next) => {
       return res.redirect('/');
     }
     if (!user) {
-      return res.send({ success: false, message: 'authentication failed' });
+      return res.status(401).send({ status: 401, success: false, message: 'Facebook Authentication Failed' });
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
         return next(loginErr);
       }
-      return res.send({ success: true, message: 'authentication succeeded' });
+      return res.send({ success: true, message: 'Facebook Authentication Succeeded' });
     });
   })(req, res, next);
 });
