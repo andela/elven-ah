@@ -38,11 +38,15 @@ authRouter.get('/google/callback', (req, res, next) => {
       return res.send(err);
     }
     if (!user) {
+<<<<<<< HEAD
       return res.status(401).send({
         status: 401,
         success: false,
         message: 'Google Authentication Failed'
       });
+=======
+      return res.status(401).send({ status: 401, success: false, message: 'Google Authentication Failed' });
+>>>>>>> validating social authentication route for google and facebook
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
