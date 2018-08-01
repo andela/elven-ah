@@ -8,11 +8,11 @@ import cors from 'cors';
 
 import router from './routes';
 
-const isProduction = process.env.NODE_ENV === 'production';
+const env = process.env.NODE_ENV;
 
 // Create global app object
 const app = express();
-const { PORT = 3000 } = process.env;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
@@ -33,13 +33,21 @@ app.use(
   }),
 );
 
-app.use('/api', router);
-
-app.use('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.status(200).send({
     url: `${req.protocol}://${req.headers.host}`,
     status: 'success',
-    message: 'Yay!!!! ES6 is working fine',
+    message: 'Welcome to Author\'s Haven API',
+  });
+});
+
+app.use('/api', router);
+
+// catch un-available routes
+app.all('*', (req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: 'Route unavailable on this server',
   });
 });
 
@@ -54,8 +62,8 @@ app.use((req, res, next) => {
 
 // development error handler
 // will print stacktrace
-if (!isProduction) {
-  app.use((err, req, res, next) => {
+if (env !== 'production') {
+  app.use((err, req, res) => {
     console.log(err.stack);
 
     res.status(err.status || 500);
@@ -71,7 +79,7 @@ if (!isProduction) {
 
 // production error handler
 // no stacktraces leaked to user
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   res.status(err.status || 500);
   res.json({
     errors: {
@@ -82,8 +90,6 @@ app.use((err, req, res, next) => {
 });
 
 // finally, let's start our server...
-export const server = app.listen(PORT, () => {
-  if (app.get('env') === 'development') console.log(`The server is live on port ${PORT}`);
-});
+export const server = app.listen(PORT);
 
 export default app;

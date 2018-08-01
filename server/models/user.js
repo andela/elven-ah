@@ -16,6 +16,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       unique: true,
     },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -33,7 +41,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
   }, {});
-  User.associate = (models) => {
+
+  User.associate = (/* models */) => {
     // to be implemented
   };
   return User;
