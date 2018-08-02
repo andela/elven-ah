@@ -87,6 +87,7 @@ authRouter.get('/facebook/callback', (req, res, next) => {
     if (err) {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       console.log(err);
       return res.send(err);
 =======
@@ -94,6 +95,8 @@ authRouter.get('/facebook/callback', (req, res, next) => {
 >>>>>>> return token with authenticated user response
 =======
       console.log(err);
+=======
+>>>>>>> rebase file and fix merge conflict
       return res.send(err);
 >>>>>>> implement a mock test strategy for the authenticatio
     }
