@@ -64,7 +64,6 @@ authRouter.get('/facebook', passport.authenticate('facebook', {
 authRouter.get('/facebook/callback', (req, res, next) => {
   passport.authenticate('facebook', (err, user, info) => {
     if (err) {
-      console.log(err);
       return res.send(err);
     }
     if (!user) {
