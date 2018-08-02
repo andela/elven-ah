@@ -15,10 +15,10 @@ class AuthController {
    */
   static stripeUser(user) {
     const {
-      email, firstName, lastName, updatedAt, createdAt,
+      email, username, firstName, lastName, bio, image, updatedAt, createdAt,
     } = user;
     return {
-      email, firstName, lastName, updatedAt, createdAt,
+      email, username, firstName, lastName, bio, image, updatedAt, createdAt,
     };
   }
 
