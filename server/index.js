@@ -38,7 +38,7 @@ app.use(passport.session());
 
 app.use('/api', router);
 
-app.use('/', (req, res) => {
+app.use('/api/', (req, res) => {
   res.status(200).send({
     url: `${req.protocol}://${req.headers.host}`,
     status: 'success',
@@ -67,8 +67,6 @@ app.use((req, res, next) => {
 // will print stacktrace
 if (env !== 'production') {
   app.use((err, req, res) => {
-    console.log(err.stack);
-
     res.status(err.status || 500);
 
     res.json({

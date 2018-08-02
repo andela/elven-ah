@@ -8,6 +8,9 @@ import JwtHelper from '../helpers/JwtHelper';
 
 const authRouter = Router();
 
+// passport mock route
+authRouter.get('/mock', passport.authenticate('mock'));
+
 // Auth routes will be added here
 authRouter.post('/signup', userValidator.signupValidation, AuthController.signUpUser);
 // import '../auth/google';
@@ -61,7 +64,8 @@ authRouter.get('/facebook', passport.authenticate('facebook', {
 authRouter.get('/facebook/callback', (req, res, next) => {
   passport.authenticate('facebook', (err, user, info) => {
     if (err) {
-      return res.send('err');
+      console.log(err);
+      return res.send(err);
     }
     if (!user) {
       return res.status(401).send({
@@ -93,5 +97,6 @@ authRouter.get('/facebook/callback', (req, res, next) => {
     });
   })(req, res, next);
 });
+
 
 export default authRouter;

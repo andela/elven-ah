@@ -1,9 +1,29 @@
 import passport from 'passport';
 import google from 'passport-google-oauth20';
 import facebook from 'passport-facebook';
+import {
+  MockStrategy, setupSerializeAndDeserialize
+} from 'passport-mock-strategy';
 import AuthController from '../controllers/AuthController';
 import config from '../config/passport';
 import init from './init';
+
+if (process.env.NODE_ENV === 'test') {
+  // const MockStrategy = mock.Strategy;
+  passport.use(new MockStrategy({
+    user: {
+      id: 1,
+      firtsName: 'lara',
+      lastName: 'simbi',
+      email: 'fit@gmail.com'
+    }
+  }, (user, done) => {
+    return done(null, user);
+  }));
+  setupSerializeAndDeserialize(passport, null, (id, done) => {
+    done(null, id);
+  });
+}
 
 const GoogleStrategy = google.Strategy;
 const FacebookStrategy = facebook.Strategy;

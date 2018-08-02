@@ -18,11 +18,11 @@ module.exports = {
   },
   test: {
     dialect: 'postgres',
-    username: process.env.DB_USERNAME || 'postgres',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'elven_ah_test',
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || '5432',
+    username: process.env.DB_USERNAME_TEST || 'postgres',
+    password: process.env.DB_PASSWORD_TEST || '',
+    database: process.env.DB_NAME_TEST || 'elven_ah_test',
+    host: process.env.DB_HOST_TEST || 'localhost',
+    port: process.env.DB_PORT_TEST || '5432',
   },
   production: {
     dialect: 'postgres',
