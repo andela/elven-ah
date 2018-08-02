@@ -10,8 +10,8 @@ class UserValidation {
    */
   static signupValidation(req, res, next) {
     const userProperties = {
-      firstName: 'required|alpha|min:2|max:15',
-      lastName: 'required|alpha|min:2|max:15',
+      firstName: 'required|alpha|min:2|max:100',
+      lastName: 'required|alpha|min:2|max:100',
       email: 'required|email',
       username: 'required|alpha_num|min:5|max:15',
       password: 'required|alpha_num|min:8|max:20',
@@ -47,6 +47,33 @@ class UserValidation {
       return true;
     }
     return false;
+  }
+
+  /**
+   * @description Validates the request payload to update a user profile
+   * @param {Object} req The request object
+   * @param {Object} res The response object
+   * @param {Object} next The next middleware
+   * @returns The next middleware to prevent email duplicates
+   */
+  static updateUserProfile(req, res, next) {
+    const userUpdateProperties = {
+      firstName: 'alpha|min:2|max:100',
+      lastName: 'alpha|min:2|max:100',
+      email: 'required|email',
+      bio: 'min:20|max:4000',
+      image: 'url'
+    };
+
+    const validator = new Validator(req.body, userUpdateProperties);
+    validator.passes(() => next());
+    validator.fails(() => {
+      const errors = validator.errors.all();
+      return res.status(400).json({
+        status: 'error',
+        errors,
+      });
+    });
   }
 }
 

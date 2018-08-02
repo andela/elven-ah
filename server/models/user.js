@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
     },
     bio: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     image: {
