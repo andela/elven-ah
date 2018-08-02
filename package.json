@@ -11,8 +11,8 @@
     "dev": "nodemon server/index.js --exec babel-node --presets babel-preset-env",
     "migrate": "sequelize db:migrate",
     "migrate:undo": "sequelize db:migrate:undo:all",
-    "migrate:test": "sequelize db:migrate:undo:all --env=test && sequelize db:migrate --env=test && sequelize db:seed:all",
-    "migrate:dev": "sequelize db:migrate:undo && sequelize db:migrate",
+    "migrate:test": "sequelize db:migrate:undo:all --env=test && sequelize db:migrate --env=test && sequelize db:seed:all --env=test",
+    "seed": "sequelize db:seed:all",
     "unseed:all": "sequelize db:seed:undo:all"
   },
   "author": "Andela Simulations Programme",

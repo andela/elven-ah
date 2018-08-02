@@ -96,6 +96,32 @@ class UserValidation {
       });
     });
   }
+
+  static newPasswordValidation(req, res, next) {
+    const passwordPayloadData = {
+      password: 'required|alpha_num|min:8|max:20',
+      confirmPassword: 'required|alpha_num|min:8|max:20|same:password',
+    };
+
+    const passwordDataValidation = new Validator(req.body, passwordPayloadData);
+
+    passwordDataValidation.passes(() => {
+      if (UserValidation.passwordCheck(req.body.password)) return next();
+      return res.status(400).json({
+        status: 'error',
+        errors: {
+          password: ['Password must contain an Upper case letter, a lower case letter and a number.'],
+        },
+      });
+    });
+    passwordDataValidation.fails(() => {
+      const errors = passwordDataValidation.errors.all();
+      return res.status(400).json({
+        status: 'error',
+        errors,
+      });
+    });
+  }
 }
 
 export default UserValidation;
