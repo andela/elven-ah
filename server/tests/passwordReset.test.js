@@ -9,6 +9,10 @@ chai.should();
 
 chai.use(chaiHttp);
 
+// test token
+let testToken;
+// A bad token
+const badToken = 'odcjdcsdkjhshsdADDSKKSDKLKLSDKLSLKKLSDJKJKSJwqjkwkd3ndcjdbm';
 // Test user request API/functions
 describe('User request API Tests', () => {
   it('should fail on empty email', (done) => {
@@ -51,6 +55,68 @@ describe('User request API Tests', () => {
         res.body.should.have.property('status').equal('fail');
         res.body.errors.should.have.property('email')
           .include('The email you provided does not exist, please check again.');
+        done();
+      });
+  });
+  it('should pass and send an reset email on email exist', (done) => {
+    chai.request(app)
+      .post('/api/users/account/password/reset')
+      .send({
+        email: 'seayomi@gmail.com',
+      })
+      .end((err, res) => {
+        testToken = res.body.token;
+        res.should.have.status(201);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status').equal('success');
+        res.body.should.have.property('message')
+          .include('A password reset link has been sent to your email. Please check your email');
+        res.body.should.have.property('token')
+          .include(testToken);
+        done();
+      });
+  });
+  it('should fail on token not provided on user accessing reset link', (done) => {
+    chai.request(app)
+      .get('/api/users/account/password/reset')
+      .end((err, res) => {
+        res.should.have.status(401);
+        res.body.should.be.a('object');
+        res.body.errors.should.have.property('token')
+          .include('Invalid Request. Unauthorized access!');
+        done();
+      });
+  });
+  it('should fail on bad token provided on user accessing reset link', (done) => {
+    chai.request(app)
+      .get(`/api/users/account/password/reset?tokenId=${badToken}`)
+      .end((err, res) => {
+        res.should.have.status(401);
+        res.body.should.be.a('object');
+        res.body.errors.should.have.property('token')
+          .include('Reset link is invalid or has expired. Please request a new reset.');
+        done();
+      });
+  });
+  it('should pass on bad token provided on user accessing reset link', (done) => {
+    chai.request(app)
+      .get(`/api/users/account/password/reset?tokenId=${badToken}`)
+      .end((err, res) => {
+        res.should.have.status(401);
+        res.body.should.be.a('object');
+        res.body.errors.should.have.property('token')
+          .include('Reset link is invalid or has expired. Please request a new reset.');
+        done();
+      });
+  });
+  it('should fail on wrong token query parameter on user accessing reset link', (done) => {
+    chai.request(app)
+      .get(`/api/users/account/password/reset?token=${badToken}`)
+      .end((err, res) => {
+        res.should.have.status(401);
+        res.body.should.be.a('object');
+        res.body.errors.should.have.property('token')
+          .include('Invalid Request. Unauthorized access!');
         done();
       });
   });
