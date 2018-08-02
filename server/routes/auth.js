@@ -39,14 +39,20 @@ authRouter.get('/google/callback', (req, res, next) => {
     }
     if (!user) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> return token with authenticated user response
       return res.status(401).send({
         status: 401,
         success: false,
         message: 'Google Authentication Failed'
       });
+<<<<<<< HEAD
 =======
       return res.status(401).send({ status: 401, success: false, message: 'Google Authentication Failed' });
 >>>>>>> validating social authentication route for google and facebook
+=======
+>>>>>>> return token with authenticated user response
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
@@ -79,8 +85,12 @@ authRouter.get('/facebook', passport.authenticate('facebook', {
 authRouter.get('/facebook/callback', (req, res, next) => {
   passport.authenticate('facebook', (err, user, info) => {
     if (err) {
+<<<<<<< HEAD
       console.log(err);
       return res.send(err);
+=======
+      return res.send('err');
+>>>>>>> return token with authenticated user response
     }
     if (!user) {
       return res.status(401).send({
@@ -113,5 +123,9 @@ authRouter.get('/facebook/callback', (req, res, next) => {
   })(req, res, next);
 });
 
+<<<<<<< HEAD
 
 export default authRouter;
+=======
+export default authRouter;
+>>>>>>> return token with authenticated user response
