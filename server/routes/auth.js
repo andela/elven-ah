@@ -86,11 +86,16 @@ authRouter.get('/facebook/callback', (req, res, next) => {
   passport.authenticate('facebook', (err, user, info) => {
     if (err) {
 <<<<<<< HEAD
+<<<<<<< HEAD
       console.log(err);
       return res.send(err);
 =======
       return res.send('err');
 >>>>>>> return token with authenticated user response
+=======
+      console.log(err);
+      return res.send(err);
+>>>>>>> implement a mock test strategy for the authenticatio
     }
     if (!user) {
       return res.status(401).send({
@@ -124,8 +129,13 @@ authRouter.get('/facebook/callback', (req, res, next) => {
 });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 export default authRouter;
 =======
 export default authRouter;
 >>>>>>> return token with authenticated user response
+=======
+
+export default authRouter;
+>>>>>>> implement a mock test strategy for the authenticatio
