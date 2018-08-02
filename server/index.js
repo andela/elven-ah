@@ -46,8 +46,6 @@ app.use('/', (req, res) => {
   });
 });
 
-app.use('/api', router);
-
 // catch un-available routes
 app.all('*', (req, res) => {
   res.status(404).json({

@@ -103,12 +103,15 @@ class AuthController {
   }
 
   static googleCallback(accessToken, refreshToken, profile, done) {
+    const displayName = profile.displayName.split(' ').join('-');
     User.findOrCreate({
       where: {
         email: profile.emails[0].value,
       },
       defaults: {
-        username: profile.displayName,
+        username: displayName,
+        firstName: profile.name.givenName,
+        lastName: profile.name.familyName,
         googleId: profile.id,
         email: profile.emails[0].value,
         image: profile.photos[0].value,
@@ -123,12 +126,16 @@ class AuthController {
   }
 
   static facebookCallback(accessToken, refreshToken, profile, done) {
+    console.log(profile);
+    const displayName = (`${profile.name.givenName}-${profile.name.familyName}`);
     User.findOrCreate({
       where: {
         email: profile.emails[0].value,
       },
       defaults: {
-        username: profile.name.givenName,
+        username: displayName,
+        firstName: profile.name.givenName,
+        lastName: profile.name.familyName,
         facebookId: profile.id,
         email: profile.emails[0].value,
       },
