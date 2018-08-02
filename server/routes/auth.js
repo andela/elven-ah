@@ -22,7 +22,7 @@ authRouter.get('/google', passport.authenticate('google', {
 }));
 
 authRouter.get('/google/callback', (req, res, next) => {
-  passport.authenticate('google', (err, user, info) => {
+  passport.authenticate('google', (err, user) => {
     if (err) {
       return res.send(err);
     }
@@ -62,7 +62,7 @@ authRouter.get('/facebook', passport.authenticate('facebook', {
 }));
 
 authRouter.get('/facebook/callback', (req, res, next) => {
-  passport.authenticate('facebook', (err, user, info) => {
+  passport.authenticate('facebook', (err, user) => {
     if (err) {
       return res.send(err);
     }
