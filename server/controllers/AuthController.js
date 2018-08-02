@@ -106,7 +106,11 @@ class AuthController {
     const displayName = profile.displayName.split(' ').join('-');
     User.findOrCreate({
       where: {
-        email: profile.emails[0].value,
+        $or: [{
+          email: profile.emails[0].value,
+        }, {
+          username: displayName,
+        }]
       },
       defaults: {
         username: displayName,
@@ -126,11 +130,14 @@ class AuthController {
   }
 
   static facebookCallback(accessToken, refreshToken, profile, done) {
-    console.log(profile);
     const displayName = (`${profile.name.givenName}-${profile.name.familyName}`);
     User.findOrCreate({
       where: {
-        email: profile.emails[0].value,
+        $or: [{
+          email: profile.emails[0].value,
+        }, {
+          username: displayName,
+        }]
       },
       defaults: {
         username: displayName,
