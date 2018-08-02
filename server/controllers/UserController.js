@@ -1,5 +1,5 @@
 import { } from 'dotenv/config';
-import { User } from '../models/index';
+import { User } from '../models/user';
 import JwtHelper from '../helpers/JwtHelper';
 
 /**

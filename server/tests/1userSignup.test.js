@@ -10,19 +10,39 @@ chai.use(chaiHttp);
 const user = {
   firstName: 'John',
   lastName: 'Doe',
-  username: 'Johnny',
-  email: 'johndoe@gmail.com',
-  password: 'Opcut2way',
-  confirmPassword: 'Opcut2way',
+  username: 'johnny',
+  email: 'johnny4life@yandex.com',
+  password: 'Qwertyui0p',
+  confirmPassword: 'Qwertyui0p',
 };
 
-describe('POST /api/auth/signup', () => {
-  it('should return 201 when a user provides valid properties to signup', (done) => {
-    chai.request(app).post('/api/auth/signup').send(user).end((req, res) => {
+describe('User signup', () => {
+  let validEvc = '';
+  it('should create the user and send verification email', (done) => {
+    chai.request(app).post('/api/auth/signup').send(user).end((err, res) => {
       res.status.should.eql(201);
       res.body.should.be.a('object');
       res.body.should.have.property('status').eql('success');
-      res.body.should.have.property('message').eql('User signup successful');
+      res.body.should.have.property('message').eql('User signup successful and verification email sent.');
+      done();
+    });
+  });
+
+  it('should re-send the verification email when requested by the user', (done) => {
+    chai.request(app).post('/api/auth/verify').send({ email: user.email }).end((err, res) => {
+      res.status.should.eql(201);
+      res.body.should.be.an('object').with.property('message').include('Email verification link re-sent successfully');
+      res.body.should.have.property('url');
+      validEvc = res.body.token;
+      done();
+    });
+  });
+
+  it('should activate the user if inactivated, and valid token supplied', (done) => {
+    chai.request(app).get(`/api/auth/verify?evc=${validEvc}`).end((err, res) => {
+      res.status.should.eql(200);
+      res.body.should.be.an('object').with.property('message').include('Account successfully verified.');
+      res.body.should.have.property('token');
       done();
     });
   });
@@ -198,7 +218,7 @@ describe('POST /api/auth/signup', () => {
       res.body.should.have.property('status').eql('fail');
       res.body.should.have.property('errors');
       res.body.errors.should.be.a('object');
-      res.body.errors.should.have.property('email').include('User with email: johndoe@gmail.com already exists.');
+      res.body.errors.should.have.property('email').include('User with email: johnny4life@yandex.com already exists.');
       done();
     });
   });
@@ -210,7 +230,7 @@ describe('POST /api/auth/signup', () => {
       res.body.should.have.property('status').eql('fail');
       res.body.should.have.property('errors');
       res.body.errors.should.be.a('object');
-      res.body.errors.should.have.property('username').include('User with username: Johnny already exists.');
+      res.body.errors.should.have.property('username').include('User with username: johnny already exists.');
       done();
     });
   });
@@ -220,8 +240,8 @@ describe('POST /api/auth/signup', () => {
       res.status.should.eql(409);
       res.body.should.be.a('object');
       res.body.should.have.property('status').eql('fail');
-      res.body.errors.should.have.property('username').include('User with username: Johnny already exists.');
-      res.body.errors.should.have.property('email').include('User with email: johndoe@gmail.com already exists.');
+      res.body.errors.should.have.property('username').include('User with username: johnny already exists.');
+      res.body.errors.should.have.property('email').include('User with email: johnny4life@yandex.com already exists.');
       done();
     });
   });

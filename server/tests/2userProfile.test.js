@@ -9,8 +9,8 @@ chai.should();
 chai.use(chaiHttp);
 
 const user = {
-  username: 'Johnny',
-  email: 'johndoe@gmail.com',
+  username: 'johnny',
+  email: 'johnny4life@yandex.com',
 };
 const expiresIn = 3600;
 const userToken = JwtHelper.createToken({ user }, expiresIn);
@@ -106,7 +106,7 @@ describe('PUT /api/user Tests for user update profile endpoint', () => {
       .send({
         firstName: 'John',
         lastName: 'Doe',
-        email: 'johndoe@gmail.com',
+        email: 'johnny4life@yandex.com',
         bio: `John Doe was born in 1977 when he arrived in Los Angeles. 
         His previous life in Tennessee, 
         Wisconsin & Baltimore was a great & fertile time but 

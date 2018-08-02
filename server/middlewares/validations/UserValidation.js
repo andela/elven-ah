@@ -38,7 +38,7 @@ class UserValidation {
   }
 
   /**
-   * @description Validates that a password contains a number, an upper and lower case letter
+   * @description Validates that a p§assword contains a number, an upper and lower case letter
    * @param {String} password The password to be validated
    * @returns The value of the evaluation
    */
@@ -64,8 +64,29 @@ class UserValidation {
       bio: 'min:20|max:4000',
       image: 'url'
     };
-
     const validator = new Validator(req.body, userUpdateProperties);
+    validator.passes(() => next());
+    validator.fails(() => {
+      const errors = validator.errors.all();
+      return res.status(400).json({
+        status: 'error',
+        errors,
+      });
+    });
+  }
+
+  /**
+   * @description Validates the email payload to re-send verification email
+   * @param {Object} req The request object
+   * @param {Object} res The response object
+   * @param {Object} next The next middleware
+   * @returns The next middleware to handle the user signup
+   */
+  static emailValidation(req, res, next) {
+    const emailProperties = {
+      email: 'required|email',
+    };
+    const validator = new Validator(req.body, emailProperties);
     validator.passes(() => next());
     validator.fails(() => {
       const errors = validator.errors.all();
