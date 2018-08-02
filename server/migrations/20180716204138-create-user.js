@@ -1,5 +1,5 @@
-export function up(queryInterface, Sequelize) {
-  return queryInterface.createTable('Users', {
+module.exports = {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Users', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -60,12 +60,6 @@ export function up(queryInterface, Sequelize) {
       allowNull: false,
       type: Sequelize.DATE,
     },
-<<<<<<< HEAD
-  });
-}
-export function down(queryInterface /* , Sequelize */) { queryInterface.dropTable('Users'); }
-=======
   }),
   down: (queryInterface/* , Sequelize */) => { queryInterface.dropTable('Users'); },
 };
->>>>>>> feat(social-login): enable social login

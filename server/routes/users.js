@@ -9,8 +9,6 @@ userRouter.post('/testUser', UserController.createTestUser);
 
 userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
 
-// userRouter.put('/', UserController.updateUser);
-
 userRouter.post('/login', UserController.login);
 
 export default userRouter;

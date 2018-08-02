@@ -1,8 +1,5 @@
 import bcrypt from 'bcrypt';
 import models from '../models';
-import JwtHelper from '../helpers/JwtHelper';
-import Mailer from '../helpers/Mailer';
-import emails from '../helpers/emailMessages';
 
 const {
   User
@@ -20,10 +17,24 @@ class AuthController {
    */
   static stripeUser(user) {
     const {
-      email, username, firstName, lastName, bio, image, updatedAt, createdAt,
+      email,
+      username,
+      firstName,
+      lastName,
+      bio,
+      image,
+      updatedAt,
+      createdAt,
     } = user;
     return {
-      email, username, firstName, lastName, bio, image, updatedAt, createdAt,
+      email,
+      username,
+      firstName,
+      lastName,
+      bio,
+      image,
+      updatedAt,
+      createdAt,
     };
   }
 
@@ -60,20 +71,10 @@ class AuthController {
    */
   static signUpUser(req, res, next) {
     const {
-      email,
-      username,
-      firstName,
-      lastName,
-      password,
+      email, username, firstName, lastName, password,
     } = req.body;
     User.findOrCreate({
-      where: {
-        $or: [{
-          email
-        }, {
-          username
-        }]
-      },
+      where: { $or: [{ email }, { username }] },
       defaults: {
         email,
         username,
@@ -95,110 +96,74 @@ class AuthController {
   }
 
   /**
-   * Sends an email verification email to the user with a verification url
-   * @param {object} req the request object
-   * @param {object} res the response object
-   * @returns null
+   * @description authenticate user with Google passport-Startegy
+   * @param {Object} user The user object to be compared
+   * @param {String} email The email to be compared
+   * @param {String} username The username to be compared
+   * @returns Returns a message object specifiying which property of
+   * the user is present in the user object
    */
-  static verifyEmail(req, res, next) {
-    const { email } = req.user || req.body;
-    const payload = { email };
-    const token = JwtHelper.createToken(payload, '24h');
-    const url = `${req.protocol}://${req.headers.host}/api/auth/verify?evc=${token}`;
-    const msg = emails.emailVerification(email, url);
-    Mailer.sendMail(msg)
-      .then((response) => {
-        if (response[0].statusCode === 202) {
-          return res.status(201).json({
-            status: 'success',
-            message: req.emailVerificationMessage,
-            url,
-            token,
-          });
-        }
-        res.status(400).send('Unable to send email');
-      })
-      .catch(err => next(err));
-  }
 
-  /**
-   * Verifies a user account
-   * @param {object} req the request object
-   * @param {object} res the response object
-   */
-  static activateUser(req, res, next) {
-    const token = req.query.evc;
-    if (token) {
-      const decoded = JwtHelper.verifyToken(token);
-      if (decoded) {
-        AuthController.updateVerifiedStatus(decoded, req, res, next);
-      } else {
-        res.status(401).send({
-          status: 'fail',
-          message: 'This verification link is invalid or expired. Please try again'
-        });
-      }
-    } else {
-      res.status(401).send({
-        status: 'fail',
-        message: 'Please click the link sent to your email to verify your account.'
+  static googleCallback(accessToken, refreshToken, profile, done) {
+    const displayName = profile.displayName.split(' ').join('-');
+    User.findOrCreate({
+      where: {
+        $or: [{
+          email: profile.emails[0].value,
+        }, {
+          username: displayName,
+        }]
+      },
+      defaults: {
+        username: displayName,
+        firstName: profile.name.givenName,
+        lastName: profile.name.familyName,
+        googleId: profile.id,
+        email: profile.emails[0].value,
+        image: profile.photos[0].value,
+      },
+    })
+      .spread((user, created) => {
+        if (created) {
+          return done(null, user);
+        }
+        return done(null, user);
       });
-    }
   }
 
   /**
-   * Sets verified status in user table to true
-   * @param {object} decoded the decoded jwt payload
-   * @param {object} req the request object
-   * @param {object} res the response object
-   * @param {object} next the next middleware function
+   * @description authenticate user with Facebook passport-Startegy
+   * @param {Object} user The user object to be compared
+   * @param {String} email The email to be compared
+   * @param {String} username The username to be compared
+   * @returns Returns a message object specifiying which property of
+   * the user is present in the user object
    */
-  static updateVerifiedStatus(decoded, req, res, next) {
-    User.update({ verified: true }, { where: { email: decoded.email, verified: false } })
-      .then((rowsUpdated) => {
-        if (!rowsUpdated) {
-          return res.status(400).json({
-            status: 'error',
-            message: 'The account has already been verified.',
-          });
-        }
-        const { email } = decoded;
-        const loginToken = JwtHelper.createToken({ email }, '720h');
-        res.status(200).send({
-          status: 'success',
-          token: loginToken,
-          message: 'Account successfully verified.',
-        });
-      })
-      .catch(err => next(err));
-  }
 
-  /**
-   * Re-sends a verification email to the user
-   * @param {object} req the request object
-   * @param {object} res the response object
-   * @param {object} next the next middleware function
-   */
-  static resendVerificationEmail(req, res, next) {
-    // get the email from the user
-    // call the sendMail method with the email and message
-    const { email } = req.body;
-    User.find({ where: { email, verified: false } })
-      .then((user) => {
-        if (user) {
-          req.emailVerificationMessage = 'Email verification link re-sent successfully';
-          return AuthController.verifyEmail(req, res, next);
+  static facebookCallback(accessToken, refreshToken, profile, done) {
+    const displayName = (`${profile.name.givenName}-${profile.name.familyName}`);
+    User.findOrCreate({
+      where: {
+        $or: [{
+          email: profile.emails[0].value,
+        }, {
+          username: displayName,
+        }]
+      },
+      defaults: {
+        username: displayName,
+        firstName: profile.name.givenName,
+        lastName: profile.name.familyName,
+        facebookId: profile.id,
+        email: profile.emails[0].value,
+      },
+    })
+      .spread((user, created) => {
+        if (created) {
+          return done(null, user);
         }
-        return res.status(400).json({
-          status: 'error',
-          errors: {
-            user: [
-              'Invalid email or the account has already been verified.'
-            ],
-          },
-        });
-      })
-      .catch(err => next(err));
+        return done(null, user);
+      });
   }
 }
 

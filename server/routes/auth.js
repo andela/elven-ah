@@ -1,30 +1,19 @@
 import {
   Router
 } from 'express';
-import userValidator from '../middlewares/validations/UserValidation';
-import AuthController from '../controllers/AuthController';
 import passport from '../auth/authStrategies';
 import JwtHelper from '../helpers/JwtHelper';
+import userValidator from '../middlewares/validations/UserValidation';
+import AuthController from '../controllers/AuthController';
+import ValidateController from '../controllers/ValidateController';
 
 const authRouter = Router();
 
+//  Auth routes will be added here
+authRouter.post('/signup', userValidator.signupValidation, AuthController.signUpUser, ValidateController.verifyEmail);
+
 // passport mock route
 authRouter.get('/mock', passport.authenticate('mock'));
-
-// Auth routes will be added here
-authRouter.post('/signup', userValidator.signupValidation, AuthController.signUpUser, AuthController.verifyEmail);
-
-/**
- * Handles email verification url
- */
-authRouter.get('/verify', AuthController.activateUser);
-
-/**
- * Handles email verification url resend
- */
-authRouter.post('/verify', userValidator.emailValidation, AuthController.resendVerificationEmail);
-authRouter.post('/signup', userValidator.signupValidation, AuthController.signUpUser);
-// import '../auth/google';
 
 authRouter.get('/google', passport.authenticate('google', {
   scope: [
@@ -33,26 +22,16 @@ authRouter.get('/google', passport.authenticate('google', {
 }));
 
 authRouter.get('/google/callback', (req, res, next) => {
-  passport.authenticate('google', (err, user, info) => {
+  passport.authenticate('google', (err, user) => {
     if (err) {
       return res.send(err);
     }
     if (!user) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> return token with authenticated user response
       return res.status(401).send({
         status: 401,
         success: false,
         message: 'Google Authentication Failed'
       });
-<<<<<<< HEAD
-=======
-      return res.status(401).send({ status: 401, success: false, message: 'Google Authentication Failed' });
->>>>>>> validating social authentication route for google and facebook
-=======
->>>>>>> return token with authenticated user response
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
@@ -83,22 +62,9 @@ authRouter.get('/facebook', passport.authenticate('facebook', {
 }));
 
 authRouter.get('/facebook/callback', (req, res, next) => {
-  passport.authenticate('facebook', (err, user, info) => {
+  passport.authenticate('facebook', (err, user) => {
     if (err) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-      console.log(err);
       return res.send(err);
-=======
-      return res.send('err');
->>>>>>> return token with authenticated user response
-=======
-      console.log(err);
-=======
->>>>>>> rebase file and fix merge conflict
-      return res.send(err);
->>>>>>> implement a mock test strategy for the authenticatio
     }
     if (!user) {
       return res.status(401).send({
@@ -131,14 +97,4 @@ authRouter.get('/facebook/callback', (req, res, next) => {
   })(req, res, next);
 });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-
 export default authRouter;
-=======
-export default authRouter;
->>>>>>> return token with authenticated user response
-=======
-
-export default authRouter;
->>>>>>> implement a mock test strategy for the authenticatio
