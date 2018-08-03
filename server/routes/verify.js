@@ -2,18 +2,18 @@ import {
   Router
 } from 'express';
 import UserValidator from '../middlewares/validations/UserValidation';
-import ValidateController from '../controllers/ValidateController';
+import VerifyController from '../controllers/VerifyController';
 
 const validateRouter = Router();
 
 /**
  * Handles email verification url
  */
-validateRouter.get('/verify', ValidateController.activateUser);
+validateRouter.get('/verify', VerifyController.activateUser);
 
 /**
  * Handles email verification url resend
  */
-validateRouter.post('/verify', UserValidator.emailValidation, ValidateController.resendVerificationEmail);
+validateRouter.post('/verify', UserValidator.emailValidation, VerifyController.resendVerificationEmail);
 
 export default validateRouter;

@@ -5,12 +5,12 @@ import passport from '../auth/authStrategies';
 import JwtHelper from '../helpers/JwtHelper';
 import userValidator from '../middlewares/validations/UserValidation';
 import AuthController from '../controllers/AuthController';
-import ValidateController from '../controllers/ValidateController';
+import VerifyController from '../controllers/VerifyController';
 
 const authRouter = Router();
 
 //  Auth routes will be added here
-authRouter.post('/signup', userValidator.signupValidation, AuthController.signUpUser, ValidateController.verifyEmail);
+authRouter.post('/signup', userValidator.signupValidation, AuthController.signUpUser, VerifyController.verifyEmail);
 
 // passport mock route
 authRouter.get('/mock', passport.authenticate('mock'));
