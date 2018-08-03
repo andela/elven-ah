@@ -20,5 +20,8 @@ userRouter.post('/account/password/reset',
 userRouter.get('/account/password/reset', checkToken,
   PasswordResetController.verifyPasswordResetToken);
 
+userRouter.put('/account/password/reset', checkToken,
+  UserValidation.newPasswordValidation,
+  PasswordResetController.updateUserPassword);
 
 export default userRouter;
