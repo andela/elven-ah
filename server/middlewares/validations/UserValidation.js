@@ -97,6 +97,31 @@ class UserValidation {
     });
   }
 
+  /**
+   * @description Validates the payload to send a user a password link
+   * @param {Object} req The request object
+   * @param {Object} res The response object
+   * @param {Object} next The next middleware
+   * @returns The next middleware to handle the user reset password process
+   */
+
+  static passwordResetValidation(req, res, next) {
+    const userPayloadData = {
+      email: 'required|email',
+    };
+
+    const userDataValidation = new Validator(req.body, userPayloadData);
+
+    userDataValidation.passes(() => next());
+    userDataValidation.fails(() => {
+      const errors = userDataValidation.errors.all();
+      return res.status(400).json({
+        status: 'error',
+        errors,
+      });
+    });
+  }
+
   static newPasswordValidation(req, res, next) {
     const passwordPayloadData = {
       password: 'required|alpha_num|min:8|max:20',
