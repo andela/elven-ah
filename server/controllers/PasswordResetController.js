@@ -73,7 +73,7 @@ export default class PasswordResetController {
     const passwordUpdateToken = JwtHelper.createToken({ email }, 900);
     return res.status(200).send({
       status: 'success',
-      message: 'use the link below to change your password',
+      message: 'Please use the link below to change your password',
       token: passwordUpdateToken,
       redirectUrl: `${req.protocol}://${req.headers.host}/api/users/account/password/reset?tokenId=${passwordUpdateToken}`,
     });
