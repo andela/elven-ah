@@ -92,7 +92,7 @@ class AuthController {
     const { email } = req.user || req.body;
     const payload = { email };
     const token = JwtHelper.createToken(payload, '24h');
-    const url = `${req.protocol}://${req.headers.host}/api/auth/verify?evc=${token}`;
+    const url = `${req.protocol}://${req.get('host')}/api/auth/verify?evc=${token}`;
     const msg = emails.emailVerification(email, url);
     Mailer.sendMail(msg)
       .then((response) => {
@@ -100,8 +100,6 @@ class AuthController {
           return res.status(201).json({
             status: 'success',
             message: req.emailVerificationMessage,
-            url,
-            token,
           });
         }
         res.status(400).send('Unable to send email');
@@ -142,16 +140,25 @@ class AuthController {
    * @param {object} next the next middleware function
    */
   static updateVerifiedStatus(decoded, req, res, next) {
-    User.update({ verified: true }, { where: { email: decoded.email, verified: false } })
-      .then((rowsUpdated) => {
-        if (!rowsUpdated) {
+    User.update({ verified: true }, {
+      returning: true,
+      where: { email: decoded.email, verified: false }
+    })
+      .then(([, [user]]) => {
+        if (!user) {
           return res.status(400).json({
             status: 'error',
             message: 'The account has already been verified.',
           });
         }
-        const { email } = decoded;
-        const loginToken = JwtHelper.createToken({ email }, '720h');
+        const { id, email, username } = user;
+        const loginToken = JwtHelper.createToken({
+          user: {
+            id,
+            email,
+            username,
+          }
+        }, '720h');
         res.status(200).send({
           status: 'success',
           token: loginToken,

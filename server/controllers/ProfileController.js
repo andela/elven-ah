@@ -24,7 +24,7 @@ export default class ProfileController {
           user,
         });
       })
-      .catch(err => next(err, req, res));
+      .catch(err => next(err));
   }
 
   /**
@@ -51,7 +51,7 @@ export default class ProfileController {
           // stripe sensitive information from the user object
           user: AuthController.stripeUser(user),
         });
-      }).catch(err => next(err, req, res));
+      }).catch(err => next(err));
   }
 
   /**
