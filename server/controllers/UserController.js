@@ -1,7 +1,5 @@
 import { } from 'dotenv/config';
 import { User } from '../models/user';
-
-const { User } = models;
 /**
   * This class contains all the methods responsible for user
   * related operations on the app including creating and querying
