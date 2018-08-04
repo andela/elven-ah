@@ -11,4 +11,6 @@ userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
 
 userRouter.post('/login', UserController.login);
 
+userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
+
 export default userRouter;

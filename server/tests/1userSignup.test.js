@@ -3,6 +3,7 @@ import { describe, it } from 'mocha';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
+import JwtHelper from '../helpers/JwtHelper';
 
 chai.should();
 chai.use(chaiHttp);
@@ -11,13 +12,13 @@ const user = {
   firstName: 'John',
   lastName: 'Doe',
   username: 'johnny',
-  email: 'johnny4life@yandex.com',
+  email: 'testuser@test.com',
   password: 'Qwertyui0p',
   confirmPassword: 'Qwertyui0p',
 };
 
 describe('User signup', () => {
-  let validEvc = '';
+  const token = JwtHelper.createToken({ email: user.email }, '24h');
   it('should create the user and send verification email', (done) => {
     chai.request(app).post('/api/auth/signup').send(user).end((err, res) => {
       res.status.should.eql(201);
@@ -32,14 +33,12 @@ describe('User signup', () => {
     chai.request(app).post('/api/auth/verify').send({ email: user.email }).end((err, res) => {
       res.status.should.eql(201);
       res.body.should.be.an('object').with.property('message').include('Email verification link re-sent successfully');
-      res.body.should.have.property('url');
-      validEvc = res.body.token;
       done();
     });
   });
 
   it('should activate the user if inactivated, and valid token supplied', (done) => {
-    chai.request(app).get(`/api/auth/verify?evc=${validEvc}`).end((err, res) => {
+    chai.request(app).get(`/api/auth/verify?evc=${token}`).end((err, res) => {
       res.status.should.eql(200);
       res.body.should.be.an('object').with.property('message').include('Account successfully verified.');
       res.body.should.have.property('token');
@@ -218,7 +217,7 @@ describe('User signup', () => {
       res.body.should.have.property('status').eql('fail');
       res.body.should.have.property('errors');
       res.body.errors.should.be.a('object');
-      res.body.errors.should.have.property('email').include('User with email: johnny4life@yandex.com already exists.');
+      res.body.errors.should.have.property('email').include('User with email: testuser@test.com already exists.');
       done();
     });
   });
@@ -241,7 +240,7 @@ describe('User signup', () => {
       res.body.should.be.a('object');
       res.body.should.have.property('status').eql('fail');
       res.body.errors.should.have.property('username').include('User with username: johnny already exists.');
-      res.body.errors.should.have.property('email').include('User with email: johnny4life@yandex.com already exists.');
+      res.body.errors.should.have.property('email').include('User with email: testuser@test.com already exists.');
       done();
     });
   });

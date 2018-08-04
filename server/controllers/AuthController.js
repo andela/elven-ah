@@ -113,6 +113,24 @@ class AuthController {
    * @returns Returns a message object specifiying which property of
    * the user is present in the user object
    */
+  static verifyEmail(req, res, next) {
+    const { email } = req.user || req.body;
+    const payload = { email };
+    const token = JwtHelper.createToken(payload, '24h');
+    const url = `${req.protocol}://${req.get('host')}/api/auth/verify?evc=${token}`;
+    const msg = emails.emailVerification(email, url);
+    Mailer.sendMail(msg)
+      .then((response) => {
+        if (response[0].statusCode === 202) {
+          return res.status(201).json({
+            status: 'success',
+            message: req.emailVerificationMessage,
+          });
+        }
+        res.status(400).send('Unable to send email');
+      })
+      .catch(err => next(err));
+  }
 
   static googleCallback(accessToken, refreshToken, profile, done) {
     const displayName = profile.displayName.split(' ').join('-');
@@ -149,6 +167,34 @@ class AuthController {
    * @returns Returns a message object specifiying which property of
    * the user is present in the user object
    */
+  static updateVerifiedStatus(decoded, req, res, next) {
+    User.update({ verified: true }, {
+      returning: true,
+      where: { email: decoded.email, verified: false }
+    })
+      .then(([, [user]]) => {
+        if (!user) {
+          return res.status(400).json({
+            status: 'error',
+            message: 'The account has already been verified.',
+          });
+        }
+        const { id, email, username } = user;
+        const loginToken = JwtHelper.createToken({
+          user: {
+            id,
+            email,
+            username,
+          }
+        }, '720h');
+        res.status(200).send({
+          status: 'success',
+          token: loginToken,
+          message: 'Account successfully verified.',
+        });
+      })
+      .catch(err => next(err));
+  }
 
   static facebookCallback(accessToken, refreshToken, profile, done) {
     const displayName = (`${profile.name.givenName}-${profile.name.familyName}`);

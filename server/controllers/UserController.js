@@ -1,6 +1,5 @@
 import { } from 'dotenv/config';
 import { User } from '../models/user';
-import JwtHelper from '../helpers/JwtHelper';
 
 /**
   * This class contains all the methods responsible for user
