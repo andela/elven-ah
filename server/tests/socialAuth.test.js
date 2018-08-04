@@ -28,4 +28,15 @@ describe('Test for Passport Authentication', () => {
       done();
     });
   });
+
+  it('should return 400 for already used token params or invalid token', (done) => {
+    chai.request(app).get('/api/auth/facebook/callback?code=jhgjkhgkjhglkjhlkjhlk,jh').end((req, res) => {
+      res.status.should.eql(400);
+      res.body.should.be.a('object');
+      res.body.should.have.property('status').eql(400);
+      res.body.should.have.property('success').eql(false);
+      res.body.should.have.property('message').eql('TokenError: The token has already been used');
+      done();
+    });
+  });
 });
