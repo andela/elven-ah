@@ -24,7 +24,11 @@ authRouter.get('/google', passport.authenticate('google', {
 authRouter.get('/google/callback', (req, res, next) => {
   passport.authenticate('google', (err, user) => {
     if (err) {
-      return res.send(err);
+      return res.status(400).send({
+        status: 400,
+        success: false,
+        message: 'TokenError: The token has already been used'
+      });
     }
     if (!user) {
       return res.status(401).send({
@@ -35,7 +39,7 @@ authRouter.get('/google/callback', (req, res, next) => {
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
-        return next(loginErr);
+        return next('Login Error: There is an error with the connection');
       }
       const token = JwtHelper.createToken({
         id: user.id,
@@ -64,7 +68,11 @@ authRouter.get('/facebook', passport.authenticate('facebook', {
 authRouter.get('/facebook/callback', (req, res, next) => {
   passport.authenticate('facebook', (err, user) => {
     if (err) {
-      return res.send(err);
+      return res.status(400).send({
+        status: 400,
+        success: false,
+        message: 'TokenError: The token has already been used'
+      });
     }
     if (!user) {
       return res.status(401).send({
@@ -75,7 +83,7 @@ authRouter.get('/facebook/callback', (req, res, next) => {
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
-        return next(loginErr);
+        return next('Login Error: There is an error with the connection');
       }
       const token = JwtHelper.createToken({
         id: user.id,

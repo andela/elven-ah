@@ -9,7 +9,7 @@ const { User } = models;
  * This class handles all authentication operations
  * such as signup, login and OAuth.
  */
-class ValidateController {
+class VerifyController {
   /**
    * @description Stripes sensitive information out of the user object
    * @param {Object} user The user object to the striped
@@ -86,7 +86,7 @@ class ValidateController {
     if (token) {
       const decoded = JwtHelper.verifyToken(token);
       if (decoded) {
-        ValidateController.updateVerifiedStatus(decoded, req, res, next);
+        VerifyController.updateVerifiedStatus(decoded, req, res, next);
       } else {
         res.status(401).send({
           status: 'fail',
@@ -142,7 +142,7 @@ class ValidateController {
       .then((user) => {
         if (user) {
           req.emailVerificationMessage = 'Email verification link re-sent successfully';
-          return ValidateController.verifyEmail(req, res, next);
+          return VerifyController.verifyEmail(req, res, next);
         }
         return res.status(400).json({
           status: 'error',
@@ -157,4 +157,4 @@ class ValidateController {
   }
 }
 
-export default ValidateController;
+export default VerifyController;

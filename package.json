@@ -4,8 +4,9 @@
   "description": "A Social platform for the creative at heart",
   "main": "server/index.js",
   "scripts": {
-    "test": "npm run migrate:test && cross-env NODE_ENV=test   nyc --reporter=html --reporter=text mocha --timeout 50000 --exit --require babel-register ./server/tests/**/*.test.js",
+    "test": "npm run migrate:test && cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --timeout 50000 --exit --require babel-core/register ./server/tests/*.test.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "coveralls": "nyc --reporter=lcov --reporter=text-lcov npm test",
     "start": "babel-node server/index.js --presets babel-preset-env",
     "dev": "nodemon server/index.js --exec babel-node --presets babel-preset-env",
     "migrate": "sequelize db:migrate",

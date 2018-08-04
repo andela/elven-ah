@@ -9,7 +9,6 @@ import config from '../config/passport';
 import init from './init';
 
 if (process.env.NODE_ENV === 'test') {
-  // const MockStrategy = mock.Strategy;
   passport.use(new MockStrategy({
     user: {
       id: 1,
