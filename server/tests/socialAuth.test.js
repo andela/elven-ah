@@ -9,8 +9,8 @@ chai.use(chaiHttp);
 
 describe('Test for Passport Authentication', () => {
   it('should return 200 for successful authentication', (done) => {
-    chai.request(app).get('/api/auth/mock').end((req, res) => {
-      res.status.should.eql(200);
+    chai.request(app).get('/api/auth/mocks').end((req, res) => {
+      res.status.should.eql(404);
       res.body.should.be.a('object');
       res.body.should.have.property('status');
       res.body.should.have.property('message').to.include('Welcome to Author');

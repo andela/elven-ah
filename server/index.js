@@ -46,6 +46,7 @@ app.all('*', (req, res) => {
   });
 });
 
+// Error handler
 // no stack traces leaked to user in production
 app.use((err, req, res) => {
   res.status(err.status || 500);
