@@ -171,7 +171,7 @@ describe('User request API Tests', () => {
   it('should fail on password not supplied', (done) => {
     chai.request(app)
       .put(`/api/users/account/password/reset?tokenId=${updateToken}`)
-      .send({ password: '', confirmPassword: 'Xolatqowb1$$' })
+      .send({ password: '', confirmPassword: 'Xolatqowb1' })
       .end((err, res) => {
         res.should.have.status(400);
         res.body.should.be.a('object');
@@ -182,11 +182,22 @@ describe('User request API Tests', () => {
   it('should fail on password and confirm password not matching', (done) => {
     chai.request(app)
       .put(`/api/users/account/password/reset?tokenId=${updateToken}`)
-      .send({ password: 'Xolatqowb1$', confirmPassword: 'Xolatqowb1$$' })
+      .send({ password: 'Xolatqowb1', confirmPassword: 'Xolatqowb' })
       .end((err, res) => {
         res.should.have.status(400);
         res.body.should.be.a('object');
         res.body.errors.should.have.property('confirmPassword').include('The confirmPassword and password fields must match.');
+        done();
+      });
+  });
+  it('should fail on confirm password not supplied', (done) => {
+    chai.request(app)
+      .put(`/api/users/account/password/reset?tokenId=${updateToken}`)
+      .send({ password: 'Xolatqowb1', confirmPassword: '' })
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.body.should.be.a('object');
+        res.body.errors.should.have.property('confirmPassword');
         done();
       });
   });
