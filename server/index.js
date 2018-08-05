@@ -42,7 +42,7 @@ app.use('/api', router);
 app.all('*', (req, res) => {
   res.status(404).json({
     status: 'error',
-    message: 'Oh-oh! Seems like the page you requested does not exist. Please check the url again.',
+    message: 'Oh-oh! Seems like the page you requested does not exist. Please check the URL again.',
   });
 });
 
