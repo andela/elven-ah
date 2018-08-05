@@ -40,23 +40,10 @@ export default class PasswordResetController {
         }
         const passwordResetUrl = `${req.protocol}://${req.headers.host}/api/users/account/password/reset?tokenId=${token}`;
         const resetEmailMessage = emails.passwordReset(email, passwordResetUrl, user.firstName);
+        const message = 'A password reset link has been sent to your email. Please check your email';
+
         // Send User Email Method Using SendGrid
-        Mailer.sendMail(resetEmailMessage)
-          .then((response) => {
-            if (response[0].statusCode === 202) {
-              return res.status(201).json({
-                status: 'success',
-                message: 'A password reset link has been sent to your email. Please check your email',
-                token,
-                passwordResetUrl,
-              });
-            }
-            return res.status(400).send({
-              status: 'fail',
-              message: 'Email could not be sent. Please try again',
-            });
-          })
-          .catch(err => res.status(500).send({ errors: { message: err.message } }));
+        PasswordResetController.resetProcessEmail(req, res, resetEmailMessage, message, token);
       })
       .catch(err => res.status(500).send({ errors: { message: err.message } }));
   }
@@ -103,19 +90,26 @@ export default class PasswordResetController {
           const resetConfirmMessage = emails.passwordResetConfirmation(email, user.firstName);
           const message = 'Your Password has been updated successfully! You can login to enjoy stories accross the globe.';
           // Send User Email Method Using SendGrid
-          PasswordResetController.sendEmailProcess(req, res, resetConfirmMessage, message);
+          PasswordResetController.resetProcessEmail(req, res, resetConfirmMessage, message, 'N/A');
         });
       }
-    });
+    })
+      .catch(err => res.status(500).send({ errors: { message: err.message } }));
   }
 
-  static sendEmailProcess(req, res, emailMessage, message) {
+  /**
+  * Send an email notifying user on successful password reset or email update
+  * @param {object} req the request object
+  * @param {object} res the response object
+  */
+  static resetProcessEmail(req, res, emailMessage, message, token) {
     Mailer.sendMail(emailMessage)
       .then((response) => {
         if (response[0].statusCode === 202) {
           return res.status(201).json({
             status: 'success',
-            message
+            message,
+            token
           });
         }
         return res.status(400).send({
