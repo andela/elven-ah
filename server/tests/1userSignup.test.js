@@ -46,6 +46,30 @@ describe('User signup', () => {
     });
   });
 
+  it('should return error if the user has already been verified', (done) => {
+    chai.request(app).get(`/api/auth/verify?evc=${token}`).end((err, res) => {
+      res.status.should.eql(400);
+      res.body.should.be.an('object').with.property('message').include('The account has already been verified.');
+      done();
+    });
+  });
+
+  it('should return error if the user has already been verified', (done) => {
+    chai.request(app).get('/api/auth/verify?evc=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlYXlvbWlAZ21haWwuY29tIiw').end((err, res) => {
+      res.status.should.eql(401);
+      res.body.should.be.an('object').with.property('message').include('This verification link is invalid or expired. Please try again');
+      done();
+    });
+  });
+
+  it('should fail if a user tries to verify without a token', (done) => {
+    chai.request(app).get('/api/auth/verify').end((err, res) => {
+      res.status.should.eql(401);
+      res.body.should.be.an('object').with.property('message').include('Please click the link sent to your email to verify your account.');
+      done();
+    });
+  });
+
   it('should return 400 when a user does not provide a firstName', (done) => {
     chai.request(app).post('/api/auth/signup').send({
       lastName: 'Yomi',

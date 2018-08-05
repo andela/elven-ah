@@ -10,8 +10,7 @@ const authRouter = Router();
 authRouter.post('/signup', userValidator.signupValidation, AuthController.signUpUser, VerifyController.verifyEmail);
 
 
-authRouter.post('/login',
-  userValidator.loginValidation, AuthController.login);
+authRouter.post('/login', userValidator.loginValidation, AuthController.login);
 
 
 // passport mock route

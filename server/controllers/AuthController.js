@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import models from '../models';
+import JwtHelper from '../helpers/JwtHelper';
 
 const { User } = models;
 
@@ -31,7 +32,9 @@ export default class AuthController {
    * @returns Returns an object to the user containing status, message and the logged in or
    * registered user
    */
-  static successResponse(status, user, res) {
+  static async successResponse(status, user, res) {
+    const { id, username } = user;
+    user.token = await JwtHelper.createToken({ user: { id, username } }, '720h');
     const { code, message } = status;
     return res.status(code).send({
       status: 'success',
@@ -199,10 +202,10 @@ export default class AuthController {
         }
 
         const { id, firstName, lastName } = user;
-        const token = JwtHelper.createToken({ user: { id, username } }, '720h');
+
         const status = { code: 200, message: 'login successful!' };
         AuthController.successResponse(status, {
-          id, firstName, lastName, email, username, token
+          id, firstName, lastName, email: user.email, username: user.username
         }, res);
       })
       .catch(() => {
