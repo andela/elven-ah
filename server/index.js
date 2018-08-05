@@ -5,7 +5,6 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
-import passport from 'passport';
 import router from './routes';
 
 const env = process.env.NODE_ENV;
@@ -33,35 +32,17 @@ app.use(
   }),
 );
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.use('/api', router);
-
-app.use('/api/', (req, res) => {
-  res.status(200).send({
-    url: `${req.protocol}://${req.headers.host}`,
-    status: 'success',
-    message: 'Welcome to Author\'s Haven API',
-  });
-});
 
 // catch un-available routes
 app.all('*', (req, res) => {
   res.status(404).json({
     status: 'error',
-    message: 'Route unavailable on this server',
+    message: 'Oh-oh! Seems like the page you requested does not exist. Please check the url again.',
   });
 });
 
-// / catch 404 and forward to error handler
-app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// / error handlers
+// Error handlers
 
 // development error handler
 // will print stacktrace

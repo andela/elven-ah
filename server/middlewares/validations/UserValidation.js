@@ -38,6 +38,38 @@ class UserValidation {
   }
 
   /**
+   * @description Validates the request payload to login a user
+   * @param {Object} req The request object
+   * @param {Object} res The response object
+   * @param {Object} next The next middleware
+   */
+  static loginValidation(req, res, next) {
+    const loginSchema = {
+      email: 'email',
+      username: 'alpha_num|min:5|max:15',
+      password: 'required|alpha_num|min:8|max:20',
+    };
+
+    const validator = new Validator(req.body, loginSchema);
+    validator.passes(() => {
+      if (UserValidation.passwordCheck(req.body.password)) return next();
+      return res.status(400).json({
+        status: 'error',
+        errors: {
+          password: ['Password must contain an Upper case letter, a lower case letter and a number.'],
+        },
+      });
+    });
+    validator.fails(() => {
+      const errors = validator.errors.all();
+      return res.status(400).json({
+        status: 'error',
+        errors,
+      });
+    });
+  }
+
+  /**
    * @description Validates that a p§assword contains a number, an upper and lower case letter
    * @param {String} password The password to be validated
    * @returns The value of the evaluation
@@ -56,7 +88,7 @@ class UserValidation {
    * @param {Object} next The next middleware
    * @returns The next middleware to prevent email duplicates
    */
-  static updateUserProfile(req, res, next) {
+  static profileValidation(req, res, next) {
     const userUpdateProperties = {
       firstName: 'alpha|min:2|max:100',
       lastName: 'alpha|min:2|max:100',

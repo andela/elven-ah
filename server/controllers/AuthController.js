@@ -1,15 +1,13 @@
 import bcrypt from 'bcrypt';
 import models from '../models';
 
-const {
-  User
-} = models;
+const { User } = models;
 
 /**
  * This class handles all authentication operations
  * such as signup, login and OAuth.
  */
-class AuthController {
+export default class AuthController {
   /**
    * @description Stripes sensitive information out of the user object
    * @param {Object} user The user object to the striped
@@ -17,25 +15,44 @@ class AuthController {
    */
   static stripeUser(user) {
     const {
-      email,
-      username,
-      firstName,
-      lastName,
-      bio,
-      image,
-      updatedAt,
-      createdAt,
+      email, username, firstName, lastName, bio, image, updatedAt, createdAt,
     } = user;
     return {
-      email,
-      username,
-      firstName,
-      lastName,
-      bio,
-      image,
-      updatedAt,
-      createdAt,
+      email, username, firstName, lastName, bio, image, updatedAt, createdAt,
     };
+  }
+
+  /**
+   * @description Formats the message sent to the user on successful login/registration
+   * This will ensure that all response is formatted in the same way.
+   * @param {Object} status The status of the response (include statusCode and message)
+   * @param {object} user The user object returned from the operation
+   * @param {object} res The express response object
+   * @returns Returns an object to the user containing status, message and the logged in or
+   * registered user
+   */
+  static successResponse(status, user, res) {
+    const { code, message } = status;
+    return res.status(code).send({
+      status: 'success',
+      message,
+      user,
+    });
+  }
+
+  /**
+   * @description Formats the message sent to the user on failed login/registration
+   * This will ensure that all response is formatted in the same way.
+   * @param {Object} status The status of the response (include statusCode and error messages)
+   * @param {object} res The express response object
+   * @returns Returns an object to the user containing status, message and
+   */
+  static failureResponse(status, res) {
+    const { code, errors } = status;
+    return res.status(code).send({
+      status: 'error',
+      errors,
+    });
   }
 
   /**
@@ -71,11 +88,7 @@ class AuthController {
    */
   static signUpUser(req, res, next) {
     const {
-      email,
-      username,
-      firstName,
-      lastName,
-      password,
+      email, username, firstName, lastName, password,
     } = req.body;
     User.findOrCreate({
       where: {
@@ -157,6 +170,44 @@ class AuthController {
         return done(null, user);
       });
   }
-}
 
-export default AuthController;
+  /**
+   * @description Handles logging in a user locally
+   * @param {Object} req The HTTP request payload object
+   * @param {Object} res The HTTP response payload object
+   */
+  static login(req, res) {
+    const { email, username, password } = req.body;
+    User.findOne({
+      where: { $or: [{ email }, { username }] },
+    })
+      .then((user) => {
+        if (!user) {
+          const errors = { user: ['No user with the provided credentials found'] };
+          return AuthController.failureResponse({ code: 404, errors }, res);
+        }
+
+        if (!user.verified) {
+          const errors = { user: ['You must verify your email before you can login!'] };
+          return AuthController.failureResponse({ code: 403, errors }, res);
+        }
+
+        const passwordIsValid = bcrypt.compareSync(password, user.password);
+        if (!passwordIsValid) {
+          const errors = { user: ['Incorrect credentials! Please try again'] };
+          return AuthController.failureResponse({ code: 401, errors }, res);
+        }
+
+        const { id, firstName, lastName } = user;
+        const token = JwtHelper.createToken({ user: { id, username } }, '720h');
+        const status = { code: 200, message: 'login successful!' };
+        AuthController.successResponse(status, {
+          id, firstName, lastName, email, username, token
+        }, res);
+      })
+      .catch(() => {
+        const errors = { user: ['Oops! Something unexpected happened. Please try again'] };
+        return AuthController.failureResponse({ code: 500, errors }, res);
+      });
+  }
+}
