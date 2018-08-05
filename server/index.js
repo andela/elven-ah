@@ -1,6 +1,7 @@
 import { } from 'dotenv/config';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
+import passport from 'passport';
 import bodyParser from 'body-parser';
 import express from 'express';
 import session from 'express-session';
@@ -32,7 +33,14 @@ app.use(
   }),
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('/api', router);
+app.use('/', (req, res) => {
+  res.redirect('/api');
+});
+
 
 // catch un-available routes
 app.all('*', (req, res) => {
@@ -44,29 +52,13 @@ app.all('*', (req, res) => {
 
 // Error handlers
 
-// development error handler
-// will print stacktrace
-if (env !== 'production') {
-  app.use((err, req, res) => {
-    res.status(err.status || 500);
-
-    res.json({
-      errors: {
-        message: err.message,
-        error: err,
-      },
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
+// no stack traces leaked to user in production
 app.use((err, req, res) => {
   res.status(err.status || 500);
   res.json({
     errors: {
       message: err.message,
-      error: {},
+      error: env === 'production' ? {} : err,
     },
   });
 });

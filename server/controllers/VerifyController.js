@@ -11,20 +11,6 @@ const { User } = models;
  */
 class VerifyController {
   /**
-   * @description Stripes sensitive information out of the user object
-   * @param {Object} user The user object to the striped
-   * @returns {Object} Returns a striped user object
-   */
-  static stripeUser(user) {
-    const {
-      email, username, firstName, lastName, bio, image, updatedAt, createdAt,
-    } = user;
-    return {
-      email, username, firstName, lastName, bio, image, updatedAt, createdAt,
-    };
-  }
-
-  /**
    * @description Checks which property of the user exists already
    * @param {Object} user The user object to be compared
    * @param {String} email The email to be compared
@@ -32,22 +18,6 @@ class VerifyController {
    * @returns Returns a message object specifiying which property of
    * the user is present in the user object
    */
-  static userExists(user, email, username) {
-    if (user.email === email && user.username === username) {
-      return {
-        email: [`User with email: ${email} already exists.`],
-        username: [`User with username: ${username} already exists.`],
-      };
-    }
-    if (user.email === email) {
-      return {
-        email: [`User with email: ${email} already exists.`],
-      };
-    }
-    return {
-      username: [`User with username: ${username} already exists.`],
-    };
-  }
 
   /**
    * @description authenticate user with Google passport-Startegy
@@ -57,7 +27,7 @@ class VerifyController {
    * @returns Returns a message object specifiying which property of
    * the user is present in the user object
    */
-  static verifyEmail(req, res, next) {
+  static verifyEmail(req, res) {
     const { email } = req.user || req.body;
     const payload = { email };
     const token = JwtHelper.createToken(payload, '24h');
@@ -72,8 +42,7 @@ class VerifyController {
           });
         }
         res.status(400).send('Unable to send email');
-      })
-      .catch(err => next(err));
+      });
   }
 
   /**
