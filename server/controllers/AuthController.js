@@ -121,6 +121,16 @@ export default class AuthController {
     });
   }
 
+  /**
+  * This method is responsible for structuring the user information from
+  * user login/signup through the passport Google
+  * authentication strategy.
+  * @param {object} accessToken the user token sent by Google
+  * @param {object} refreshToken the user refresh token  sent by Google
+  * @param {object} profile the user profile object containing the user information from linkedIn
+  * @param {*} done the callback function that completes passport auth and attach
+  * the user object to the request
+  */
   static googleCallback(accessToken, refreshToken, profile, done) {
     const displayName = profile.displayName.split(' ').join('-');
     User.findOrCreate({
