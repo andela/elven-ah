@@ -145,6 +145,7 @@ class VerifyController {
    * @param {object} next the next middleware function
    */
   static resendVerificationEmail(req, res, next) {
+    const { email } = req.body;
     User.find({ where: { email, verified: false } })
       .then((user) => {
         if (user) {
