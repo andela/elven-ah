@@ -181,7 +181,7 @@ describe('User request API Tests', () => {
   it('should fail on confirm password not supplied', (done) => {
     chai.request(app)
       .put(`/api/users/account/password/reset?tokenId=${updateToken}`)
-      .send({ password: 'Xolatqowb1', confirmPassword: '' })
+      .send({ password: 'Xxolatqowb1', confirmPassword: '' })
       .end((err, res) => {
         res.should.have.status(400);
         res.body.should.be.a('object');
