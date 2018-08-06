@@ -3,19 +3,14 @@ export default (sequelize, DataTypes) => {
   const Article = sequelize.define('Article', {
     slug: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: false
     },
     categoryId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: false
     },
-    title: {
-      type: DataTypes.STRING,
+    titleId: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     body: {
@@ -26,7 +21,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.BLOB,
       allowNull: true
     },
-
   });
   Article.associate = (models) => {
     Article.belongsTo(models.User, {
