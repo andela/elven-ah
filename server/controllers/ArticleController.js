@@ -13,6 +13,4 @@ export default class ArticleController {
   static createArticle(req, res) {
     // to be implemented
   }
-
-  // Other articles related methods
 }

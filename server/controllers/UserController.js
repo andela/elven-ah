@@ -1,5 +1,6 @@
 import { } from 'dotenv/config';
 import { User } from '../models/user';
+import JwtHelper from '../helpers/JwtHelper';
 
 /**
   * This class contains all the methods responsible for user
@@ -50,8 +51,6 @@ export default class UserController {
   * @returns {user} the user object
   */
   static getLoggedInUser(req, res) {
-    // This is just to test the isLoggedIn middleware.
-    // The real immplementation may be different.
     const { username } = req.user;
     User.findOne({
       where: { username },
@@ -61,7 +60,6 @@ export default class UserController {
         status: 'success',
         user,
       }));
-    // to be implemented
   }
 
   /**

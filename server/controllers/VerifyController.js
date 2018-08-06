@@ -145,9 +145,6 @@ class VerifyController {
    * @param {object} next the next middleware function
    */
   static resendVerificationEmail(req, res, next) {
-    // get the email from the user
-    // call the sendMail method with the email and message
-    const { email } = req.body;
     User.find({ where: { email, verified: false } })
       .then((user) => {
         if (user) {

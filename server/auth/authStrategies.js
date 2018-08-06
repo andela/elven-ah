@@ -16,9 +16,7 @@ if (process.env.NODE_ENV === 'test') {
       lastName: 'simbi',
       email: 'fit@gmail.com'
     }
-  }, (user, done) => {
-    return done(null, user);
-  }));
+  }, (user, done) => done(null, user)));
   setupSerializeAndDeserialize(passport, null, (id, done) => {
     done(null, id);
   });
@@ -41,7 +39,6 @@ passport.use(new FacebookStrategy({
   profileFields: ['id', 'emails', 'name'],
 }, AuthController.facebookCallback));
 
-// serialize user into the session
 init();
 
 export default passport;
