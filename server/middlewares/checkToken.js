@@ -16,7 +16,7 @@ const checkToken = (req, res, next) => {
     return res.status(401).send({
       errors: {
         token: [
-          'Invalid Request. Unauthorized access!',
+          'Invalid link. Either you check your email for the correct link or request a new password reset',
         ],
       },
     });
@@ -25,12 +25,13 @@ const checkToken = (req, res, next) => {
     return res.status(401).send({
       errors: {
         token: [
-          'Reset link is invalid or has expired. Please request a new reset.',
+          'Password Reset link is invalid or has expired. Please request a new password reset.',
         ],
       },
     });
   }
 
+  req.decoded = decoded;
   return next();
 };
 
