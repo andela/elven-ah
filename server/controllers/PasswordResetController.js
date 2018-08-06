@@ -19,10 +19,10 @@ export default class PasswordResetController {
   * @param {object} req the request object
   * @param {object} res the response object
   */
-  static sendResetEmail(req, res) {
+  static sendResetEmail(req, res, next) {
     const { email } = req.body;
     // Jwt token
-    const token = JwtHelper.createToken({ email }, 1800);
+    const token = JwtHelper.createToken({ email }, '8760h');
     // Create Reset Email Data
     // This is to verify if user email exist and send reset
     // password link
@@ -43,9 +43,9 @@ export default class PasswordResetController {
         const message = 'A password reset link has been sent to your email. Please check your email';
 
         // Send User Email Method Using SendGrid
-        PasswordResetController.resetProcessEmail(req, res, resetEmailMessage, message, token);
+        PasswordResetController.resetProcessEmail(req, res, resetEmailMessage, message);
       })
-      .catch(err => res.status(500).send({ errors: { message: err.message } }));
+      .catch(err => next(err));
   }
 
   /**
@@ -54,14 +54,12 @@ export default class PasswordResetController {
   * @param {object} res the response object
   */
   static verifyPasswordResetToken(req, res) {
-    const decoded = JwtHelper.verifyToken(req.query.tokenId);
     // A newly generated token to update the password
-    const { email } = decoded;
+    const { email } = req.decoded;
     const passwordUpdateToken = JwtHelper.createToken({ email }, 900);
     return res.status(200).send({
       status: 'success',
       message: 'Please use the link below to change your password',
-      token: passwordUpdateToken,
       redirectUrl: `${req.protocol}://${req.headers.host}/api/users/account/password/reset?tokenId=${passwordUpdateToken}`,
     });
   }
@@ -71,10 +69,9 @@ export default class PasswordResetController {
   * @param {object} req the request object
   * @param {object} res the response object
   */
-  static updateUserPassword(req, res) {
-    const decoded = JwtHelper.verifyToken(req.query.tokenId);
+  static updateUserPassword(req, res, next) {
     // A newly generated token to update the password
-    const { email } = decoded;
+    const { email } = req.decoded;
     const { password } = req.body;
     const encryptedPassword = bcrypt.hashSync(password, 10);
 
@@ -90,11 +87,11 @@ export default class PasswordResetController {
           const resetConfirmMessage = emails.passwordResetConfirmation(email, user.firstName);
           const message = 'Your Password has been updated successfully! You can login to enjoy stories accross the globe.';
           // Send User Email Method Using SendGrid
-          PasswordResetController.resetProcessEmail(req, res, resetConfirmMessage, message, 'N/A');
+          PasswordResetController.resetProcessEmail(req, res, resetConfirmMessage, message);
         });
       }
     })
-      .catch(err => res.status(500).send({ errors: { message: err.message } }));
+      .catch(err => next(err));
   }
 
   /**
@@ -102,14 +99,13 @@ export default class PasswordResetController {
   * @param {object} req the request object
   * @param {object} res the response object
   */
-  static resetProcessEmail(req, res, emailMessage, message, token) {
+  static resetProcessEmail(req, res, emailMessage, message, token, next) {
     Mailer.sendMail(emailMessage)
       .then((response) => {
         if (response[0].statusCode === 202) {
           return res.status(201).json({
             status: 'success',
             message,
-            token
           });
         }
         return res.status(400).send({
@@ -117,6 +113,6 @@ export default class PasswordResetController {
           message: 'Email could not be sent. Please try again',
         });
       })
-      .catch(err => res.status(500).send({ errors: { message: err.message } }));
+      .catch(err => next(err));
   }
 }

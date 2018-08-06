@@ -12,15 +12,21 @@ const userRouter = Router();
 userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
 
 // Password reset
-userRouter.post('/account/password/reset',
+userRouter.post(
+  '/account/password/reset',
   UserValidation.passwordResetValidation,
-  PasswordResetController.sendResetEmail);
+  PasswordResetController.sendResetEmail
+);
 
-userRouter.get('/account/password/reset', checkToken,
-  PasswordResetController.verifyPasswordResetToken);
+userRouter.get(
+  '/account/password/reset', checkToken,
+  PasswordResetController.verifyPasswordResetToken
+);
 
-userRouter.put('/account/password/reset', checkToken,
+userRouter.put(
+  '/account/password/reset', checkToken,
   UserValidation.newPasswordValidation,
-  PasswordResetController.updateUserPassword);
+  PasswordResetController.updateUserPassword
+);
 
 export default userRouter;

@@ -102,7 +102,10 @@ class AuthController {
             message: req.emailVerificationMessage,
           });
         }
-        res.status(400).send('Unable to send email');
+        return res.status(400).send({
+          status: 'fail',
+          message: 'Email could not be sent. Please try again',
+        });
       })
       .catch(err => next(err));
   }
