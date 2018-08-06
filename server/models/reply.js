@@ -15,7 +15,7 @@ export default (sequelize, DataTypes) => {
     },
   });
   Reply.associate = (models) => {
-    Reply.belongsTo(models.comment, {
+    Reply.belongsTo(models.Comment, {
       foreignKey: 'commentId',
       onDelete: 'CASCADE',
       OnUpdate: 'CASCADE'
