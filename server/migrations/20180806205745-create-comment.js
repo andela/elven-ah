@@ -1,3 +1,5 @@
+
+
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Comments', {
     id: {
@@ -6,15 +8,15 @@ module.exports = {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    articleId: {
-      type: Sequelize.INTEGER,
+    articleSlug: {
+      type: Sequelize.STRING,
       allowNull: false,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       references: {
         model: 'Articles',
-        key: 'id',
-        as: 'articleId'
+        key: 'slug',
+        as: 'articleSlug'
       },
     },
     userId: {

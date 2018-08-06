@@ -9,12 +9,16 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     body: {
       type: DataTypes.TEXT,
       allowNull: false
     },
     imageUrl: {
-      type: DataTypes.BLOB,
+      type: DataTypes.STRING,
       allowNull: true
     },
   });
