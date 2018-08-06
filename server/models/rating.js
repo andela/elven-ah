@@ -15,7 +15,7 @@ export default (sequelize, DataTypes) => {
     },
   }, {});
   Rating.associate = (models) => {
-    Rating.BelongsTo(models.Article, {
+    Rating.belongsTo(models.Article, {
       foreignKey: 'articleId',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE'
