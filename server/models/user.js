@@ -1,4 +1,4 @@
-export default (sequelize, DataTypes) => {
+export default (DataTypes, DataTypes) => {
   const User = sequelize.define('User', {
     username: {
       type: DataTypes.STRING,
@@ -15,6 +15,18 @@ export default (sequelize, DataTypes) => {
         },
       },
       unique: true
+    },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    facebookId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    twitterId: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     firstName: {
       type: DataTypes.STRING,
