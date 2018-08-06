@@ -2,11 +2,14 @@ export default (sequelize, DataTypes) => {
   const Article = sequelize.define('Article', {
     slug: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
+      allowNull: false
     },
-    title: {
-      type: DataTypes.STRING,
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    titleId: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     body: {
