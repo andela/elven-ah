@@ -22,7 +22,7 @@ export default class PasswordResetController {
   static sendResetEmail(req, res, next) {
     const { email } = req.body;
     // Jwt token
-    const token = JwtHelper.createToken({ email }, '8760h');
+    const token = JwtHelper.createToken({ email }, 1800);
     // Create Reset Email Data
     // This is to verify if user email exist and send reset
     // password link
