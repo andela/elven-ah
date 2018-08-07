@@ -34,22 +34,6 @@ export default class UserController {
       .catch(err => res.status(500).send({ errors: { message: err.message } }));
   }
 
-  /**
-   * Logs in the user and return a user with jwt token.
-   * @param {object} req the request object
-   * @param {object} res the response object
-   * @returns {user} the user object
-   */
-  static login(req, res) {
-    // to be implemented
-  }
-
-  /**
-  * Gets the current/authenticated user using the username.
-  * @param {object} req the request object
-  * @param {object} res the response object
-  * @returns {user} the user object
-  */
   static getLoggedInUser(req, res) {
     const { username } = req.user;
     User.findOne({
@@ -60,15 +44,5 @@ export default class UserController {
         status: 'success',
         user,
       }));
-  }
-
-  /**
-   * Updates the currently logged in user and returns a user object.
-   * @param {object} req the request object
-   * @param {object} res the response object
-   * @returns {user} the user object
-   */
-  static updateUser(req, res) {
-    // to be implemented
   }
 }
