@@ -1,8 +1,12 @@
 import { } from 'dotenv/config';
+<<<<<<< HEAD
 import JwtHelper from '../helpers/JwtHelper';
 import models from '../models'; // user model
 
 const { User } = models;
+=======
+import { User } from '../models/user';
+>>>>>>> 02c17b538dd060fbf6797a343371027c7ecf6169
 /**
   * This class contains all the methods responsible for user
   * related operations on the app including creating and querying
