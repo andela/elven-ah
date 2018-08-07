@@ -1,9 +1,7 @@
 import passport from 'passport';
 import google from 'passport-google-oauth20';
 import facebook from 'passport-facebook';
-import {
-  MockStrategy, setupSerializeAndDeserialize
-} from 'passport-mock-strategy';
+import { MockStrategy, setupSerializeAndDeserialize } from 'passport-mock-strategy';
 import AuthController from '../controllers/AuthController';
 import config from '../config/passport';
 import init from './init';

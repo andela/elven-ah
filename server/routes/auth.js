@@ -1,6 +1,4 @@
-import {
-  Router
-} from 'express';
+import { Router } from 'express';
 import passport from '../auth/authStrategies';
 import JwtHelper from '../helpers/JwtHelper';
 import userValidator from '../middlewares/validations/UserValidation';

@@ -7,12 +7,6 @@ import app from '../index';
 chai.should();
 chai.use(chaiHttp);
 
-
-const badUser = {
-  firstName: 'Benny'
-
-};
-
 describe('ALL /api/', () => {
   it('should return 200 when base url is requested', (done) => {
     chai.request(app).get('/api/').end((req, res) => {
