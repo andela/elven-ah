@@ -60,6 +60,7 @@ export default class PasswordResetController {
     return res.status(200).send({
       status: 'success',
       message: 'Please use the link below to change your password',
+      token: passwordUpdateToken,
       redirectUrl: `${req.protocol}://${req.headers.host}/api/users/account/password/reset?tokenId=${passwordUpdateToken}`,
     });
   }
