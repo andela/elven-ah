@@ -9,7 +9,8 @@ chai.use(chaiHttp);
 
 // test and update token
 const testToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlYXlvbWlAZ21haWwuY29tIiwiaWF0IjoxNTMzNTkyODkyLCJleHAiOjE1NjUxMjg4OTJ9.NMjImSX1Yh_2JFzhrRtCW_1PVV-V3Cjj4UZBE-e-Fvg';
-const updateToken = testToken;
+
+let updateToken;
 
 // A bad token
 const badToken = 'odcjdcsdkjhshsdADDSKKSDKLKLSDKLSLKKLSDJKJKSJwqjkwkd3ndcjdbm';
@@ -117,6 +118,7 @@ describe('User request API Tests', () => {
     chai.request(app)
       .get(`/api/users/account/password/reset?tokenId=${testToken}`)
       .end((err, res) => {
+        updateToken = res.body.token;
         res.should.have.status(200);
         res.body.should.be.a('object');
         res.body.should.have.property('status').equal('success');
