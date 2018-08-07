@@ -2,13 +2,14 @@ import { describe, it } from 'mocha';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
+import JwtHelper from '../helpers/JwtHelper';
 
 chai.should();
 
 chai.use(chaiHttp);
 
 // test and update token
-const testToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlYXlvbWlAZ21haWwuY29tIiwiaWF0IjoxNTMzNTkyODkyLCJleHAiOjE1NjUxMjg4OTJ9.NMjImSX1Yh_2JFzhrRtCW_1PVV-V3Cjj4UZBE-e-Fvg';
+const emailToken = JwtHelper.createToken({ email: 'seayomi@gmail.com' }, 1800);
 
 let updateToken;
 
@@ -30,7 +31,7 @@ describe('User request API Tests', () => {
         done();
       });
   });
-  it('should fail on empty improper email format', (done) => {
+  it('should fail on invalid email format', (done) => {
     chai.request(app)
       .post('/api/users/account/password/reset')
       .send({
@@ -59,7 +60,7 @@ describe('User request API Tests', () => {
         done();
       });
   });
-  it('should pass and send a reset email on email exist', (done) => {
+  it('should pass and send a reset email if email exist', (done) => {
     chai.request(app)
       .post('/api/users/account/password/reset')
       .send({
@@ -74,7 +75,7 @@ describe('User request API Tests', () => {
         done();
       });
   });
-  it('should fail on token not provided on user accessing reset link', (done) => {
+  it('should fail on token not provided while user access reset link', (done) => {
     chai.request(app)
       .get('/api/users/account/password/reset')
       .end((err, res) => {
@@ -84,7 +85,7 @@ describe('User request API Tests', () => {
         done();
       });
   });
-  it('should fail on bad token provided on user accessing reset link', (done) => {
+  it('should fail on bad token provided while user access reset link', (done) => {
     chai.request(app)
       .get(`/api/users/account/password/reset?tokenId=${badToken}`)
       .end((err, res) => {
@@ -94,7 +95,7 @@ describe('User request API Tests', () => {
         done();
       });
   });
-  it('should pass on bad token provided on user accessing reset link', (done) => {
+  it('should pass on bad token provided when a user access the password reset link', (done) => {
     chai.request(app)
       .get(`/api/users/account/password/reset?tokenId=${badToken}`)
       .end((err, res) => {
@@ -114,9 +115,9 @@ describe('User request API Tests', () => {
         done();
       });
   });
-  it('should pass on verify token query parameter from link sent to mail', (done) => {
+  it('should pass for a valid token query parameter from reset password link sent to email', (done) => {
     chai.request(app)
-      .get(`/api/users/account/password/reset?tokenId=${testToken}`)
+      .get(`/api/users/account/password/reset?tokenId=${emailToken}`)
       .end((err, res) => {
         updateToken = res.body.token;
         res.should.have.status(200);
@@ -125,7 +126,7 @@ describe('User request API Tests', () => {
         done();
       });
   });
-  it('should fail on wrong token query parameter on user accessing reset link', (done) => {
+  it('should fail on wrong token query parameter while a user access the reset link', (done) => {
     chai.request(app)
       .put(`/api/users/account/password/reset?token=${badToken}`)
       .send({ password: 'Xolatqowb1$', confirmPassword: 'Xolatqowb1$' })
@@ -136,7 +137,7 @@ describe('User request API Tests', () => {
         done();
       });
   });
-  it('should fail on wrong token query parameter on user accessing reset link', (done) => {
+  it('should fail on wrong token query parameter while a user access the reset link', (done) => {
     chai.request(app)
       .put(`/api/users/account/password/reset?token=${badToken}`)
       .send({ password: 'Xolatqowb1$', confirmPassword: 'Xolatqowb1$' })
@@ -158,7 +159,7 @@ describe('User request API Tests', () => {
         done();
       });
   });
-  it('should fail on password not supplied', (done) => {
+  it('should fail on empty password', (done) => {
     chai.request(app)
       .put(`/api/users/account/password/reset?tokenId=${updateToken}`)
       .send({ password: '', confirmPassword: 'Xolatqowb1' })
