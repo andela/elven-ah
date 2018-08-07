@@ -4,7 +4,7 @@ import isLoggedIn from '../middlewares/isLoggedIn';
 
 const userRouter = Router();
 
-// Just to test the database connection
+userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
 
 userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
 

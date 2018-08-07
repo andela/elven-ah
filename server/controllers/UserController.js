@@ -1,5 +1,6 @@
 import { } from 'dotenv/config';
 import { User } from '../models/user';
+import JwtHelper from '../helpers/JwtHelper';
 
 /**
   * This class contains all the methods responsible for user
@@ -9,14 +10,31 @@ import { User } from '../models/user';
   */
 export default class UserController {
   /**
-  * Gets the current/authenticated user using the username.
-  * @param {object} req the request object
-  * @param {object} res the response object
-  * @returns {user} the user object
-  */
+   * This is just a method to create a test user to test that database connection
+   * is working as expected.
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns {user} the user object
+   */
+  static createTestUser(req, res) {
+    const { username, email, password } = req.body;
+
+    User.create({ username, email, password })
+      .then((newUser) => {
+        const { id, bio, image } = newUser;
+        const validity = 2592000; // 30 days
+        const token = JwtHelper.createToken({ user: { id, username, email } }, validity);
+        return res.status(201).send({
+          status: 'success',
+          user: {
+            id, email, username, token, bio, image,
+          },
+        });
+      })
+      .catch(err => res.status(500).send({ errors: { message: err.message } }));
+  }
+
   static getLoggedInUser(req, res) {
-    // This is just to test the isLoggedIn middleware.
-    // The real immplementation may be different.
     const { username } = req.user;
     User.findOne({
       where: { username },
@@ -26,6 +44,5 @@ export default class UserController {
         status: 'success',
         user,
       }));
-    // to be implemented
   }
 }

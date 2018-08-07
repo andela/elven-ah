@@ -1,4 +1,6 @@
-require('dotenv/config');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 /**
  * This config file bootstraps the sequelize database connection

@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
-
+import passport from 'passport';
 import router from './routes';
 
 const env = process.env.NODE_ENV;
@@ -26,22 +26,25 @@ app.use(express.static(`${__dirname}/public`));
 
 app.use(
   session({
-    secret: 'authorshaven',
+    secret: process.env.SESSION_KEY,
     cookie: { maxAge: 60000 },
     resave: false,
     saveUninitialized: false,
   }),
 );
 
-app.get('/api', (req, res) => {
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/api', router);
+
+app.use('/api/', (req, res) => {
   res.status(200).send({
     url: `${req.protocol}://${req.headers.host}`,
     status: 'success',
     message: 'Welcome to Author\'s Haven API',
   });
 });
-
-app.use('/api', router);
 
 // catch un-available routes
 app.all('*', (req, res) => {
@@ -64,8 +67,6 @@ app.use((req, res, next) => {
 // will print stacktrace
 if (env !== 'production') {
   app.use((err, req, res) => {
-    console.log(err.stack);
-
     res.status(err.status || 500);
 
     res.json({
@@ -88,6 +89,7 @@ app.use((err, req, res) => {
     },
   });
 });
+
 
 // finally, let's start our server...
 export const server = app.listen(PORT);
