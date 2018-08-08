@@ -40,7 +40,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.BLOB,
       allowNull: true
     },
-
   });
   Article.associate = (models) => {
     Article.belongsTo(models.User, {
