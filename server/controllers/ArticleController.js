@@ -31,7 +31,7 @@ export default class ArticleController {
     } = req.body;
 
     Article.create({
-      slug,
+      slug: slug.toLowerCase(),
       title,
       body,
       imageUrl,
@@ -51,7 +51,7 @@ export default class ArticleController {
           body: newArticle.body,
           imageUrl: newArticle.imageUrl,
           Author: username,
-          createdAt: newArticle.createdAt,
+          createdAt: new Date(newArticle.createdAt).toLocaleString('en-GB', { hour12: true }),
         },
       }))
       .catch(() => {
@@ -119,8 +119,8 @@ export default class ArticleController {
               body: updatedArticle.body,
               imageUrl: updatedArticle.imageUrl,
               categoryId: updatedArticle.categoryId,
-              createdAt: updatedArticle.createdAt,
-              updatedAt: updatedArticle.updatedAt
+              createdAt: new Date(updatedArticle.createdAt).toLocaleString('en-GB', { hour12: true }),
+              updatedAt: new Date(updatedArticle.updatedAt).toLocaleString('en-GB', { hour12: true })
             }
           }))
           .catch(() => {
