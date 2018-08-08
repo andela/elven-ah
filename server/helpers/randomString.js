@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 const randomString = (length) => {
   let result = '';
   const alphaNumeric = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
