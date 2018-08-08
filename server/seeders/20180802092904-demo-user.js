@@ -9,7 +9,7 @@ module.exports = {
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     }
-  ], {}),
+  ]),
 
   down: queryInterface => queryInterface.bulkDelete('Users', null, {})
 };

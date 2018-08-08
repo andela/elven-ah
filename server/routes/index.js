@@ -11,7 +11,6 @@ router.use('/user', profileRouter);
 router.use('/auth', verifyRouter);
 router.use('/articles', articleRouter);
 
-
 // Matches /api the API home route
 router.get('/*', (req, res) => {
   res.status(200).send({

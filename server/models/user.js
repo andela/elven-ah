@@ -14,42 +14,43 @@ export default (sequelize, DataTypes) => {
           msg: 'Must be a valid email address',
         },
       },
-      firstName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      lastName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      googleId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      facebookId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      twitterId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      verified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      bio: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
-      image: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
+      unique: true,
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    facebookId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    twitterId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    verified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   });
 

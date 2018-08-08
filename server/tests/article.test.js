@@ -1,3 +1,4 @@
+import { describe, it, beforeEach } from 'mocha';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
@@ -30,13 +31,13 @@ const categoryId = 1;
 
 describe('Test for Article Request', () => {
   describe('login user', () => {
-    before((done) => {
+    beforeEach((done) => {
       token = JwtHelper.createToken({ user }, expiresIn);
       done();
     });
 
     describe('login anotherUser', () => {
-      before((done) => {
+      beforeEach((done) => {
         anotherToken = JwtHelper.createToken({ user: anotherUser }, expiresIn);
         done();
       });
