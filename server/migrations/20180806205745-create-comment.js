@@ -23,6 +23,18 @@ module.exports = {
       type: Sequelize.INTEGER,
       allowNull: false
     },
+    parentId: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: 'Comments',
+        key: 'id',
+        as: 'parentId',
+      }
+    },
     body: {
       type: Sequelize.TEXT,
       allowNull: false

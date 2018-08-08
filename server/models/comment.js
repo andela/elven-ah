@@ -1,14 +1,6 @@
 
 export default (sequelize, DataTypes) => {
   const Comment = sequelize.define('Comment', {
-    articleId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
     body: {
       type: DataTypes.TEXT,
       allowNull: false
@@ -18,11 +10,16 @@ export default (sequelize, DataTypes) => {
     Comment.belongsTo(models.Article, {
       foreignKey: 'articleId',
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
-    Comment.hasMany(models.Reply, {
-      foreignKey: 'commentId',
-      as: 'replies'
+    Comment.hasMany(models.Comment, {
+      foreignKey: 'parentId',
+      as: 'replies',
+    });
+    Comment.belongsTo(models.Comment, {
+      foreignKey: 'parentId',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     });
   };
   return Comment;
