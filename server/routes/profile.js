@@ -7,6 +7,7 @@ import isLoggedIn from '../middlewares/isLoggedIn';
 const profileRouter = Router();
 
 profileRouter.get('/', isLoggedIn, ProfileController.getUserProfile);
+
 profileRouter.put('/', isLoggedIn, UserValidation.updateUserProfile, ProfileController.userEmailExists, ProfileController.updateUserProfile);
 
 export default profileRouter;

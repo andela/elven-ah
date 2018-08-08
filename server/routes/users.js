@@ -6,6 +6,4 @@ const userRouter = Router();
 
 userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
 
-userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
-
 export default userRouter;

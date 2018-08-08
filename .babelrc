@@ -4,6 +4,9 @@
     "retainLines": true,
     "env": {
         "test": {
+            "plugins": [
+                "istanbul"
+            ]
         }
     }
 }

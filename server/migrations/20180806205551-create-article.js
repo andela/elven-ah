@@ -8,7 +8,8 @@ module.exports = {
     },
     slug: {
       type: Sequelize.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     userId: {
       type: Sequelize.INTEGER,
@@ -23,10 +24,17 @@ module.exports = {
     },
     categoryId: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: 'Categories',
+        key: 'id',
+        as: 'categoryId'
+      },
     },
-    titleId: {
-      type: Sequelize.INTEGER,
+    title: {
+      type: Sequelize.STRING,
       allowNull: false
     },
     body: {
@@ -46,5 +54,5 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Articles')
+  down: queryInterface => queryInterface.dropTable('Articles')
 };
