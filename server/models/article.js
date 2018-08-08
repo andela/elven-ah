@@ -3,14 +3,33 @@ export default (sequelize, DataTypes) => {
   const Article = sequelize.define('Article', {
     slug: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: 'Users',
+        key: 'id',
+        as: 'userId'
+      },
     },
     categoryId: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: 'Categories',
+        key: 'id',
+        as: 'categoryId'
+      },
     },
-    titleId: {
-      type: DataTypes.INTEGER,
+    title: {
+      type: DataTypes.STRING,
       allowNull: false
     },
     body: {
@@ -21,6 +40,7 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.BLOB,
       allowNull: true
     },
+
   });
   Article.associate = (models) => {
     Article.belongsTo(models.User, {
@@ -33,12 +53,16 @@ export default (sequelize, DataTypes) => {
       as: 'comments'
     });
     Article.hasMany(models.Tag, {
-      foreignKey: 'TagId',
+      foreignKey: 'tagId',
       as: 'tags'
     });
     Article.hasMany(models.Rating, {
-      foreignKey: 'RatingId',
+      foreignKey: 'ratingId',
       as: 'ratings',
+    });
+    Article.belongsTo(models.Category, {
+      foreignKey: 'categoryId',
+      as: 'categories'
     });
   };
   return Article;

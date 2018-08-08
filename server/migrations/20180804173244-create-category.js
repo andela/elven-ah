@@ -1,21 +1,11 @@
 
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Tags', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Categories', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER
-    },
-    articleId: {
-      type: Sequelize.INTEGER,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-      references: {
-        model: 'Articles',
-        key: 'id',
-        as: 'articleId'
-      },
     },
     title: {
       type: Sequelize.STRING,
@@ -30,5 +20,5 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  down: queryInterface => queryInterface.dropTable('Tags')
+  down: queryInterface => queryInterface.dropTable('Categories')
 };

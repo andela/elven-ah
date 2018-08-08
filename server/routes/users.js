@@ -9,8 +9,6 @@ const userRouter = Router();
 
 userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
 
-userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
-
 userRouter.post(
   '/account/password/reset',
   UserValidation.passwordResetValidation,

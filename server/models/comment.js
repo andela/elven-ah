@@ -13,7 +13,7 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false
     },
-  }, {});
+  });
   Comment.associate = (models) => {
     Comment.belongsTo(models.Article, {
       foreignKey: 'articleId',
