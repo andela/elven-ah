@@ -9,24 +9,10 @@ export default (sequelize, DataTypes) => {
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-      references: {
-        model: 'Users',
-        key: 'id',
-        as: 'userId'
-      },
     },
     categoryId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-      references: {
-        model: 'Categories',
-        key: 'id',
-        as: 'categoryId'
-      },
     },
     title: {
       type: DataTypes.STRING,
