@@ -51,46 +51,6 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-<<<<<<< HEAD
-=======
-      unique: true,
-    },
-    googleId: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    facebookId: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    twitterId: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    verified: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    bio: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    image: {
-      type: DataTypes.STRING,
-      allowNull: true,
->>>>>>> feat(article): Create, Update and Delete Article
     },
   });
 
