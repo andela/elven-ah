@@ -5,8 +5,8 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    articleId: {
-      type: DataTypes.INTEGER,
+    articleSlug: {
+      type: DataTypes.TEXT,
       allowNull: false
     },
     value: {
