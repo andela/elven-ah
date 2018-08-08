@@ -74,13 +74,9 @@ export default class AuthController {
       };
     }
     if (user.email === email) {
-      return {
-        email: [`User with email: ${email} already exists.`],
-      };
+      return { email: [`User with email: ${email} already exists.`] };
     }
-    return {
-      username: [`User with username: ${username} already exists.`],
-    };
+    return { username: [`User with username: ${username} already exists.`] };
   }
 
   /**
@@ -182,7 +178,7 @@ export default class AuthController {
         if (created) {
           return done(null, user);
         }
-        return done(null, user);
+        return done(null, false);
       });
   }
 

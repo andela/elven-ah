@@ -2,14 +2,15 @@ export default (sequelize, DataTypes) => {
   const Article = sequelize.define('Article', {
     slug: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     categoryId: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    titleId: {
-      type: DataTypes.INTEGER,
+    title: {
+      type: DataTypes.STRING,
       allowNull: false
     },
     body: {
@@ -20,10 +21,15 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-  });
+  }, {});
   Article.associate = (models) => {
     Article.belongsTo(models.User, {
       foreignKey: 'userId',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    });
+    Article.belongsTo(models.Category, {
+      foreignKey: 'categoryId',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE'
     });
@@ -38,8 +44,10 @@ export default (sequelize, DataTypes) => {
       as: 'tags'
     });
     Article.hasMany(models.Rating, {
-      foreignKey: 'ratingId',
+      foreignKey: 'articleId',
       as: 'ratings',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     });
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',

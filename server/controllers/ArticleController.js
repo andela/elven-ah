@@ -2,9 +2,7 @@ import models from '../models';
 import randomString from '../helpers/randomString';
 import dashReplace from '../helpers/replaceDash';
 
-const {
-  Article
-} = models;
+const { Article } = models;
 /**
  * This class contains all the methods responsible for creating and querying
  * articles on the app

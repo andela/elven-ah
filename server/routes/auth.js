@@ -13,6 +13,16 @@ authRouter.post('/signup', userValidator.signupValidation, AuthController.signUp
 authRouter.post('/login', userValidator.loginValidation, AuthController.login);
 
 
+/**
+ * Handles email verification url
+ */
+authRouter.get('/verify', VerifyController.activateUser);
+
+/**
+ * Handles email verification url resend
+ */
+authRouter.post('/verify', userValidator.emailValidation, VerifyController.resendVerificationEmail);
+
 // passport mock route
 authRouter.get('/mock', passport.authenticate('mock'));
 

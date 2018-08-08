@@ -10,13 +10,19 @@ export default (sequelize, DataTypes) => {
       allowNull: false
     },
     value: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
   }, {});
   Rating.associate = (models) => {
-    Rating.BelongsTo(models.Article, {
+    Rating.belongsTo(models.Article, {
       foreignKey: 'articleId',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    });
+    Rating.belongsTo(models.User, {
+      foreignKey: 'userId',
+      as: 'rater',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE'
     });
