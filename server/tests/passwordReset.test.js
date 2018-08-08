@@ -11,7 +11,7 @@ chai.use(chaiHttp);
 // test and update token
 const emailToken = JwtHelper.createToken({ email: 'seayomi@gmail.com' }, 1800);
 
-let updateToken;
+const updateToken = JwtHelper.createToken({ email: 'seayomi@gmail.com' }, 900);
 
 // A bad token
 const badToken = 'odcjdcsdkjhshsdADDSKKSDKLKLSDKLSLKKLSDJKJKSJwqjkwkd3ndcjdbm';
@@ -119,7 +119,6 @@ describe('User request API Tests', () => {
     chai.request(app)
       .get(`/api/users/account/password/reset?tokenId=${emailToken}`)
       .end((err, res) => {
-        updateToken = res.body.token;
         res.should.have.status(200);
         res.body.should.be.a('object');
         res.body.should.have.property('status').equal('success');

@@ -60,7 +60,6 @@ export default class PasswordResetController {
     return res.status(200).send({
       status: 'success',
       message: 'Please use the link below to change your password',
-      token: passwordUpdateToken,
       redirectUrl: `${req.protocol}://${req.headers.host}/api/users/account/password/reset?tokenId=${passwordUpdateToken}`,
     });
   }
@@ -89,6 +88,15 @@ export default class PasswordResetController {
           const message = 'Your Password has been updated successfully! You can login to enjoy stories accross the globe.';
           // Send User Email Method Using SendGrid
           PasswordResetController.resetProcessEmail(req, res, resetConfirmMessage, message);
+        });
+      } else {
+        return res.status(404).send({
+          status: 'fail',
+          errors: {
+            email: [
+              'The email you provided does not exist, please check again.',
+            ],
+          },
         });
       }
     })
