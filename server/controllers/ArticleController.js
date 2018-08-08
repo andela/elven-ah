@@ -18,10 +18,7 @@ export default class ArticleController {
    * @returns {object} the article that was created.
    */
   static createArticle(req, res) {
-    const {
-      id,
-      username
-    } = req.user;
+    const { id } = req.user;
     const slug = `${dashReplace(req.body.title)}-${randomString(10)}`;
     const {
       title,
