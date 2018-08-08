@@ -50,7 +50,6 @@ export default class ArticleController {
           title: newArticle.title,
           body: newArticle.body,
           imageUrl: newArticle.imageUrl,
-          Author: username,
           createdAt: new Date(newArticle.createdAt).toLocaleString('en-GB', { hour12: true }),
         },
       }))
@@ -78,7 +77,7 @@ export default class ArticleController {
       body,
       imageUrl,
       categoryId,
-      createdAt
+      createdAt,
     } = req.body;
     Article.findOne({
       where: {
@@ -114,6 +113,7 @@ export default class ArticleController {
             success: true,
             message: `Article with ${slug} has been updated`,
             newArticle: {
+              authorId: updatedArticle.userId,
               slug: updatedArticle.slug,
               title: updatedArticle.title,
               body: updatedArticle.body,
