@@ -9,10 +9,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
     body: {
       type: DataTypes.TEXT,
       allowNull: false
@@ -21,6 +17,7 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+
   });
   Article.associate = (models) => {
     Article.belongsTo(models.User, {
