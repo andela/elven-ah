@@ -96,6 +96,57 @@ class UserValidation {
       });
     });
   }
+
+  /**
+   * @description Validates the payload to send a user a password link
+   * @param {Object} req The request object
+   * @param {Object} res The response object
+   * @param {Object} next The next middleware
+   * @returns The next middleware to handle the user reset password process
+   */
+
+  static passwordResetValidation(req, res, next) {
+    const userPayloadData = {
+      email: 'required|email',
+    };
+
+    const userDataValidation = new Validator(req.body, userPayloadData);
+
+    userDataValidation.passes(() => next());
+    userDataValidation.fails(() => {
+      const errors = userDataValidation.errors.all();
+      return res.status(400).json({
+        status: 'error',
+        errors,
+      });
+    });
+  }
+
+  static newPasswordValidation(req, res, next) {
+    const passwordPayloadData = {
+      password: 'required|alpha_num|min:8|max:20',
+      confirmPassword: 'required|alpha_num|min:8|max:20|same:password',
+    };
+
+    const passwordDataValidation = new Validator(req.body, passwordPayloadData);
+
+    passwordDataValidation.passes(() => {
+      if (UserValidation.passwordCheck(req.body.password)) return next();
+      return res.status(400).json({
+        status: 'error',
+        errors: {
+          password: ['Password must contain an Upper case letter, a lower case letter and a number.'],
+        },
+      });
+    });
+    passwordDataValidation.fails(() => {
+      const errors = passwordDataValidation.errors.all();
+      return res.status(400).json({
+        status: 'error',
+        errors,
+      });
+    });
+  }
 }
 
 export default UserValidation;
