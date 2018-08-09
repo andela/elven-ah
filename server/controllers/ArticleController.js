@@ -93,6 +93,13 @@ export default class ArticleController {
             message: 'You can only update an article that belongs to you',
           });
         }
+        if (foundArticle.userId !== id) {
+          return res.status(403).json({
+            status: 403,
+            success: false,
+            message: 'You can only update an article that belongs to you',
+          });
+        }
         Article.update({
           title: title || foundArticle.title,
           body: body || foundArticle.body,
@@ -136,6 +143,13 @@ export default class ArticleController {
             status: 404,
             success: false,
             message: 'The specified article does not exist',
+          });
+        }
+        if (foundArticle.userId !== id) {
+          return res.status(403).json({
+            status: 403,
+            success: false,
+            message: 'You can only delete an article that belongs to you',
           });
         }
         if (foundArticle.userId !== id) {
