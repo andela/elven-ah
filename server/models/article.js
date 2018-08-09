@@ -28,9 +28,10 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'commentId',
       as: 'comments'
     });
-    Article.hasMany(models.Tag, {
-      foreignKey: 'tagId',
-      as: 'tags'
+    Article.belongsToMany(models.Tag, {
+      through: 'ArticleTags',
+      as: 'tags',
+      foreignKey: 'articleId',
     });
     Article.hasMany(models.Rating, {
       foreignKey: 'ratingId',
