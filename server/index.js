@@ -7,6 +7,7 @@ import session from 'express-session';
 import cors from 'cors';
 import passport from 'passport';
 import router from './routes';
+import JwtHelper from './helpers/JwtHelper';
 
 const env = process.env.NODE_ENV;
 
@@ -90,7 +91,15 @@ app.use((err, req, res) => {
   });
 });
 
+const token = JwtHelper.createToken({
+  user: {
+    id: 1,
+    username: 'unique',
+    email: 'testseeder@test.com'
+  }
+}, '720h');
 
+console.log(token);
 // finally, let's start our server...
 export const server = app.listen(PORT);
 

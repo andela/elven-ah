@@ -3,7 +3,7 @@ import randomString from '../helpers/randomString';
 import dashReplace from '../helpers/replaceDash';
 
 const {
-  Article
+  Article, Tag
 } = models;
 /**
  * This class contains all the methods responsible for creating and querying
@@ -18,7 +18,6 @@ export default class ArticleController {
    * @returns {object} the article that was created.
    */
   static createArticle(req, res) {
-    console.log(req.user);
     const {
       id,
       username
@@ -28,9 +27,52 @@ export default class ArticleController {
       title,
       body,
       imageUrl,
-      categoryId
+      categoryId,
+      tags
     } = req.body;
 
+    const tagToLowerCase = tags.toLowerCase();
+    const splitTags = tagToLowerCase.split(',');
+
+    // Article.create({
+    //   slug: slug.toLowerCase(),
+    //   title,
+    //   body,
+    //   imageUrl,
+    //   categoryId,
+    //   userId: id,
+    //   createdAt: Date.now(),
+    // })
+    //   .then((article) => {
+    //     const articleId = article.id;
+    //     // Create Tags
+    //     return Tag.create({
+    //       articleId,
+    //       title: splitTags
+    //     })
+    //       .then(() => article.addTags(splitTags));
+    //   }).then(newArticle => res.status(200).json({
+    //     status: 200,
+    //     success: true,
+    //     message: 'Article has been created',
+    //     article: {
+    //       slug: newArticle.slug,
+    //       authorId: newArticle.userId,
+    //       categoryId: newArticle.categoryId,
+    //       title: newArticle.title,
+    //       body: newArticle.body,
+    //       imageUrl: newArticle.imageUrl,
+    //       Author: username,
+    //       createdAt: new Date(newArticle.createdAt).toLocaleString('en-GB', { hour12: true }),
+    //     },
+    //   }))
+    //   .catch(() => {
+    //     res.status(400).json({
+    //       status: 400,
+    //       success: false,
+    //       error: 'Request was not successfully created',
+    //     });
+    //   });
     Article.create({
       slug: slug.toLowerCase(),
       title,
@@ -39,29 +81,19 @@ export default class ArticleController {
       categoryId,
       userId: id,
       createdAt: Date.now(),
-    })
-      .then(newArticle => res.status(200).json({
-        status: 200,
-        success: true,
-        message: 'Article has been created',
-        article: {
-          slug: newArticle.slug,
-          authorId: newArticle.userId,
-          categoryId: newArticle.categoryId,
-          title: newArticle.title,
-          body: newArticle.body,
-          imageUrl: newArticle.imageUrl,
-          Author: username,
-          createdAt: new Date(newArticle.createdAt).toLocaleString('en-GB', { hour12: true }),
-        },
-      }))
-      .catch(() => {
-        res.status(400).json({
-          status: 400,
-          success: false,
-          error: 'Request was not successfully created',
+    }).then((article) => {
+      Tag.bulkCreate(
+        [
+          { title: 'andela' },
+          { title: 'tech' }
+        ]
+      )
+        .then(() => Tag.findAll())
+        .then((cTags) => {
+          article.addTags(cTags);
+          console.log(cTags);
         });
-      });
+    });
   }
   /**
    * Update an article and return the Data.
