@@ -46,8 +46,6 @@ app.all('*', (req, res) => {
   });
 });
 
-// Error handlers
-
 // no stack traces leaked to user in production
 app.use((err, req, res) => {
   res.status(err.status || 500);
@@ -58,7 +56,6 @@ app.use((err, req, res) => {
     },
   });
 });
-
 
 // finally, let's start our server...
 export const server = app.listen(PORT);

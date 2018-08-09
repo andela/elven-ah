@@ -9,7 +9,7 @@ const router = Router();
 router.use('/auth', authRouter);
 router.use('/user', profileRouter);
 router.use('/auth', verifyRouter);
-router.use(articleRouter);
+router.use('/articles', articleRouter);
 
 
 // Matches /api the API home route

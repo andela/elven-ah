@@ -16,34 +16,21 @@ export default class ArticleValidation {
      * @memberof Validation
      */
   static validateCreateArticle(req, res, next) {
-    const articleRules = {
-      categoryId: 'required|integer|max:5',
+    const articleProperties = {
+      categoryId: 'required|integer|min:1|max:5',
       title: 'required|string',
       body: 'required|string',
     };
 
-    const validate = new Validator(req.body, articleRules);
-    if (validate.passes()) return next();
+    const validator = new Validator(req.body, articleProperties);
+    if (validator.passes()) return next();
 
-    const error = {};
-    const categoryId = validate.errors.first('categoryId');
-    const title = validate.errors.first('title');
-    const body = validate.errors.first('body');
-
-    if (categoryId) {
-      error.categoryId = categoryId;
-    }
-    if (title) {
-      error.title = title;
-    }
-    if (body) {
-      error.body = body;
-    }
-
-    return res.status(400).json({
-      message: 'A Required Field is Missing',
-      status: 400,
-      error,
+    validator.fails(() => {
+      const errors = validator.errors.all();
+      return res.status(400).json({
+        status: 'error',
+        errors,
+      });
     });
   }
 
@@ -57,34 +44,21 @@ export default class ArticleValidation {
      * @memberof Validation
      */
   static validateUpdateArticle(req, res, next) {
-    const articleRules = {
-      categoryId: 'integer|max:5',
+    const articleProperties = {
+      categoryId: 'integer|min:1|max:5',
       title: 'string',
       body: 'string',
     };
 
-    const validate = new Validator(req.body, articleRules);
-    if (validate.passes()) return next();
+    const validator = new Validator(req.body, articleProperties);
+    if (validator.passes()) return next();
 
-    const error = {};
-    const categoryId = validate.errors.first('categoryId');
-    const title = validate.errors.first('title');
-    const body = validate.errors.first('body');
-
-    if (categoryId) {
-      error.categoryId = categoryId;
-    }
-    if (title) {
-      error.title = title;
-    }
-    if (body) {
-      error.body = body;
-    }
-
-    return res.status(400).json({
-      message: 'A Required Field is Missing',
-      status: 400,
-      error,
+    validator.fails(() => {
+      const errors = validator.errors.all();
+      return res.status(400).json({
+        status: 'error',
+        errors,
+      });
     });
   }
 }
