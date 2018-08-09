@@ -8,8 +8,6 @@ export default (sequelize, DataTypes) => {
   Tag.associate = (models) => {
     Tag.belongsToMany(models.Article, {
       through: 'ArticleTags',
-      as: 'articles',
-      foreignKey: 'tagId'
     });
   };
   return Tag;
