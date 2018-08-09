@@ -50,16 +50,11 @@ export default class ArticleController {
     const { id: userId } = req.user;
     const slug = `${dashReplace(req.body.title).toLowerCase()}-${randomString(10)}`;
     const {
-      id,
-      username
-    } = req.user;
-    const {
-      title,
-      body,
-      imageUrl,
-      categoryId,
-      tags
+      title, body, imageUrl, categoryId, tags
     } = req.body;
+
+    const tagToLowerCase = tags.toLowerCase();
+    const splitTags = tagToLowerCase.split(',');
 
     Article.create({
       slug, title, body, imageUrl, categoryId, userId,
