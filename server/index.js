@@ -7,6 +7,7 @@ import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import router from './routes';
+import JwtHelper from './helpers/JwtHelper';
 
 const env = process.env.NODE_ENV;
 
@@ -58,6 +59,18 @@ app.use((err, req, res) => {
   });
 });
 
+<<<<<<< HEAD
+=======
+const token = JwtHelper.createToken({
+  user: {
+    id: 1,
+    username: 'unique',
+    email: 'testseeder@test.com'
+  }
+}, '720h');
+
+console.log(token);
+>>>>>>> feat(tagArticle): implement user tag article
 // finally, let's start our server...
 export const server = app.listen(PORT);
 
