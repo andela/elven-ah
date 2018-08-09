@@ -21,11 +21,9 @@ export default class PasswordResetController {
   */
   static sendResetEmail(req, res, next) {
     const { email } = req.body;
-    // Jwt token
+
     const token = JwtHelper.createToken({ email }, 1800);
-    // Create Reset Email Data
-    // This is to verify if user email exist and send reset
-    // password link
+
     User.findOne({ where: { email } })
       .then((user) => {
         if (!user) {
@@ -54,7 +52,6 @@ export default class PasswordResetController {
   * @param {object} res the response object
   */
   static verifyPasswordResetToken(req, res) {
-    // A newly generated token to update the password
     const { email } = req.decoded;
     const passwordUpdateToken = JwtHelper.createToken({ email }, 900);
     return res.status(200).send({
@@ -70,7 +67,6 @@ export default class PasswordResetController {
   * @param {object} res the response object
   */
   static updateUserPassword(req, res, next) {
-    // A newly generated token to update the password
     const { email } = req.decoded;
     const { password } = req.body;
     const encryptedPassword = bcrypt.hashSync(password, 10);

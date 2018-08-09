@@ -11,7 +11,6 @@ userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
 
 userRouter.get('/', isLoggedIn, UserController.getLoggedInUser);
 
-// Password reset
 userRouter.post(
   '/account/password/reset',
   UserValidation.passwordResetValidation,

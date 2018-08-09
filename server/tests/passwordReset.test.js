@@ -8,14 +8,11 @@ chai.should();
 
 chai.use(chaiHttp);
 
-// test and update token
 const emailToken = JwtHelper.createToken({ email: 'seayomi@gmail.com' }, 1800);
 
 const updateToken = JwtHelper.createToken({ email: 'seayomi@gmail.com' }, 900);
 
-// A bad token
 const badToken = 'odcjdcsdkjhshsdADDSKKSDKLKLSDKLSLKKLSDJKJKSJwqjkwkd3ndcjdbm';
-// Test user request API/functions
 describe('User request API Tests', () => {
   it('should fail on empty email', (done) => {
     chai.request(app)
