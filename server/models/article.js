@@ -48,7 +48,6 @@ export default (sequelize, DataTypes) => {
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',
       as: 'categories',
-      
     });
   };
   return Article;

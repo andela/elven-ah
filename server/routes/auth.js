@@ -39,8 +39,10 @@ authRouter.get('/google/callback', (req, res, next) => {
         return next('Login Error: There is an error with the connection');
       }
       const token = JwtHelper.createToken({
-        id: user.id,
-        email: user.email
+        user: {
+          id: user.id,
+          email: user.email
+        }
       }, '24h');
       return res.status(200).send({
         status: 200,
@@ -83,8 +85,10 @@ authRouter.get('/facebook/callback', (req, res, next) => {
         return next('Login Error: There is an error with the connection');
       }
       const token = JwtHelper.createToken({
-        id: user.id,
-        email: user.email
+        user: {
+          id: user.id,
+          email: user.email
+        }
       }, '24h');
       return res.status(200).send({
         status: 200,
