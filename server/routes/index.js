@@ -11,6 +11,6 @@ router.use('/users', userRouter);
 router.use('/auth', authRouter);
 router.use('/user', profileRouter);
 router.use('/auth', verifyRouter);
-router.use(articleRouter);
+router.use('/articles', articleRouter);
 
 export default router;

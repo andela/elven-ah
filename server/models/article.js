@@ -48,7 +48,11 @@ export default (sequelize, DataTypes) => {
     });
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',
+<<<<<<< HEAD
       as: 'categories'
+=======
+      as: 'categories',
+>>>>>>> - write unit tests
     });
   };
   return Article;

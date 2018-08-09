@@ -19,7 +19,7 @@ export default class ArticleController {
    */
   static createArticle(req, res) {
     const { id } = req.user;
-    const slug = `${dashReplace(req.body.title)}-${randomString(10)}`;
+    const slug = `${dashReplace(req.body.title).toLowerCase()}-${randomString(10)}`;
     const {
       title,
       body,
@@ -28,7 +28,7 @@ export default class ArticleController {
     } = req.body;
 
     Article.create({
-      slug: slug.toLowerCase(),
+      slug,
       title,
       body,
       imageUrl,
@@ -36,8 +36,8 @@ export default class ArticleController {
       userId: id,
       createdAt: Date.now(),
     })
-      .then(newArticle => res.status(200).json({
-        status: 200,
+      .then(newArticle => res.status(201).json({
+        status: 201,
         success: true,
         message: 'Article has been created',
         article: {
@@ -54,7 +54,7 @@ export default class ArticleController {
         res.status(400).json({
           status: 400,
           success: false,
-          error: 'Request was not successfully created',
+          error: 'Article was not successfully created',
         });
       });
   }
@@ -66,6 +66,7 @@ export default class ArticleController {
    */
 
   static updateArticle(req, res) {
+    const { id } = req.user;
     const {
       slug
     } = req.params;
@@ -74,13 +75,13 @@ export default class ArticleController {
       body,
       imageUrl,
       categoryId,
-      createdAt,
     } = req.body;
+
     Article.findOne({
       where: {
         slug
       },
-      attributes: ['title', 'slug', 'body', 'imageUrl', 'categoryId', 'createdAt'],
+      attributes: ['title', 'userId', 'slug', 'body', 'imageUrl', 'categoryId', 'createdAt'],
     })
       .then((foundArticle) => {
         if (!foundArticle) {
@@ -90,14 +91,18 @@ export default class ArticleController {
             message: 'The specified artcile does not exist',
           });
         }
-
+        if (foundArticle.userId !== id) {
+          return res.status(403).json({
+            status: 403,
+            success: false,
+            message: 'You can only update an article that belongs to you',
+          });
+        }
         Article.update({
-          slug: foundArticle.slug,
           title: title || foundArticle.title,
           body: body || foundArticle.body,
           imageUrl: imageUrl || foundArticle.imageUrl,
           categoryId: categoryId || foundArticle.categoryId,
-          createdAt,
           updatedAt: Date.now()
         }, {
           returning: true,
@@ -124,7 +129,7 @@ export default class ArticleController {
             res.status(400).json({
               status: 400,
               success: false,
-              error: 'Request not successfully updated',
+              error: 'Article not successfully updated',
             });
           });
       });
@@ -138,6 +143,7 @@ export default class ArticleController {
    */
 
   static removeArticle(req, res) {
+    const { id } = req.user;
     const {
       slug
     } = req.params;
@@ -145,7 +151,7 @@ export default class ArticleController {
       where: {
         slug
       },
-      attributes: ['title', 'slug', 'body', 'imageUrl', 'categoryId', 'createdAt'],
+      attributes: ['title', 'slug', 'body', 'userId', 'imageUrl', 'categoryId', 'createdAt'],
     })
       .then((foundArticle) => {
         if (!foundArticle) {
@@ -153,6 +159,13 @@ export default class ArticleController {
             status: 404,
             success: false,
             message: 'The specified artcile does not exist',
+          });
+        }
+        if (foundArticle.userId !== id) {
+          return res.status(403).json({
+            status: 403,
+            success: false,
+            message: 'You can only delete an article that belongs to you',
           });
         }
         Article.destroy({
@@ -171,7 +184,7 @@ export default class ArticleController {
       .catch(() => res.status(400).json({
         status: 400,
         success: false,
-        Error: 'Article can not be deleted'
+        error: 'Article can not be deleted'
       }));
   }
 }

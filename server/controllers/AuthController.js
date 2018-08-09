@@ -122,6 +122,7 @@ class AuthController {
         googleId: profile.id,
         email: profile.emails[0].value,
         image: profile.photos[0].value,
+        verified: true,
       },
     })
       .spread((user, created) => {
@@ -148,6 +149,7 @@ class AuthController {
         lastName: profile.name.familyName,
         facebookId: profile.id,
         email: profile.emails[0].value,
+        verified: true
       },
     })
       .spread((user, created) => {
