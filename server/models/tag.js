@@ -11,10 +11,10 @@ export default (sequelize, DataTypes) => {
     },
   }, {});
   Tag.associate = (models) => {
-    Tag.belongsTo(models.Article, {
-      foreignKey: 'articleId',
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+    Tag.belongsToMany(models.Article, {
+      through: 'ArticleTags',
+      as: 'articles',
+      foreignKey: 'tagId'
     });
   };
   return Tag;

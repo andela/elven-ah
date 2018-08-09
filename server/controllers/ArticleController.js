@@ -27,8 +27,12 @@ export default class ArticleController {
       title,
       body,
       imageUrl,
-      categoryId
+      categoryId,
+      tags
     } = req.body;
+
+    const tagToLowerCase = tags.toLowerCase();
+    const splitTags = tagToLowerCase.split(',');
 
     Article.create({
       slug: slug.toLowerCase(),
