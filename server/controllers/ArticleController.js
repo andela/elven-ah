@@ -3,7 +3,7 @@ import randomString from '../helpers/randomString';
 import dashReplace from '../helpers/replaceDash';
 
 const {
-  Article
+  Article, Tag
 } = models;
 /**
  * This class contains all the methods responsible for creating and querying
@@ -18,7 +18,6 @@ export default class ArticleController {
    * @returns {object} the article that was created.
    */
   static createArticle(req, res) {
-    console.log(req.user);
     const {
       id,
       username
@@ -28,7 +27,8 @@ export default class ArticleController {
       title,
       body,
       imageUrl,
-      categoryId
+      categoryId,
+      tags
     } = req.body;
 
     Article.create({
@@ -39,22 +39,57 @@ export default class ArticleController {
       categoryId,
       userId: id,
       createdAt: Date.now(),
-    })
-      .then(newArticle => res.status(200).json({
+    }).then((article) => {
+      if (typeof tags !== 'undefined') {
+        const tagToLowerCase = tags.toLowerCase();
+        const splitTags = tagToLowerCase.split(',');
+        const tagsObjectsArray = [];
+        for (const value of splitTags) {
+          tagsObjectsArray.push({ title: value, articleId: article.id });
+        }
+        Tag.bulkCreate(
+          tagsObjectsArray
+        )
+          .then(() => Tag.findAll({
+            where: { articleId: article.id }
+          }))
+          .then((newTags) => {
+            article.addTag(newTags);
+            return res.status(200).json({
+              status: 200,
+              success: true,
+              message: 'Article has been created',
+              article: {
+                slug: article.slug,
+                authorId: article.userId,
+                categoryId: article.categoryId,
+                title: article.title,
+                body: article.body,
+                imageUrl: article.imageUrl,
+                Author: username,
+                tags: splitTags,
+                createdAt: new Date(article.createdAt).toLocaleString('en-GB', { hour12: true }),
+              },
+            });
+          });
+      }
+      return res.status(200).json({
         status: 200,
         success: true,
         message: 'Article has been created',
         article: {
-          slug: newArticle.slug,
-          authorId: newArticle.userId,
-          categoryId: newArticle.categoryId,
-          title: newArticle.title,
-          body: newArticle.body,
-          imageUrl: newArticle.imageUrl,
+          slug: article.slug,
+          authorId: article.userId,
+          categoryId: article.categoryId,
+          title: article.title,
+          body: article.body,
+          imageUrl: article.imageUrl,
           Author: username,
-          createdAt: new Date(newArticle.createdAt).toLocaleString('en-GB', { hour12: true }),
+          tags: 'None',
+          createdAt: new Date(article.createdAt).toLocaleString('en-GB', { hour12: true }),
         },
-      }))
+      });
+    })
       .catch(() => {
         res.status(400).json({
           status: 400,

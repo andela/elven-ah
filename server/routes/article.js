@@ -2,12 +2,11 @@ import { Router } from 'express';
 import ArticleController from '../controllers/ArticleController';
 import userAuthenticate from '../middlewares/isLoggedIn';
 import ArticleValidation from '../middlewares/validations/ArticleValidation';
-import ArticleControllerTag from '../controllers/ArticleControllerTag';
 
 const articleRouter = Router();
 
 
-articleRouter.post('/articles', userAuthenticate, ArticleValidation.validateCreateArticle, ArticleControllerTag.createArticle);
+articleRouter.post('/articles', userAuthenticate, ArticleValidation.validateCreateArticle, ArticleController.createArticle);
 
 articleRouter.put('/articles/:slug', userAuthenticate, ArticleValidation.validateUpdateArticle, ArticleController.updateArticle);
 
