@@ -1,6 +1,6 @@
 import models from '../models';
 
-const { Comment } = models;
+const { Comment, User } = models;
 
 /**
  * This class contains all the methods responsible for creating and querying
@@ -41,8 +41,7 @@ export default class CommentController {
           following: 'true',
         },
       },
-    })).catch((err) => {
-      console.error(err);
+    })).catch(() => {
       res.status(400).json({
         status: 'fail',
         error: 'Unable to create comment.',
@@ -50,33 +49,159 @@ export default class CommentController {
     });
   }
 
+  /**
+   * Get all comments with one level reply nesting.
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns {object} an object containing an array of all comments.
+   */
   static getComments(req, res) {
-    let query;
-    if (req.params.commentId) {
-      query = Comment.findAll({
-        include: [
-          { model: models.Comment, as: 'parent', where: { id: req.params.commentId, } },
-          { model: models.User },
-        ]
+    Comment.findAll({
+      include: [
+        { model: User, as: 'commenter' },
+      ]
+    }).then((comments) => {
+      const destructuredComments = comments.map(comment => Object.assign(
+        {},
+        {
+          id: comment.id,
+          parentId: comment.parentId,
+          createdAt: new Date(comment.createdAt).toLocaleString('en-GB', { hour12: true }),
+          updatedAt: new Date(comment.updatedAt).toLocaleString('en-GB', { hour12: true }),
+          body: comment.body,
+          author: {
+            username: comment.commenter.username,
+            bio: comment.commenter.bio,
+            image: comment.commenter.image,
+          },
+        }
+      ));
+      const result = CommentController.nestComments(destructuredComments);
+      res.status(200).json({
+        status: 'success',
+        comments: result,
       });
-    } else {
-      query = Comment.findAll({
-        include: [
-          { model: models.Comment, as: 'child' },
-          { model: models.User },
-        ]
+    }).catch(() => {
+      res.status(400).json({
+        status: 'fail',
+        message: 'Unable to get comments',
       });
-    }
-    return query.then(comments => res.status(200).json({
+    });
+  }
+
+  /**
+   * Get a comment by its id
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns {object} an object containing an array of all comments.
+   */
+  static getComment(req, res) {
+    Comment.findById((req.params.id), {
+      include: [
+        { model: User, as: 'commenter' },
+      ]
+    }).then(comment => res.status(200).json({
       status: 'success',
-      Comments: comments,
-    }))
-      .catch((err) => {
-        console.error(err);
-        res.status(400).json({
-          status: 'fail',
-          message: 'Unable to get comments',
-        });
+      comment: {
+        id: comment.id,
+        parentId: comment.parentId,
+        createdAt: new Date(comment.createdAt).toLocaleString('en-GB', { hour12: true }),
+        updatedAt: new Date(comment.updatedAt).toLocaleString('en-GB', { hour12: true }),
+        body: comment.body,
+        author: {
+          username: comment.commenter.username,
+          bio: comment.commenter.bio,
+          image: comment.commenter.image,
+        },
+      }
+    })).catch(() => {
+      res.status(400).json({
+        status: 'fail',
+        message: 'Unable to get comment.',
       });
+    });
+  }
+
+  /**
+   * Update a comment
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns {object} the updated comment.
+   */
+  static updateComment(req, res) {
+    Comment.findById(parseInt(req.params.id, 10))
+      .then((comment) => {
+        if (!comment) {
+          return res.status(404).json({
+            status: 'fail',
+            message: 'No comment found, please check the id supplied',
+          });
+        }
+        Comment.update({
+          body: req.body.body,
+        }, {
+          returning: true,
+          where: { id: comment.id },
+        })
+          .then(([, [updatedComment]]) => {
+            res.status(200).json({
+              status: 'success',
+              data: {
+                id: updatedComment.id,
+                parentId: updatedComment.parentId,
+                createdAt: new Date(updatedComment.createdAt).toLocaleString('en-GB', { hour12: true }),
+                updatedAt: new Date(updatedComment.updatedAt).toLocaleString('en-GB', { hour12: true }),
+                body: updatedComment.body,
+                author: updatedComment.author,
+              }
+            });
+          });
+      }).catch(() => res.status(400).json({
+        status: 'fail',
+        message: 'Unable to update comment',
+      }));
+  }
+
+  /**
+   * Delete a comment
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns {null}
+   */
+  static deleteComment(req, res) {
+    Comment.findById(parseInt(req.params.id, 10))
+      .then((comment) => {
+        if (!comment) {
+          return res.status(400).json({
+            status: 'fail',
+            message: 'No comment found, please check the id supplied',
+          });
+        }
+        Comment.destroy({ where: { id: comment.id } })
+          .then(() => res.status(200).json({
+            status: 'success',
+            message: 'Comment deleted.'
+          }));
+      }).catch(() => res.status(400).json({
+        status: 'fail',
+        message: 'Invalid comment id supplied.',
+      }));
+  }
+
+  /**
+   * One-level nest an array of comments and replies
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns {array} an array of nested comments.
+   */
+  static nestComments(comments) {
+    const mainComments = comments.filter(comment => comment.parentId === null);
+    const replies = comments.filter(comment => comment.parentId !== null);
+    const result = [];
+    mainComments.forEach((comment) => {
+      comment.replies = replies.filter(reply => reply.parentId === comment.id);
+      result.push(comment);
+    });
+    return result;
   }
 }

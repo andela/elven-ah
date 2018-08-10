@@ -22,7 +22,7 @@ export default (sequelize, DataTypes) => {
     });
     Comment.hasMany(models.Comment, {
       foreignKey: 'parentId',
-      as: 'child',
+      as: 'reply',
     });
     Comment.belongsTo(models.Comment, {
       foreignKey: 'parentId',
@@ -32,6 +32,7 @@ export default (sequelize, DataTypes) => {
     });
     Comment.belongsTo(models.User, {
       foreignKey: 'author',
+      as: 'commenter',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     });
