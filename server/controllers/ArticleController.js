@@ -72,23 +72,24 @@ export default class ArticleController {
               },
             });
           });
+      } else {
+        return res.status(200).json({
+          status: 200,
+          success: true,
+          message: 'Article has been created',
+          article: {
+            slug: article.slug,
+            authorId: article.userId,
+            categoryId: article.categoryId,
+            title: article.title,
+            body: article.body,
+            imageUrl: article.imageUrl,
+            Author: username,
+            tags: 'None',
+            createdAt: new Date(article.createdAt).toLocaleString('en-GB', { hour12: true }),
+          },
+        });
       }
-      return res.status(200).json({
-        status: 200,
-        success: true,
-        message: 'Article has been created',
-        article: {
-          slug: article.slug,
-          authorId: article.userId,
-          categoryId: article.categoryId,
-          title: article.title,
-          body: article.body,
-          imageUrl: article.imageUrl,
-          Author: username,
-          tags: 'None',
-          createdAt: new Date(article.createdAt).toLocaleString('en-GB', { hour12: true }),
-        },
-      });
     })
       .catch(() => {
         res.status(400).json({
