@@ -16,13 +16,24 @@ export default (sequelize, DataTypes) => {
   });
   Comment.associate = (models) => {
     Comment.belongsTo(models.Article, {
-      foreignKey: 'articleId',
+      foreignKey: 'articleSlug',
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
-    Comment.hasMany(models.Reply, {
-      foreignKey: 'commentId',
-      as: 'replies'
+    Comment.hasMany(models.Comment, {
+      foreignKey: 'parentId',
+      as: 'child',
+    });
+    Comment.belongsTo(models.Comment, {
+      foreignKey: 'parentId',
+      as: 'parent',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    });
+    Comment.belongsTo(models.User, {
+      foreignKey: 'author',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     });
   };
   return Comment;

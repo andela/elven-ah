@@ -19,9 +19,16 @@ module.exports = {
         as: 'articleSlug'
       },
     },
-    userId: {
-      type: Sequelize.INTEGER,
-      allowNull: false
+    author: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'username',
+        as: 'author',
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     },
     parentId: {
       type: Sequelize.INTEGER,

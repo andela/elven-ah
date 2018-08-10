@@ -21,12 +21,12 @@ export default (sequelize, DataTypes) => {
   });
   Article.associate = (models) => {
     Article.belongsTo(models.User, {
-      foreignKey: 'userId',
+      foreignKey: 'author',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE'
     });
     Article.hasMany(models.Comment, {
-      foreignKey: 'commentId',
+      foreignKey: 'articleSlug',
       as: 'comments'
     });
     Article.hasMany(models.Tag, {

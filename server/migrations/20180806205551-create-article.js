@@ -11,15 +11,15 @@ module.exports = {
       allowNull: false,
       unique: true
     },
-    userId: {
-      type: Sequelize.INTEGER,
+    author: {
+      type: Sequelize.STRING,
       allowNull: false,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       references: {
         model: 'Users',
-        key: 'id',
-        as: 'userId'
+        key: 'username',
+        as: 'author'
       },
     },
     categoryId: {
