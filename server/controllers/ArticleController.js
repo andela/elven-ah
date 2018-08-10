@@ -3,7 +3,7 @@ import randomString from '../helpers/randomString';
 import dashReplace from '../helpers/replaceDash';
 
 const {
-  Article
+  Article, Tag
 } = models;
 /**
  * This class contains all the methods responsible for creating and querying

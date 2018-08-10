@@ -59,6 +59,7 @@ app.use((err, req, res) => {
 });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 const token = JwtHelper.createToken({
   user: {
@@ -69,6 +70,8 @@ const token = JwtHelper.createToken({
 }, '720h');
 
 console.log(token);
+>>>>>>> feat(tagArticle): implement user tag article
+=======
 >>>>>>> feat(tagArticle): implement user tag article
 // finally, let's start our server...
 export const server = app.listen(PORT);
