@@ -57,7 +57,8 @@ export default class ArticleController {
       title,
       body,
       imageUrl,
-      categoryId
+      categoryId,
+      tags
     } = req.body;
 
     Article.create({

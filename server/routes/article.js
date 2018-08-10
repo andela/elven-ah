@@ -2,15 +2,22 @@ import { Router } from 'express';
 import ArticleController from '../controllers/ArticleController';
 import isLoggedIn from '../middlewares/isLoggedIn';
 import ArticleValidation from '../middlewares/validations/ArticleValidation';
+<<<<<<< HEAD
 import CommentValidation from '../middlewares/validations/CommentValidation';
 import CommentController from '../controllers/CommentController';
 import RatingController from '../controllers/RatingController';
+=======
+>>>>>>> feat(tagArticle): implement user tag article
 
 const articleRouter = Router();
 
 articleRouter.post('/', isLoggedIn, ArticleValidation.validateCreateArticle, ArticleController.createArticle);
 
+<<<<<<< HEAD
 articleRouter.put('/:slug', isLoggedIn, ArticleValidation.validateUpdateArticle, ArticleController.updateArticle);
+=======
+articleRouter.post('/articles', userAuthenticate, ArticleValidation.validateCreateArticle, ArticleController.createArticle);
+>>>>>>> feat(tagArticle): implement user tag article
 
 articleRouter.delete('/:slug', isLoggedIn, ArticleController.removeArticle);
 
