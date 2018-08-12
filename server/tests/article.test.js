@@ -252,7 +252,7 @@ describe('Test for Article Request', () => {
               done();
             });
         });
-        it('should return 200 for successfully creating an article', (done) => {
+        it('should return 201 for successfully creating an article', (done) => {
           chai.request(app)
             .post('/api/articles/')
             .set('x-access-token', token)
@@ -264,9 +264,8 @@ describe('Test for Article Request', () => {
             .end((err, res) => {
               res.status.should.eql(201);
               res.body.should.be.a('object');
-              res.body.should.have.property('status').eql(201);
-              res.body.should.have.property('success').eql(true);
-              res.body.should.have.property('message').eql('Article has been created');
+              res.body.should.have.property('status').eql('success');
+              res.body.should.have.property('message').eql('The article has been created successfully');
               res.body.article.should.have.property('title').eql(title);
               res.body.article.should.have.property('body').eql(body);
               res.body.article.should.have.property('categoryId').eql(1);
@@ -402,7 +401,7 @@ describe('Test for Article Request', () => {
               res.body.should.be.a('object');
               res.body.should.have.property('status').eql(404);
               res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('message').eql('The specified artcile does not exist');
+              res.body.should.have.property('message').eql('The specified article does not exist');
               done();
             });
         });
@@ -432,9 +431,8 @@ describe('Test for Article Request', () => {
             .end((err, res) => {
               res.status.should.eql(200);
               res.body.should.be.a('object');
-              res.body.should.have.property('status').eql(200);
-              res.body.should.have.property('success').eql(true);
-              res.body.should.have.property('message').eql('Article with arts-is-wonderful-120794ujhd has been updated');
+              res.body.should.have.property('status').eql('success');
+              res.body.should.have.property('message').eql('The article with slug: arts-is-wonderful-120794ujhd has been updated successfully');
               done();
             });
         });
@@ -475,7 +473,7 @@ describe('Test for Article Request', () => {
               res.body.should.be.a('object');
               res.body.should.have.property('status').eql(404);
               res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('message').eql('The specified artcile does not exist');
+              res.body.should.have.property('message').eql('The specified article does not exist');
               done();
             });
         });
@@ -501,7 +499,7 @@ describe('Test for Article Request', () => {
               res.body.should.be.a('object');
               res.body.should.have.property('status').eql(200);
               res.body.should.have.property('success').eql(true);
-              res.body.should.have.property('message').eql('Article with arts-is-wonderful-120794ujhd has been successfully deleted');
+              res.body.should.have.property('message').eql('Article with slug: arts-is-wonderful-120794ujhd has been successfully deleted');
               done();
             });
         });

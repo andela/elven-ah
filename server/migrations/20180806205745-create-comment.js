@@ -1,5 +1,4 @@
 
-
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Comments', {
     id: {
@@ -22,6 +21,18 @@ module.exports = {
     userId: {
       type: Sequelize.INTEGER,
       allowNull: false
+    },
+    parentId: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: 'Comments',
+        key: 'id',
+        as: 'parentId',
+      }
     },
     body: {
       type: Sequelize.TEXT,

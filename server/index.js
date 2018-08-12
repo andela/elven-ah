@@ -61,35 +61,18 @@ app.use((req, res, next) => {
   next(err);
 });
 
-// / error handlers
+// Error handlers
 
-// development error handler
-// will print stacktrace
-if (env !== 'production') {
-  app.use((err, req, res) => {
-    res.status(err.status || 500);
-
-    res.json({
-      errors: {
-        message: err.message,
-        error: err,
-      },
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
+// no stack traces leaked to user in production
 app.use((err, req, res) => {
   res.status(err.status || 500);
   res.json({
     errors: {
       message: err.message,
-      error: {},
+      error: env === 'production' ? {} : err,
     },
   });
 });
-
 
 // finally, let's start our server...
 export const server = app.listen(PORT);

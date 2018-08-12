@@ -16,14 +16,6 @@ export default (sequelize, DataTypes) => {
       },
       unique: true
     },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     googleId: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -35,6 +27,14 @@ export default (sequelize, DataTypes) => {
     twitterId: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     password: {
       type: DataTypes.STRING,
