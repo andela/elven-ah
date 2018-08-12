@@ -54,7 +54,7 @@ export default class ArticleController {
         res.status(400).json({
           status: 400,
           success: false,
-          error: 'Article was not successfully created',
+          error: 'Request was not successfully created',
         });
       });
   }
@@ -129,7 +129,7 @@ export default class ArticleController {
             res.status(400).json({
               status: 400,
               success: false,
-              error: 'Article not successfully updated',
+              error: 'Request not successfully updated',
             });
           });
       });
