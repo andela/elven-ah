@@ -6,14 +6,6 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    categoryId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     title: {
       type: DataTypes.STRING,
       allowNull: false
