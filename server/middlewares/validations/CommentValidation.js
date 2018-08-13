@@ -14,7 +14,7 @@ export default class CommentValidation {
   * @returns {object} Class instance
   * @memberof Validation
   */
-  static validateNewComment(req, res, next) {
+  static validateComment(req, res, next) {
     const commentProperties = {
       body: 'required|string',
     };

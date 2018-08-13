@@ -44,7 +44,7 @@ export default class CommentController {
     })).catch(() => {
       res.status(400).json({
         status: 'fail',
-        error: 'Unable to create comment.',
+        message: 'Unable to create comment.',
       });
     });
   }

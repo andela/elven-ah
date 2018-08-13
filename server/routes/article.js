@@ -18,13 +18,13 @@ articleRouter.post('/articles/:slug/comments', userAuthenticate, CommentValidati
 
 articleRouter.get('/articles/:slug/comments', userAuthenticate, CommentController.getComments);
 
-articleRouter.post('/articles/:slug/comments', userAuthenticate, CommentValidation.validateNewComment, CommentController.createComment);
+articleRouter.post('/articles/:slug/comments', userAuthenticate, CommentValidation.validateComment, CommentController.createComment);
 
 articleRouter.get('/articles/:slug/comments', userAuthenticate, CommentController.getComments);
 
 articleRouter.get('/articles/:slug/comments/:id', userAuthenticate, CommentController.getComment);
 
-articleRouter.put('/articles/:slug/comments/:id', userAuthenticate, CommentController.updateComment);
+articleRouter.put('/articles/:slug/comments/:id', userAuthenticate, CommentValidation.validateComment, CommentController.updateComment);
 
 articleRouter.delete('/articles/:slug/comments/:id', userAuthenticate, CommentController.deleteComment);
 
