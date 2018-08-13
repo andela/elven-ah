@@ -13,7 +13,6 @@ describe('ALL /api/', () => {
       res.status.should.eql(200);
       res.body.should.be.a('object');
       res.body.should.have.property('status').eql('success');
-      res.body.should.have.property('message').eql('Welcome to Author\'s Haven API');
       done();
     });
   });
@@ -23,7 +22,7 @@ describe('ALL /api/', () => {
       res.status.should.eql(404);
       res.body.should.be.a('object');
       res.body.should.have.property('status').eql('error');
-      res.body.should.have.property('message').eql('Route unavailable on this server');
+      res.body.should.have.property('message');
       done();
     });
   });
