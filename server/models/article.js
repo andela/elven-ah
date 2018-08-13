@@ -17,7 +17,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-
   });
   Article.associate = (models) => {
     Article.belongsTo(models.User, {
@@ -39,7 +38,7 @@ export default (sequelize, DataTypes) => {
     });
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',
-      as: 'categories'
+      as: 'categories',
     });
   };
   return Article;

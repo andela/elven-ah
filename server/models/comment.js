@@ -1,14 +1,5 @@
-
 export default (sequelize, DataTypes) => {
   const Comment = sequelize.define('Comment', {
-    articleId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
     body: {
       type: DataTypes.TEXT,
       allowNull: false
