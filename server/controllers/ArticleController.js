@@ -19,6 +19,7 @@ export default class ArticleController {
    * @returns {object} the article that was created/updated.
    */
   static articleResponse(article, statusCode, res) {
+    const updatedAt = statusCode === 201 ? undefined : new Date(article.updatedAt).toLocaleString('en-GB', { hour12: true });
     return res.status(statusCode).send({
       status: 'success',
       message: statusCode === 201 ? 'The article has been created successfully' : `The article with slug: ${article.slug} has been updated successfully`,
@@ -30,7 +31,7 @@ export default class ArticleController {
         body: article.body,
         imageUrl: article.imageUrl,
         createdAt: new Date(article.createdAt).toLocaleString('en-GB', { hour12: true }),
-        updatedAt: new Date(article.updatedAt).toLocaleString('en-GB', { hour12: true }),
+        updatedAt,
       },
     });
   }
