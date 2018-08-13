@@ -1,4 +1,3 @@
-
 export default (sequelize, DataTypes) => {
   const Article = sequelize.define('Article', {
     slug: {
@@ -18,7 +17,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.BLOB,
       allowNull: true
     },
-
   });
   Article.associate = (models) => {
     Article.belongsTo(models.User, {
@@ -43,4 +41,5 @@ export default (sequelize, DataTypes) => {
       as: 'categories'
     });
   };
+  return Article;
 };

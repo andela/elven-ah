@@ -14,15 +14,7 @@ export default (sequelize, DataTypes) => {
           msg: 'Must be a valid email address',
         },
       },
-      unique: true,
-    },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      unique: true
     },
     googleId: {
       type: DataTypes.STRING,
@@ -35,6 +27,14 @@ export default (sequelize, DataTypes) => {
     twitterId: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     password: {
       type: DataTypes.STRING,

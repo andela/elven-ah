@@ -40,7 +40,7 @@ authRouter.get('/google/callback', (req, res, next) => {
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
-        return next('Login Error: There is an error with the connection');
+        return next(loginErr);
       }
       const token = JwtHelper.createToken({
         user: {
@@ -86,7 +86,7 @@ authRouter.get('/facebook/callback', (req, res, next) => {
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
-        return next('Login Error: There is an error with the connection');
+        return next(loginErr);
       }
       const token = JwtHelper.createToken({
         user: {
