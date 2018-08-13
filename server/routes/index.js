@@ -1,8 +1,10 @@
+
 import { Router } from 'express';
 import authRouter from './auth';
 import profileRouter from './profile';
 import verifyRouter from './verify.js';
 import userRouter from './users';
+import articleRouter from './article.js';
 
 const router = Router();
 
@@ -10,7 +12,7 @@ router.use('/auth', authRouter);
 router.use('/user', profileRouter);
 router.use('/users', userRouter);
 router.use('/auth', verifyRouter);
-
+router.use('/articles', articleRouter);
 
 // Matches /api the API home route
 router.get('/*', (req, res) => {
