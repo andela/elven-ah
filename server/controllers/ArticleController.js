@@ -160,7 +160,7 @@ export default class ArticleController {
       .catch(() => res.status(400).json({
         status: 400,
         success: false,
-        error: 'Article can not be deleted'
+        error: 'Article cannot be deleted'
       }));
   }
 }

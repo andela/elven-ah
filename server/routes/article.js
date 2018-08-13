@@ -13,14 +13,14 @@ articleRouter.put('/:slug', userAuthenticate, ArticleValidation.validateUpdateAr
 
 articleRouter.delete('/:slug', userAuthenticate, ArticleController.removeArticle);
 
-articleRouter.post('/articles/:slug/comments', userAuthenticate, CommentValidation.validateComment, CommentController.createComment);
+articleRouter.post('/:slug/comments', userAuthenticate, CommentValidation.validateComment, CommentController.createComment);
 
-articleRouter.get('/articles/:slug/comments', userAuthenticate, CommentController.getComments);
+articleRouter.get('/:slug/comments', userAuthenticate, CommentController.getComments);
 
-articleRouter.get('/articles/:slug/comments/:id', userAuthenticate, CommentController.getComment);
+articleRouter.get('/:slug/comments/:id', userAuthenticate, CommentController.getComment);
 
-articleRouter.put('/articles/:slug/comments/:id', userAuthenticate, CommentValidation.validateComment, CommentController.updateComment);
+articleRouter.put('/:slug/comments/:id', userAuthenticate, CommentValidation.validateComment, CommentController.updateComment);
 
-articleRouter.delete('/articles/:slug/comments/:id', userAuthenticate, CommentController.deleteComment);
+articleRouter.delete('/:slug/comments/:id', userAuthenticate, CommentController.deleteComment);
 
 export default articleRouter;
