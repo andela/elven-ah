@@ -1,4 +1,3 @@
-import { runInNewContext } from 'vm';
 import models from '../models';
 
 const { Comment, User, Article } = models;
