@@ -130,6 +130,24 @@ describe('Comment Tests', () => {
           done();
         });
     });
+
+    it('should not create the comment when an invalid slug is provided, or the article does not exist', (done) => {
+      chai.request(app)
+        .post('/api/articles/invalid-slug-87123/comments')
+        .set('x-access-token', token)
+        .send({
+          articleId: validId,
+          userId: user.id,
+          parentId: null,
+          body: 'I am a valid comment.',
+        })
+        .end((req, res) => {
+          res.status.should.eql(400);
+          res.body.should.be.an('object').with.property('status').eql('fail');
+          res.body.should.have.property('message').include('Unable to create comment because article does not exist.');
+          done();
+        });
+    });
   });
 
   describe('Comment creation with valid token but no body', () => {
@@ -189,7 +207,7 @@ describe('Comment Tests', () => {
         .end((req, res) => {
           res.status.should.eql(200);
           res.body.should.be.an('object').with.property('status').include('success');
-          res.body.should.have.property('data');
+          res.body.should.have.property('comment');
           done();
         });
     });
@@ -233,6 +251,30 @@ describe('Comment Tests', () => {
           res.status.should.eql(200);
           res.body.should.be.an('object').with.property('status').include('success');
           res.body.should.have.property('message').include('Comment deleted.');
+          done();
+        });
+    });
+
+    it('should throw an error when invalid comment id is supplied', (done) => {
+      chai.request(app)
+        .delete(`/api/articles/${validSlug}/comments/rer`)
+        .set('x-access-token', token)
+        .end((req, res) => {
+          res.status.should.eql(400);
+          res.body.should.be.an('object').with.property('status').include('fail');
+          res.body.should.have.property('message').include('Invalid comment id supplied.');
+          done();
+        });
+    });
+
+    it('should throw an error when no comment with supplied id exists', (done) => {
+      chai.request(app)
+        .delete(`/api/articles/${validSlug}/comments/900`)
+        .set('x-access-token', token)
+        .end((req, res) => {
+          res.status.should.eql(404);
+          res.body.should.be.an('object').with.property('status').include('fail');
+          res.body.should.have.property('message').include('No comment with the supplied id found.');
           done();
         });
     });

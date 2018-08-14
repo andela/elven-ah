@@ -1,3 +1,4 @@
+import { runInNewContext } from 'vm';
 import models from '../models';
 
 const { Comment, User, Article } = models;
@@ -20,19 +21,13 @@ export default class CommentController {
     const parentId = req.query.id === undefined ? null : req.query.id;
     const { slug } = req.params;
     const article = await CommentController.getArticleFromSlug(slug);
-    if (article !== undefined) {
+    if (article !== null) {
       return Comment.create({
         articleId: article.id,
         userId: id,
         parentId,
         body,
-      }).then(newComment => CommentController.commentResponse(res, newComment, slug, username))
-        .catch(() => {
-          res.status(400).json({
-            status: 'fail',
-            message: 'Unable to create comment, please try again.',
-          });
-        });
+      }).then(newComment => CommentController.commentResponse(res, newComment, slug, username));
     }
     res.status(400).json({
       status: 'fail',
@@ -75,7 +70,7 @@ export default class CommentController {
     }).catch(() => {
       res.status(400).json({
         status: 'fail',
-        message: 'Unable to get comments',
+        message: 'Unable to get comments.',
       });
     });
   }
@@ -86,31 +81,34 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {object} an object containing an array of all comments.
    */
-  static getComment(req, res) {
+  static getComment(req, res, next) {
     Comment.findById((req.params.id), {
       include: [
         { model: User, as: 'commenter' },
       ]
-    }).then(comment => res.status(200).json({
-      status: 'success',
-      comment: {
-        id: comment.id,
-        parentId: comment.parentId,
-        createdAt: new Date(comment.createdAt).toLocaleString('en-GB', { hour12: true }),
-        updatedAt: new Date(comment.updatedAt).toLocaleString('en-GB', { hour12: true }),
-        body: comment.body,
-        author: {
-          username: comment.commenter.username,
-          bio: comment.commenter.bio,
-          image: comment.commenter.image,
-        },
+    }).then((comment) => {
+      if (!comment) {
+        res.status(404).json({
+          status: 'fail',
+          message: 'Unable to get the comment with supplied id.',
+        });
       }
-    })).catch(() => {
-      res.status(400).json({
-        status: 'fail',
-        message: 'Unable to get comment.',
+      res.status(200).json({
+        status: 'success',
+        comment: {
+          id: comment.id,
+          parentId: comment.parentId,
+          createdAt: new Date(comment.createdAt).toLocaleString('en-GB', { hour12: true }),
+          updatedAt: new Date(comment.updatedAt).toLocaleString('en-GB', { hour12: true }),
+          body: comment.body,
+          author: {
+            username: comment.commenter.username,
+            bio: comment.commenter.bio,
+            image: comment.commenter.image,
+          },
+        }
       });
-    });
+    }).catch(err => next(err));
   }
 
   /**
@@ -119,13 +117,13 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {object} the updated comment.
    */
-  static updateComment(req, res) {
+  static updateComment(req, res, next) {
     Comment.findById(parseInt(req.params.id, 10))
       .then((comment) => {
         if (!comment) {
           return res.status(404).json({
             status: 'fail',
-            message: 'No comment found, please check the id supplied',
+            message: 'No comment found, please check the id supplied.',
           });
         }
         Comment.update({
@@ -137,7 +135,7 @@ export default class CommentController {
           .then(([, [updatedComment]]) => {
             res.status(200).json({
               status: 'success',
-              data: {
+              comment: {
                 id: updatedComment.id,
                 parentId: updatedComment.parentId,
                 createdAt: new Date(updatedComment.createdAt).toLocaleString('en-GB', { hour12: true }),
@@ -146,11 +144,11 @@ export default class CommentController {
                 author: updatedComment.author,
               }
             });
-          });
-      }).catch(() => res.status(400).json({
-        status: 'fail',
-        message: 'Unable to update comment',
-      }));
+          }).catch(() => res.status(400).json({
+            status: 'fail',
+            message: 'Unable to update comment',
+          }));
+      }).catch(err => next(err));
   }
 
   /**
@@ -163,9 +161,9 @@ export default class CommentController {
     Comment.findById(parseInt(req.params.id, 10))
       .then((comment) => {
         if (!comment) {
-          return res.status(400).json({
+          return res.status(404).json({
             status: 'fail',
-            message: 'No comment found, please check the id supplied',
+            message: 'No comment with the supplied id found.',
           });
         }
         Comment.destroy({ where: { id: comment.id } })
@@ -196,6 +194,12 @@ export default class CommentController {
     return result;
   }
 
+  /**
+   * Return the article that has the supplied slug
+   * @param {object} req the request object
+   * @param {object} res the response object
+   * @returns {promise} the article object found
+   */
   static getArticleFromSlug(slug) {
     return new Promise((resolve, reject) => {
       Article.findOne({
@@ -210,6 +214,14 @@ export default class CommentController {
     });
   }
 
+  /**
+   * Formats and sends the response to the user when a comment is created.
+   * @param {object} res the response object
+   * @param {object} newComment the created comment
+   * @param {string} slug the slug of the article to which the comment belongs
+   * @param {string} username the author of the comment
+   * @returns {object} the comment that was created.
+   */
   static commentResponse(res, newComment, slug, username) {
     return res.status(201).json({
       status: 'success',
