@@ -14,7 +14,7 @@ export default (sequelize, DataTypes) => {
       allowNull: false
     },
     imageUrl: {
-      type: DataTypes.BLOB,
+      type: DataTypes.STRING,
       allowNull: true
     },
   });
@@ -25,8 +25,10 @@ export default (sequelize, DataTypes) => {
       onUpdate: 'CASCADE'
     });
     Article.hasMany(models.Comment, {
-      foreignKey: 'commentId',
-      as: 'comments'
+      foreignKey: 'articleId',
+      as: 'comments',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     });
     Article.hasMany(models.Tag, {
       foreignKey: 'tagId',

@@ -19,7 +19,15 @@ module.exports = {
     },
     userId: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: 'Users',
+        key: 'id',
+        as: 'userId'
+      },
+
     },
     parentId: {
       type: Sequelize.INTEGER,
