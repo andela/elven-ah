@@ -1,6 +1,6 @@
 import models from '../models';
 
-const { Comment, User } = models;
+const { Comment, User, Article } = models;
 
 /**
  * This class contains all the methods responsible for creating and querying
@@ -14,38 +14,29 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {object} the comment that was created.
    */
-  static createComment(req, res) {
-    const { username } = req.user;
+  static async createComment(req, res) {
+    const { id, username } = req.user;
     const { body } = req.body;
     const parentId = req.query.id === undefined ? null : req.query.id;
-    const slug = parentId === null ? req.params.slug : null;
-    Comment.create({
-      articleSlug: slug,
-      author: username,
-      parentId,
-      body,
-    }).then(newComment => res.status(201).json({
-      status: 'success',
-      message: 'Comment has been created',
-      comment: {
-        id: newComment.id,
-        parentId: newComment.parentId,
-        createdAt: new Date(newComment.createdAt).toLocaleString('en-GB', { hour12: true }),
-        updatedAt: new Date(newComment.updatedAt).toLocaleString('en-GB', { hour12: true }),
-        body: newComment.body,
-        article: newComment.articleSlug,
-        author: {
-          username: newComment.author,
-          bio: newComment.author.bio,
-          image: newComment.author.image,
-          following: 'true',
-        },
-      },
-    })).catch(() => {
-      res.status(400).json({
-        status: 'fail',
-        message: 'Unable to create comment.',
-      });
+    const { slug } = req.params;
+    const article = await CommentController.getArticleFromSlug(slug);
+    if (article !== undefined) {
+      return Comment.create({
+        articleId: article.id,
+        userId: id,
+        parentId,
+        body,
+      }).then(newComment => CommentController.commentResponse(res, newComment, slug, username))
+        .catch(() => {
+          res.status(400).json({
+            status: 'fail',
+            message: 'Unable to create comment, please try again.',
+          });
+        });
+    }
+    res.status(400).json({
+      status: 'fail',
+      message: 'Unable to create comment because article does not exist.',
     });
   }
 
@@ -203,5 +194,35 @@ export default class CommentController {
       result.push(comment);
     });
     return result;
+  }
+
+  static getArticleFromSlug(slug) {
+    return new Promise((resolve, reject) => {
+      Article.findOne({
+        where: { slug },
+        attributes: [
+          'id', 'title', 'userId', 'slug', 'body',
+          'imageUrl', 'categoryId', 'createdAt', 'updatedAt'
+        ],
+      })
+        .then(article => resolve(article))
+        .catch(err => reject(err));
+    });
+  }
+
+  static commentResponse(res, newComment, slug, username) {
+    return res.status(201).json({
+      status: 'success',
+      message: 'Comment has been created',
+      comment: {
+        id: newComment.id,
+        parentId: newComment.parentId,
+        createdAt: new Date(newComment.createdAt).toLocaleString('en-GB', { hour12: true }),
+        updatedAt: new Date(newComment.updatedAt).toLocaleString('en-GB', { hour12: true }),
+        body: newComment.body,
+        article: slug,
+        author: username,
+      },
+    });
   }
 }

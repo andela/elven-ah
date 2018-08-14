@@ -20,13 +20,15 @@ export default (sequelize, DataTypes) => {
   });
   Article.associate = (models) => {
     Article.belongsTo(models.User, {
-      foreignKey: 'author',
+      foreignKey: 'userId',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE'
     });
     Article.hasMany(models.Comment, {
-      foreignKey: 'articleSlug',
-      as: 'comments'
+      foreignKey: 'articleId',
+      as: 'comments',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     });
     Article.hasMany(models.Tag, {
       foreignKey: 'tagId',
@@ -38,7 +40,7 @@ export default (sequelize, DataTypes) => {
     });
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',
-      as: 'categories',
+      as: 'categories'
     });
   };
   return Article;

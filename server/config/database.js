@@ -15,7 +15,7 @@ module.exports = {
     database: process.env.DB_NAME || 'elven_ah_dev',
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || '5432',
-    operatorsAliases: false,
+    // operatorsAliases: false,
   },
   test: {
     dialect: 'postgres',

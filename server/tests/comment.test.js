@@ -11,12 +11,13 @@ const { Article } = models;
 chai.should();
 chai.use(chaiHttp);
 const user = {
-  id: 1,
+  id: 2,
   username: 'unique',
-  email: 'testuser@test.com',
+  email: 'testseeder@test.com',
 };
 let token;
 let validSlug;
+let validId;
 
 const comments = [
   {
@@ -76,8 +77,9 @@ const comments = [
 describe('Comment Tests', () => {
   before((done) => {
     token = JwtHelper.createToken({ user }, 3600);
-    Article.find({ attributes: ['slug'] }).then((article) => {
+    Article.findOne({ attributes: ['slug', 'id'] }).then((article) => {
       validSlug = article.slug;
+      validId = article.id;
     }).catch();
     done();
   });
@@ -115,8 +117,8 @@ describe('Comment Tests', () => {
         .post(`/api/articles/${validSlug}/comments`)
         .set('x-access-token', token)
         .send({
-          articleSlug: validSlug,
-          author: user.username,
+          articleId: validId,
+          userId: user.id,
           parentId: null,
           body: 'I am a valid comment.',
         })
@@ -137,7 +139,7 @@ describe('Comment Tests', () => {
         .set('x-access-token', token)
         .send({
           articleSlug: validSlug,
-          author: user.username,
+          author: user.id,
           parentId: null,
         })
         .end((req, res) => {

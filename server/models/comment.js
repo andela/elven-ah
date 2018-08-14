@@ -7,7 +7,7 @@ export default (sequelize, DataTypes) => {
   });
   Comment.associate = (models) => {
     Comment.belongsTo(models.Article, {
-      foreignKey: 'articleSlug',
+      foreignKey: 'articleId',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     });
@@ -22,7 +22,7 @@ export default (sequelize, DataTypes) => {
       onUpdate: 'CASCADE',
     });
     Comment.belongsTo(models.User, {
-      foreignKey: 'author',
+      foreignKey: 'userId',
       as: 'commenter',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',

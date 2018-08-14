@@ -6,27 +6,28 @@ module.exports = {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    articleSlug: {
-      type: Sequelize.STRING,
+    articleId: {
+      type: Sequelize.INTEGER,
       allowNull: false,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       references: {
         model: 'Articles',
-        key: 'slug',
-        as: 'articleSlug'
+        key: 'id',
+        as: 'articleId'
       },
     },
-    author: {
-      type: Sequelize.STRING,
+    userId: {
+      type: Sequelize.INTEGER,
       allowNull: false,
-      references: {
-        model: 'Users',
-        key: 'username',
-        as: 'author',
-      },
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
+      references: {
+        model: 'Users',
+        key: 'id',
+        as: 'userId'
+      },
+
     },
     parentId: {
       type: Sequelize.INTEGER,

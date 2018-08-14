@@ -4,7 +4,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      primaryKey: true,
     },
     email: {
       type: DataTypes.STRING,
@@ -61,7 +60,7 @@ export default (sequelize, DataTypes) => {
       as: 'articles',
     });
     User.hasMany(models.Comment, {
-      foreignKey: 'author',
+      foreignKey: 'userId',
       as: 'comments',
     });
   };
