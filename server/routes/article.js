@@ -5,7 +5,7 @@ import ArticleValidation from '../middlewares/validations/ArticleValidation';
 
 const articleRouter = Router();
 
-articleRouter.post('/articles', userAuthenticate, ArticleValidation.validateCreateArticle, ArticleController.createArticle);
+articleRouter.post('/', userAuthenticate, ArticleValidation.validateCreateArticle, ArticleController.createArticle);
 
 articleRouter.put('/:slug', userAuthenticate, ArticleValidation.validateUpdateArticle, ArticleController.updateArticle);
 

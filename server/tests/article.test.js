@@ -28,6 +28,7 @@ let anotherToken;
 const title = 'Ann mary$# is a teacher';
 const body = 'There is so much to learn in simulations';
 const categoryId = 1;
+const tags = 'tech,andela';
 
 describe('Test for Article Request', () => {
   describe('login user', () => {
@@ -268,6 +269,49 @@ describe('Test for Article Request', () => {
               res.body.should.have.property('message').eql('The article has been created successfully');
               res.body.article.should.have.property('title').eql(title);
               res.body.article.should.have.property('body').eql(body);
+              res.body.article.should.have.property('categoryId').eql(1);
+              done();
+            });
+        });
+        it('should return 201 for successfully creating an article with tags', (done) => {
+          chai.request(app)
+            .post('/api/articles/')
+            .set('x-access-token', token)
+            .send({
+              title,
+              body,
+              categoryId,
+              tags,
+            })
+            .end((err, res) => {
+              res.status.should.eql(201);
+              res.body.should.be.a('object');
+              res.body.should.have.property('status').eql('success');
+              res.body.should.have.property('message').eql('The article has been created successfully');
+              res.body.article.should.have.property('title').eql(title);
+              res.body.article.should.have.property('body').eql(body);
+              res.body.article.should.have.property('tags').eql(['tech', 'andela']);
+              res.body.article.should.have.property('categoryId').eql(1);
+              done();
+            });
+        });
+        it('should return 201 and empty tag array for successfully creating an article without tags', (done) => {
+          chai.request(app)
+            .post('/api/articles/')
+            .set('x-access-token', token)
+            .send({
+              title,
+              body,
+              categoryId,
+            })
+            .end((err, res) => {
+              res.status.should.eql(201);
+              res.body.should.be.a('object');
+              res.body.should.have.property('status').eql('success');
+              res.body.should.have.property('message').eql('The article has been created successfully');
+              res.body.article.should.have.property('title').eql(title);
+              res.body.article.should.have.property('body').eql(body);
+              res.body.article.should.have.property('tags').eql([]);
               res.body.article.should.have.property('categoryId').eql(1);
               done();
             });

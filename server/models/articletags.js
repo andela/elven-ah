@@ -6,7 +6,7 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNULL: true,
       },
-      articleSlug: {
+      articleId: {
         type: DataTypes.INTEGER,
         allowNULL: true,
       }
