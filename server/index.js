@@ -42,10 +42,11 @@ app.use('/api', router);
 app.all('*', (req, res) => {
   res.status(404).json({
     status: 'error',
-    message: 'Oh-oh! Seems like the page you requested does not exist. Please check the url again.',
+    message: 'Oh-oh! Seems like the page you requested does not exist. Please check the URL again.',
   });
 });
 
+// Error handler
 // no stack traces leaked to user in production
 app.use((err, req, res) => {
   res.status(err.status || 500);

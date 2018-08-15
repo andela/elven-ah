@@ -74,13 +74,9 @@ export default class AuthController {
       };
     }
     if (user.email === email) {
-      return {
-        email: [`User with email: ${email} already exists.`],
-      };
+      return { email: [`User with email: ${email} already exists.`] };
     }
-    return {
-      username: [`User with username: ${username} already exists.`],
-    };
+    return { username: [`User with username: ${username} already exists.`] };
   }
 
   /**
@@ -121,6 +117,16 @@ export default class AuthController {
     });
   }
 
+  /**
+  * This method is responsible for structuring the user information from
+  * user login/signup through the passport Google
+  * authentication strategy.
+  * @param {object} accessToken the user token sent by Google
+  * @param {object} refreshToken the user refresh token  sent by Google
+  * @param {object} profile the user profile object containing the user information from linkedIn
+  * @param {*} done the callback function that completes passport auth and attach
+  * the user object to the request
+  */
   static googleCallback(accessToken, refreshToken, profile, done) {
     const displayName = profile.displayName.split(' ').join('-');
     User.findOrCreate({
@@ -172,7 +178,7 @@ export default class AuthController {
         if (created) {
           return done(null, user);
         }
-        return done(null, user);
+        return done(null, false);
       });
   }
 

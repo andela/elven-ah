@@ -16,6 +16,14 @@ const user = {
   password: 'Qwertyui0p',
   confirmPassword: 'Qwertyui0p',
 };
+const userWithAlreadyUsedEmail = {
+  firstName: 'John',
+  lastName: 'Doe',
+  username: 'johnnyllllee',
+  email: 'testuser@test.com',
+  password: 'Qwertyui0p',
+  confirmPassword: 'Qwertyui0p',
+};
 
 describe('User signup', () => {
   const token = JwtHelper.createToken({ email: user.email }, '24h');
@@ -33,6 +41,14 @@ describe('User signup', () => {
     chai.request(app).post('/api/auth/verify').send({ email: user.email }).end((err, res) => {
       res.status.should.eql(201);
       res.body.should.be.an('object').with.property('message').include('Email verification link re-sent successfully');
+      done();
+    });
+  });
+
+  it('should not re-send the verification email when requested by the user  if no email is sent', (done) => {
+    chai.request(app).post('/api/auth/verify').send({ username: user.username }).end((err, res) => {
+      res.status.should.eql(400);
+      res.body.should.be.an('object').with.property('errors');
       done();
     });
   });
@@ -235,7 +251,7 @@ describe('User signup', () => {
   });
 
   it('should return 409 when a user with the email already exists', (done) => {
-    chai.request(app).post('/api/auth/signup').send(user).end((req, res) => {
+    chai.request(app).post('/api/auth/signup').send(userWithAlreadyUsedEmail).end((req, res) => {
       res.status.should.eql(409);
       res.body.should.be.a('object');
       res.body.should.have.property('status').eql('fail');

@@ -15,19 +15,19 @@ describe('Creating and verifying JWT tokens', () => {
   };
   const expiringIn = 3600;
 
-  it('It should create a token and return it', (done) => {
+  it('should create a token and return it', (done) => {
     token = JwtHelper.createToken({ user }, expiringIn);
     expect(token).to.be.a('string');
     done();
   });
 
-  it('It should verify a token and return the payload', (done) => {
+  it('should verify a token and return the payload', (done) => {
     const payload = JwtHelper.verifyToken(token);
     expect(payload).to.be.an('object');
     done();
   });
 
-  it('It should verify a token and return a payload with user object', (done) => {
+  it('should verify a token and return a payload with user object', (done) => {
     const payload = JwtHelper.verifyToken(token);
     expect(payload).to.have.property('user');
     expect(payload).to.have.nested.property('user.email');

@@ -8,11 +8,19 @@ module.exports = {
     },
     userId: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: 'Users',
+        key: 'id',
+        as: 'userId'
+      },
     },
     articleId: {
       type: Sequelize.INTEGER,
       allowNull: false,
+      unique: true,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       references: {
@@ -22,7 +30,7 @@ module.exports = {
       },
     },
     value: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       allowNull: false
     },
     createdAt: {

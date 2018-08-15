@@ -1,26 +1,30 @@
 import { Router } from 'express';
 import ArticleController from '../controllers/ArticleController';
-import userAuthenticate from '../middlewares/isLoggedIn';
+import isLoggedIn from '../middlewares/isLoggedIn';
 import ArticleValidation from '../middlewares/validations/ArticleValidation';
 import CommentValidation from '../middlewares/validations/CommentValidation';
 import CommentController from '../controllers/CommentController';
+import RatingController from '../controllers/RatingController';
 
 const articleRouter = Router();
 
-articleRouter.post('/', userAuthenticate, ArticleValidation.validateCreateArticle, ArticleController.createArticle);
+articleRouter.post('/', isLoggedIn, ArticleValidation.validateCreateArticle, ArticleController.createArticle);
 
-articleRouter.put('/:slug', userAuthenticate, ArticleValidation.validateUpdateArticle, ArticleController.updateArticle);
+articleRouter.put('/:slug', isLoggedIn, ArticleValidation.validateUpdateArticle, ArticleController.updateArticle);
 
-articleRouter.delete('/:slug', userAuthenticate, ArticleController.removeArticle);
+articleRouter.delete('/:slug', isLoggedIn, ArticleController.removeArticle);
 
-articleRouter.post('/:slug/comments', userAuthenticate, CommentValidation.validateComment, CommentController.createComment);
+articleRouter.post('/:slug/comments', isLoggedIn, CommentValidation.validateComment, CommentController.createComment);
 
-articleRouter.get('/:slug/comments', userAuthenticate, CommentController.getComments);
+articleRouter.get('/:slug/comments', isLoggedIn, CommentController.getComments);
 
-articleRouter.get('/:slug/comments/:id', userAuthenticate, CommentController.getComment);
+articleRouter.get('/:slug/comments/:id', isLoggedIn, CommentController.getComment);
 
-articleRouter.put('/:slug/comments/:id', userAuthenticate, CommentValidation.validateComment, CommentController.updateComment);
+articleRouter.put('/:slug/comments/:id', isLoggedIn, CommentValidation.validateComment, CommentController.updateComment);
 
-articleRouter.delete('/:slug/comments/:id', userAuthenticate, CommentController.deleteComment);
+articleRouter.delete('/:slug/comments/:id', isLoggedIn, CommentController.deleteComment);
+
+articleRouter.post('/:author/:slug/:rating', isLoggedIn, RatingController.rateArticle);
+
 
 export default articleRouter;
