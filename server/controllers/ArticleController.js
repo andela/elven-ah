@@ -178,11 +178,10 @@ export default class ArticleController {
   static getAllArticles(req, res, next) {
     const limit = req.query.limit || 100;
     const offset = req.query.offset || 0;
-    Article.findAll(
-      Object.assign({}, queryHelper.allArticles, { offset, limit })
-    ).then((articles) => {
-      ArticleController.sendPaginationResponse(res, articles, false);
-    })
+    Article.findAll(Object.assign({}, queryHelper.allArticles, { offset, limit }))
+      .then((articles) => {
+        ArticleController.sendPaginationResponse(res, articles, false);
+      })
       .catch(() => next(error));
   }
 
