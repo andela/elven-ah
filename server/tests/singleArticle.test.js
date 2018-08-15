@@ -26,9 +26,11 @@ describe('GET /api/articles/:slug Tests an article with the slug', () => {
         res.body.article.should.have.property('createdAt');
         res.body.article.should.have.property('updatedAt');
         res.body.article.should.have.property('User');
+        res.body.article.should.have.property('ratings');
         res.body.article.should.have.property('tags');
         res.body.article.User.should.be.a('object');
         res.body.article.tags.should.be.a('array');
+        res.body.article.ratings.should.be.a('array');
         done();
       });
   });

@@ -26,8 +26,10 @@ describe('GET /api/articles Tests a list of paginated articles', () => {
         res.body.articles[0].should.have.property('updatedAt');
         res.body.articles[0].should.have.property('User');
         res.body.articles[0].should.have.property('tags');
+        res.body.articles[0].should.have.property('ratings');
         res.body.articles[0].User.should.be.a('object');
         res.body.articles[0].tags.should.be.a('array');
+        res.body.articles[0].ratings.should.be.a('array');
         done();
       });
   });
@@ -113,8 +115,10 @@ describe('GET /api/users/:username/articles Tests a list of paginated articles w
         res.body.articles[0].should.have.property('updatedAt');
         res.body.articles[0].should.have.property('User');
         res.body.articles[0].should.have.property('tags');
+        res.body.articles[0].should.have.property('ratings');
         res.body.articles[0].User.should.be.a('object');
         res.body.articles[0].tags.should.be.a('array');
+        res.body.articles[0].ratings.should.be.a('array');
         done();
       });
   });

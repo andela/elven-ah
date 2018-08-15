@@ -205,11 +205,11 @@ export default class ArticleController {
       });
     }
     userId = Number.parseInt(userId, 10);
-    Article.findAll(
-      Object.assign({}, queryHelper.allArticles, { where: { userId }, offset, limit }),
-    ).then((articles) => {
-      ArticleController.sendPaginationResponse(res, articles, userId);
-    })
+    Article
+      .findAll(Object.assign({}, queryHelper.allArticles, { where: { userId }, offset, limit }))
+      .then((articles) => {
+        ArticleController.sendPaginationResponse(res, articles, userId);
+      })
       .catch(() => next(error));
   }
 
@@ -223,22 +223,21 @@ export default class ArticleController {
   */
   static getSingleArticle(req, res, next) {
     const { slug } = req.params;
-    Article.findOne(
-      Object.assign({}, queryHelper.allArticles, { where: { slug } }),
-    ).then((article) => {
-      if (article) {
-        return res.status(200).json({
-          status: 'success',
-          article,
+    Article.findOne(Object.assign({}, queryHelper.singleArticle, { where: { slug } }))
+      .then((article) => {
+        if (article) {
+          return res.status(200).json({
+            status: 'success',
+            article,
+          });
+        }
+        return res.status(404).json({
+          status: 'fail',
+          errors: {
+            article: [`Article with slug: ${slug} not found.`],
+          },
         });
-      }
-      return res.status(404).json({
-        status: 'fail',
-        errors: {
-          article: [`Article with slug: ${slug} not found.`],
-        },
-      });
-    })
+      })
       .catch(() => next(error));
   }
 
