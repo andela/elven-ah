@@ -61,4 +61,28 @@ export default class ArticleValidation {
       });
     });
   }
+
+  /**
+   * Validates the offset and limit parameters in the
+   * url query
+   * @param {Object} req The HTTP request object
+   * @param {Object} res The HTTP response object
+   * @param {Object} next The next middleware on the route
+   */
+  static paginationValidation(req, res, next) {
+    const queryProperties = {
+      offset: 'integer|min:0',
+      limit: 'integer|min:0'
+    };
+
+    const validator = new Validator(req.query, queryProperties);
+    validator.passes(() => next());
+    validator.fails(() => {
+      const errors = validator.errors.all();
+      return res.status(400).json({
+        status: 'error',
+        errors,
+      });
+    });
+  }
 }

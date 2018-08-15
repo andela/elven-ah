@@ -40,7 +40,7 @@ export default (sequelize, DataTypes) => {
       onUpdate: 'CASCADE',
     });
     Article.hasMany(models.Tag, {
-      foreignKey: 'tagId',
+      foreignKey: 'articleId',
       as: 'tags'
     });
     Article.hasMany(models.Rating, {

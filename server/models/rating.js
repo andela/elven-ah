@@ -1,12 +1,11 @@
-
 export default (sequelize, DataTypes) => {
   const Rating = sequelize.define('Rating', {
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    articleSlug: {
-      type: DataTypes.TEXT,
+    articleId: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     value: {

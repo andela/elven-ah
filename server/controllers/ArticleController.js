@@ -1,8 +1,14 @@
 import models from '../models';
 import randomString from '../helpers/randomString';
 import dashReplace from '../helpers/replaceDash';
+import queryHelper from '../helpers/queryHelper';
 
 const { Article } = models;
+const error = {
+  message: 'Request can not be processed at the moment, please try again shortly,',
+  status: 400,
+};
+
 /**
  * This class contains all the methods responsible for creating and querying
  * articles on the app
@@ -160,5 +166,114 @@ export default class ArticleController {
         success: false,
         error: 'Article can not be deleted'
       }));
+  }
+
+  /**
+   * Gets a list of paginated articles
+   *
+   * @param {Object} req The HTTP request object
+   * @param {Object} res The HTTP response object
+   * @param {Object} next The next middleware to be called
+   */
+  static getAllArticles(req, res, next) {
+    const limit = req.query.limit || 100;
+    const offset = req.query.offset || 0;
+    Article.findAll(
+      Object.assign({}, queryHelper.allArticles, { offset, limit })
+    ).then((articles) => {
+      ArticleController.sendPaginationResponse(res, articles, false);
+    })
+      .catch(() => next(error));
+  }
+
+  /**
+   * Gets a list of paginated articles belonging to the user
+   * in the url route parameter
+   *
+   * @param {Object} req The HTTP request object
+   * @param {Object} res The HTTP response object
+   * @param {Object} next The next middleware to be called
+   */
+  static getUserArticles(req, res, next) {
+    const limit = req.query.limit || 100;
+    const offset = req.query.offset || 0;
+    let { userId } = req.params;
+    if (!/[0-9]/.test(userId)) {
+      return res.status(400).json({
+        status: 'fail',
+        errors: { userId: ['userId must be a number.'] }
+      });
+    }
+    userId = Number.parseInt(userId, 10);
+    Article.findAll(
+      Object.assign({}, queryHelper.allArticles, { where: { userId }, offset, limit }),
+    ).then((articles) => {
+      ArticleController.sendPaginationResponse(res, articles, userId);
+    })
+      .catch(() => next(error));
+  }
+
+  /**
+  * Gets a single article with the slug specified
+  * in the url route parameter
+  *
+  * @param {Object} req The HTTP request object
+  * @param {Object} res The HTTP response object
+  * @param {Object} next The next middleware to be called
+  */
+  static getSingleArticle(req, res, next) {
+    const { slug } = req.params;
+    Article.findOne(
+      Object.assign({}, queryHelper.allArticles, { where: { slug } }),
+    ).then((article) => {
+      if (article) {
+        return res.status(200).json({
+          status: 'success',
+          article,
+        });
+      }
+      return res.status(404).json({
+        status: 'fail',
+        errors: {
+          article: [`Article with slug: ${slug} not found.`],
+        },
+      });
+    })
+      .catch(() => next(error));
+  }
+
+  /**
+   * Sends the response to the user when a list of paginated articles are requested
+   * For a given user or random articles
+   *
+   * @param {Object} res The HTTP response object
+   * @param {Object} articles A list of articles returned
+   * @param {String} userId The userId of the user whose articles are requested
+   * @returns {Object} The response object returned to the user
+   */
+  static sendPaginationResponse(res, articles, userId) {
+    // Returns a 20 when a list of articles are requested and found
+    if (articles[0]) {
+      return res.status(200).json({
+        status: 'success',
+        articles,
+      });
+    }
+    // Returns a 404 when a list of user articles are requested but not found
+    if (userId) {
+      return res.status(404).json({
+        status: 'fail',
+        errors: {
+          articles: [`Articles not found for user with userId: ${userId}.`],
+        },
+      });
+    }
+    // Returns a 404 when a list of articles are requested but not found
+    return res.status(404).json({
+      status: 'fail',
+      errors: {
+        articles: ['No articles found.'],
+      },
+    });
   }
 }
