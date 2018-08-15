@@ -45,6 +45,7 @@ authRouter.get('/google/callback', (req, res, next) => {
       const token = JwtHelper.createToken({
         user: {
           id: user.id,
+          username: user.username,
           email: user.email
         }
       }, '24h');
@@ -91,6 +92,7 @@ authRouter.get('/facebook/callback', (req, res, next) => {
       const token = JwtHelper.createToken({
         user: {
           id: user.id,
+          username: user.username,
           email: user.email
         }
       }, '24h');
