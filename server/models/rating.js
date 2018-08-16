@@ -1,4 +1,3 @@
-
 export default (sequelize, DataTypes) => {
   const Rating = sequelize.define('Rating', {
     userId: {

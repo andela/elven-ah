@@ -64,6 +64,46 @@ module.exports = {
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49'
     },
+    {
+      title: 'Unmissable steps before, during, and after user research',
+      slug: 'unmissable-steps-before-74U33U38N3IHF1',
+      userId: 1,
+      categoryId: 2,
+      body: 'As a UX designer, I’m expected to run research studies to mine meaningful insights for my products. I often conduct usability studies to get a pulse of what users think, need or expect from a new product. I was fortunate to work on consumer-facing as well as enterprise products, as a result of which, I gained a diverse experience relevant to conducting user studies in industrial settings. While the commercial products gave us the liberty to find and interview users in person, the enterprise products on the other hand make it difficult to find or access the right users, resulting in remote usability studies.',
+      imageUrl: 'https://cloudinary/ah/images/miss.jpg',
+      createdAt: 'NOW()',
+      updatedAt: 'NOW()'
+    },
+    {
+      title: 'Unmissable steps before, during, and after user research',
+      slug: 'unmissable-steps-before-74U33U38N3IHF2',
+      userId: 1,
+      categoryId: 1,
+      body: 'As a UX designer, I’m expected to run research studies to mine meaningful insights for my products. I often conduct usability studies to get a pulse of what users think, need or expect from a new product. I was fortunate to work on consumer-facing as well as enterprise products, as a result of which, I gained a diverse experience relevant to conducting user studies in industrial settings. While the commercial products gave us the liberty to find and interview users in person, the enterprise products on the other hand make it difficult to find or access the right users, resulting in remote usability studies.',
+      imageUrl: 'https://cloudinary/ah/images/miss.jpg',
+      createdAt: 'NOW()',
+      updatedAt: 'NOW()'
+    },
+    {
+      title: 'Unmissable steps before, during, and after user research',
+      slug: 'unmissable-steps-before-74U33U38N3IHF3',
+      userId: 1,
+      categoryId: 1,
+      body: 'As a UX designer, I’m expected to run research studies to mine meaningful insights for my products. I often conduct usability studies to get a pulse of what users think, need or expect from a new product. I was fortunate to work on consumer-facing as well as enterprise products, as a result of which, I gained a diverse experience relevant to conducting user studies in industrial settings. While the commercial products gave us the liberty to find and interview users in person, the enterprise products on the other hand make it difficult to find or access the right users, resulting in remote usability studies.',
+      imageUrl: 'https://cloudinary/ah/images/miss.jpg',
+      createdAt: 'NOW()',
+      updatedAt: 'NOW()'
+    },
+    {
+      title: 'Unmissable steps before, during, and after user research',
+      slug: 'unmissable-steps-before-74U33U38N3IHF4',
+      userId: 1,
+      categoryId: 1,
+      body: 'As a UX designer, I’m expected to run research studies to mine meaningful insights for my products. I often conduct usability studies to get a pulse of what users think, need or expect from a new product. I was fortunate to work on consumer-facing as well as enterprise products, as a result of which, I gained a diverse experience relevant to conducting user studies in industrial settings. While the commercial products gave us the liberty to find and interview users in person, the enterprise products on the other hand make it difficult to find or access the right users, resulting in remote usability studies.',
+      imageUrl: 'https://cloudinary/ah/images/miss.jpg',
+      createdAt: 'NOW()',
+      updatedAt: 'NOW()'
+    },
   ]),
   down: () => {
   }
