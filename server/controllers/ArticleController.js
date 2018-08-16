@@ -250,27 +250,24 @@ export default class ArticleController {
    * @returns {Object} The response object returned to the user
    */
   static sendPaginationResponse(res, articles, userId) {
-    // Returns a 20 when a list of articles are requested and found
     if (articles[0]) {
       return res.status(200).json({
         status: 'success',
         articles,
       });
     }
-    // Returns a 404 when a list of user articles are requested but not found
-    if (userId) {
+    if (!userId) {
       return res.status(404).json({
         status: 'fail',
         errors: {
-          articles: [`Articles not found for user with userId: ${userId}.`],
+          articles: ['No articles found.'],
         },
       });
     }
-    // Returns a 404 when a list of articles are requested but not found
     return res.status(404).json({
       status: 'fail',
       errors: {
-        articles: ['No articles found.'],
+        articles: [`Articles not found for user with userId: ${userId}.`],
       },
     });
   }
