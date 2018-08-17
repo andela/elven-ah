@@ -13,7 +13,7 @@ const emailToken = JwtHelper.createToken({ email: 'seayomi@gmail.com' }, 1800);
 const updateToken = JwtHelper.createToken({ email: 'seayomi@gmail.com' }, 900);
 
 const badToken = 'odcjdcsdkjhshsdADDSKKSDKLKLSDKLSLKKLSDJKJKSJwqjkwkd3ndcjdbm';
-describe('User request API Tests', () => {
+describe('Password reset', () => {
   it('should fail on empty email', (done) => {
     chai.request(app)
       .post('/api/users/account/password/reset')
@@ -92,7 +92,7 @@ describe('User request API Tests', () => {
         done();
       });
   });
-  it('should pass on bad token provided when a user access the password reset link', (done) => {
+  it('should fail on bad token provided when a user access the password reset link', (done) => {
     chai.request(app)
       .get(`/api/users/account/password/reset?tokenId=${badToken}`)
       .end((err, res) => {

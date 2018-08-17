@@ -85,15 +85,6 @@ export default class PasswordResetController {
           // Send User Email Method Using SendGrid
           PasswordResetController.resetProcessEmail(req, res, resetConfirmMessage, message);
         });
-      } else {
-        return res.status(404).send({
-          status: 'fail',
-          errors: {
-            email: [
-              'The email you provided does not exist, please check again.',
-            ],
-          },
-        });
       }
     })
       .catch(err => next(err));

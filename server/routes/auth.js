@@ -9,6 +9,20 @@ const authRouter = Router();
 
 authRouter.post('/signup', userValidator.signupValidation, AuthController.signUpUser, VerifyController.verifyEmail);
 
+
+authRouter.post('/login', userValidator.loginValidation, AuthController.login);
+
+
+/**
+ * Handles email verification url
+ */
+authRouter.get('/verify', VerifyController.activateUser);
+
+/**
+ * Handles email verification url resend
+ */
+authRouter.post('/verify', userValidator.emailValidation, VerifyController.resendVerificationEmail);
+
 // passport mock route
 authRouter.get('/mock', passport.authenticate('mock'));
 
@@ -36,11 +50,14 @@ authRouter.get('/google/callback', (req, res, next) => {
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
-        return next('Login Error: There is an error with the connection');
+        return next(loginErr);
       }
       const token = JwtHelper.createToken({
-        id: user.id,
-        email: user.email
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email
+        }
       }, '24h');
       return res.status(200).send({
         status: 200,
@@ -80,11 +97,14 @@ authRouter.get('/facebook/callback', (req, res, next) => {
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
-        return next('Login Error: There is an error with the connection');
+        return next(loginErr);
       }
       const token = JwtHelper.createToken({
-        id: user.id,
-        email: user.email
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email
+        }
       }, '24h');
       return res.status(200).send({
         status: 200,
