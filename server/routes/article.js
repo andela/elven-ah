@@ -10,8 +10,6 @@ const articleRouter = Router();
 
 articleRouter.post('/', isLoggedIn, ArticleValidation.validateCreateArticle, ArticleController.createArticle);
 
-articleRouter.post('/', userAuthenticate, ArticleValidation.validateCreateArticle, ArticleController.createArticle);
-
 articleRouter.put('/:slug', isLoggedIn, ArticleValidation.validateUpdateArticle, ArticleController.updateArticle);
 
 articleRouter.delete('/:slug', isLoggedIn, ArticleController.removeArticle);

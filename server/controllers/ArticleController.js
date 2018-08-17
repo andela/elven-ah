@@ -3,7 +3,7 @@ import randomString from '../helpers/randomString';
 import dashReplace from '../helpers/replaceDash';
 import queryHelper from '../helpers/queryHelper';
 
-const { Article } = models;
+const { Article, Tag } = models;
 const error = {
   message: 'Request can not be processed at the moment, please try again shortly,',
   status: 400,
