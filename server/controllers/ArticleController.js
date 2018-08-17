@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import models from '../models';
 import randomString from '../helpers/randomString';
 import dashReplace from '../helpers/replaceDash';
@@ -64,11 +65,11 @@ export default class ArticleController {
           const splitTags = tagToLowerCase.split(',');
           const tagsObjectsArray = [];
           for (const value of splitTags) {
-            tagsObjectsArray.push({ title: value, articleId: article.id });
+            tagsObjectsArray.push(
+              { title: value, articleId: article.id }
+            );
           }
-          Tag.bulkCreate(
-            tagsObjectsArray
-          )
+          Tag.bulkCreate(tagsObjectsArray)
             .then(() => Tag.findAll({
               where: { articleId: article.id }
             }))
