@@ -65,9 +65,7 @@ export default class ArticleController {
           const splitTags = tagToLowerCase.split(',');
           const tagsObjectsArray = [];
           for (const value of splitTags) {
-            tagsObjectsArray.push(
-              { title: value, articleId: article.id }
-            );
+            tagsObjectsArray.push({ title: value, articleId: article.id });
           }
           Tag.bulkCreate(tagsObjectsArray)
             .then(() => Tag.findAll({
