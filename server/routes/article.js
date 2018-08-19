@@ -25,7 +25,7 @@ articleRouter.put('/:slug/comments/:id', isLoggedIn, CommentValidation.validateC
 
 articleRouter.delete('/:slug/comments/:id', isLoggedIn, CommentController.deleteComment);
 
-articleRouter.post('/:author/:slug/:rating', isLoggedIn, RatingController.rateArticle);
+articleRouter.post('/:author/:slug/:rating', isLoggedIn, RatingController.prepRating);
 
 articleRouter.get('/', ArticleValidation.paginationValidation, ArticleController.getAllArticles);
 

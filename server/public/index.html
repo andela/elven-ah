@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Authors' Haven | Login</title>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+<body onload="getUserProfile()">
+    <header>
+        <section class="container">
+            <div class="header-brand">
+                <a href="index.html">Authors' Haven</a>
+            </div>
+            <nav>
+                <ul class="header-nav" role="navigation">
+                    <li class="nav-left"><a href="index.html">Home</a></li>
+                    <li><a href="login.html">Login</a></li>
+                </ul> 
+            </nav>
+        </section>
+    </header>
+    <section class="home-welcome">
+        <div class="container centered">
+            <p id="welcome">Welcome to Authors' Haven Realtime Playground</p>
+            <h2>Just to demonstrate real time notification</h2>
+            <h3><a  class="button primary" href="login.html">Login to get started</a></h3>
+        </div>
+    </section>
+    <section class="footer" id="footer">
+        <div class="container">
+            <p class="centered">
+           Copyright &copy;<script>document.write(new Date().getFullYear());</script> <a href="https://facebook.com/veraclins" target="_blank">Veraclins</a> | All rights reserved
+            </p>
+        </div>
+    </section>
+    <script src="https://js.pusher.com/4.2/pusher.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import { server } from '..';
+import app from '..';
 
 const { expect } = chai;
 chai.use(chaiHttp);
@@ -11,7 +11,7 @@ const loggedInUser = 'JohnAwesome';
 const anotherUser = 'SweetHeart';
 describe('Rating an article', () => {
   before(() => {
-    chai.request(server).post('/api/auth/login').send({
+    chai.request(app).post('/api/auth/login').send({
       username: loggedInUser,
       password: 'passWord4'
     }).end((err, res) => {
@@ -20,7 +20,7 @@ describe('Rating an article', () => {
   });
 
   it('should return an error if the user is not logged in', (done) => {
-    chai.request(server)
+    chai.request(app)
       .post(`/api/articles/${anotherUser}/the-second-article-by-other-user/4`)
       .end((err, res) => {
         expect(res.status).to.be.equal(401);
@@ -29,7 +29,7 @@ describe('Rating an article', () => {
   });
 
   it('should return error if I try to rate my own article', (done) => {
-    chai.request(server)
+    chai.request(app)
       .post(`/api/articles/${loggedInUser}/the-first-article-by-the-user/4`)
       .set('x-access-token', token)
       .end((err, res) => {
@@ -40,7 +40,7 @@ describe('Rating an article', () => {
   });
 
   it('should return error if I try to rate an article that does not exist', (done) => {
-    chai.request(server)
+    chai.request(app)
       .post(`/api/articles/${anotherUser}/this-does-not-exist-the-user/5`)
       .set('x-access-token', token)
       .end((err, res) => {
@@ -51,7 +51,7 @@ describe('Rating an article', () => {
   });
 
   it('should give the rating and return the number of stars', (done) => {
-    chai.request(server)
+    chai.request(app)
       .post(`/api/articles/${anotherUser}/the-first-article-by-another-user/2`)
       .set('x-access-token', token)
       .end((err, res) => {
@@ -63,7 +63,7 @@ describe('Rating an article', () => {
   });
 
   it('should not give a rating more than 5', (done) => {
-    chai.request(server)
+    chai.request(app)
       .post(`/api/articles/${anotherUser}/the-second-article-by-another-user/8`)
       .set('x-access-token', token)
       .end((err, res) => {
@@ -75,7 +75,7 @@ describe('Rating an article', () => {
   });
 
   it('should not give a rating less than 1', (done) => {
-    chai.request(server)
+    chai.request(app)
       .post(`/api/articles/${anotherUser}/other-articles-by-other-users/-10`)
       .set('x-access-token', token)
       .end((err, res) => {
@@ -87,7 +87,7 @@ describe('Rating an article', () => {
   });
 
   it('should update my rating if I already rated the article', (done) => {
-    chai.request(server)
+    chai.request(app)
       .post(`/api/articles/${anotherUser}/the-second-article-by-another-user/3`)
       .set('x-access-token', token)
       .end((err, res) => {

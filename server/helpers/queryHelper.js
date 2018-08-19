@@ -1,7 +1,7 @@
 import models from '../models';
 
 const {
-  User, Rating, Tag, Article
+  User, Rating, Tag, Article, Subscription, Channel, Notification
 } = models;
 
 /*
@@ -42,6 +42,26 @@ export default {
     attributes: ['id', 'title', 'articleId', 'createdAt', 'updatedAt'],
     include: [
       { model: Article, as: 'articles', attributes: ['id', 'slug', 'userId', 'categoryId', 'title', 'body', 'imageUrl', 'createdAt', 'updatedAt'] },
+    ],
+  },
+  userProfile: {
+    attributes: ['id', 'firstName', 'lastName', 'email', 'username', 'bio', 'image'],
+    include: [
+      {
+        model: Subscription,
+        as: 'subscriptions',
+        attributes: ['channelId', 'createdAt'],
+        include: [{
+          model: Channel,
+          as: 'channel',
+          attributes: ['name'],
+          include: [{
+            model: Notification,
+            as: 'notifications',
+            attributes: ['id', 'creator', 'channelId', 'articleSlug', 'eventType', 'resourceId', 'read', 'createdAt', 'updatedAt']
+          }],
+        }],
+      }
     ],
   },
 };

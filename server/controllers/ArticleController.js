@@ -3,8 +3,9 @@ import models from '../models';
 import randomString from '../helpers/randomString';
 import dashReplace from '../helpers/replaceDash';
 import queryHelper from '../helpers/queryHelper';
+import NotificationController from './NotificationController';
 
-const { Article, Tag } = models;
+const { Article, Tag, Channel } = models;
 const error = {
   message: 'Request can not be processed at the moment, please try again shortly,',
   status: 400,
@@ -35,6 +36,7 @@ export default class ArticleController {
         categoryId: article.categoryId,
         title: article.title,
         body: article.body,
+        channel: article.channel,
         imageUrl: article.imageUrl,
         tags,
         createdAt: new Date(article.createdAt).toLocaleString('en-GB', { hour12: true }),
@@ -49,44 +51,40 @@ export default class ArticleController {
    * @param {object} res the response object
    * @returns {object} the article that was created.
    */
-  static createArticle(req, res) {
+  static async createArticle(req, res) {
     const { id: userId } = req.user;
     const slug = `${dashReplace(req.body.title).toLowerCase()}-${randomString(10)}`;
     const {
       title, body, imageUrl, categoryId, tags
     } = req.body;
-
-    Article.create({
-      slug, title, body, imageUrl, categoryId, userId,
-    })
-      .then((article) => {
-        if (tags !== undefined) {
-          const tagToLowerCase = tags.toLowerCase();
-          const splitTags = tagToLowerCase.split(',');
-          const tagsObjectsArray = [];
-          for (const value of splitTags) {
-            tagsObjectsArray.push({ title: value, articleId: article.id });
-          }
-          Tag.bulkCreate(tagsObjectsArray)
-            .then(() => Tag.findAll({
-              where: { articleId: article.id }
-            }))
-            .then((newTags) => {
-              article.tags = splitTags;
-              article.addTag(newTags);
-              return ArticleController.articleResponse(article, 201, res);
-            });
-        } else {
-          return ArticleController.articleResponse(article, 201, res);
-        }
-      })
-      .catch(() => {
-        res.status(400).json({
-          status: 400,
-          success: false,
-          error: 'Article was not successfully created',
-        });
+    try {
+      const newArticle = await Article.create({
+        slug, title, body, imageUrl, categoryId, userId,
       });
+      if (tags !== undefined) {
+        const tagToLowerCase = tags.toLowerCase();
+        const splitTags = tagToLowerCase.split(',');
+        const tagsObjectsArray = [];
+        for (const value of splitTags) {
+          tagsObjectsArray.push({ title: value, articleId: newArticle.id });
+        }
+        await Tag.bulkCreate(tagsObjectsArray);
+        const newTags = await Tag.findAll({
+          where: { articleId: newArticle.id },
+        });
+        newArticle.tags = splitTags;
+        newArticle.addTag(newTags);
+      }
+      ArticleController.articleResponse(newArticle, 201, res);
+      const articleChannel = `article-${slug}`;
+      return NotificationController.subscribe(articleChannel, userId);
+    } catch (err) {
+      res.status(400).json({
+        status: 'error',
+        message: 'Article was not successfully created',
+        err: err.message,
+      });
+    }
   }
   /**
    * Update an article and return the Data.
@@ -121,7 +119,7 @@ export default class ArticleController {
             message: 'You can only update an article that belongs to you',
           });
         }
-        Article.update({
+        return Article.update({
           title: title || foundArticle.title,
           body: body || foundArticle.body,
           imageUrl: imageUrl || foundArticle.imageUrl,
@@ -133,6 +131,11 @@ export default class ArticleController {
         })
           .then(([, [updatedArticle]]) => {
             ArticleController.articleResponse(updatedArticle, 200, res);
+            return NotificationController.notifyOnUpdate('made an update', {
+              userId: id,
+              articleSlug: slug,
+              resourceId: updatedArticle.id,
+            });
           })
           .catch(() => {
             res.status(400).json({
@@ -173,7 +176,7 @@ export default class ArticleController {
             message: 'You can only delete an article that belongs to you',
           });
         }
-        Article.destroy({
+        return Article.destroy({
           where: { slug },
         })
           .then(() => {
@@ -182,6 +185,8 @@ export default class ArticleController {
               success: true,
               message: `Article with slug: ${slug} has been successfully deleted`,
             });
+            const name = `article-${slug}`;
+            return Channel.destroy({ where: { name } });
           });
       })
       .catch(() => res.status(400).json({
@@ -227,7 +232,7 @@ export default class ArticleController {
       });
     }
     userId = Number.parseInt(userId, 10);
-    Article
+    return Article
       .findAll(Object.assign({}, queryHelper.allArticles, { where: { userId }, offset, limit }))
       .then((articles) => {
         ArticleController.sendPaginationResponse(res, articles, userId);

@@ -1,4 +1,5 @@
 import models from '../models';
+import NotificationController from './NotificationController';
 
 const { Comment, User, Article } = models;
 
@@ -9,28 +10,38 @@ const { Comment, User, Article } = models;
  */
 export default class CommentController {
   /**
-   * Create a comment and return the data.
+   * Create a comment, trigger a notification to all users following that article
+   * and subscribes the user to get notifications on that article.
    * @param {object} req the request object
    * @param {object} res the response object
    * @returns {object} the comment that was created.
    */
   static async createComment(req, res) {
-    const { id, username } = req.user;
+    const { id: userId, username } = req.user;
     const { body } = req.body;
     const parentId = req.query.id === undefined ? null : req.query.id;
     const { slug } = req.params;
     const article = await CommentController.getArticleFromSlug(slug);
-    if (article !== null) {
-      return Comment.create({
-        articleId: article.id,
-        userId: id,
-        parentId,
-        body,
-      }).then(newComment => CommentController.commentResponse(res, newComment, slug, username));
+    if (article === null) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Unable to create comment because the article does not exist.',
+      });
     }
-    res.status(400).json({
-      status: 'fail',
-      message: 'Unable to create comment because article does not exist.',
+    const newComment = await Comment.create({
+      articleId: article.id,
+      userId,
+      parentId,
+      body,
+    });
+    const channel = `article-${slug}`;
+    CommentController.commentResponse(res, newComment, slug, username);
+    const subscription = await NotificationController.subscribe(channel, userId);
+    return NotificationController.notifyReaders(channel, 'commented', {
+      userId,
+      articleSlug: slug,
+      channelId: subscription.channel.id,
+      resourceId: newComment.id,
     });
   }
 
@@ -142,6 +153,12 @@ export default class CommentController {
                 body: updatedComment.body,
                 author: updatedComment.author,
               }
+            });
+            const { slug } = req.params;
+            return NotificationController.notifyOnUpdate('updated a comment', {
+              userId: req.user.id,
+              articleSlug: slug,
+              resourceId: updatedComment.id,
             });
           }).catch(() => res.status(400).json({
             status: 'fail',

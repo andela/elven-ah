@@ -75,6 +75,10 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'followerId',
       onDelete: 'cascade'
     });
+    User.hasMany(models.Subscription, {
+      foreignKey: 'userId',
+      as: 'subscriptions',
+    });
   };
 
   return User;
