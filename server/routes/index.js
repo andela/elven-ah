@@ -5,12 +5,14 @@ import profileRouter from './profile';
 import articleRouter from './article';
 import userRouter from './users';
 import followRouter from './follow';
+import searchRouter from './search';
 
 const router = Router();
 
 router.use('/auth', authRouter);
 router.use('/user', profileRouter);
 router.use('/users', userRouter);
+router.use('/search', searchRouter);
 router.use('/articles', articleRouter);
 router.use('/user', followRouter);
 
