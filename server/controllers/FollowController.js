@@ -19,15 +19,15 @@ export default class ArticleController {
     User.findById(authorsId)
       .then((author) => {
         if (authorsId === userId) {
-          return res.status(401).json({
-            status: 'fail',
-            message: 'You can not follow yourself',
+          return res.status(400).json({
+            success: false,
+            errors: 'You can not follow yourself',
           });
         }
         if (!author) {
           return res.status(404).json({
-            status: 'fail',
-            message: 'The author You have selected does not exist'
+            success: false,
+            errors: 'The author You have selected does not exist'
           });
         }
         Follow.findOrCreate({
@@ -42,19 +42,19 @@ export default class ArticleController {
         }).spread((user, created) => {
           if (!created) {
             return res.status(409).json({
-              status: 'fail',
-              errors: 'user already exist',
+              success: false,
+              errors: `You are already following ${author.firstName}`,
             });
           }
           return res.status(201).json({
-            status: 'success',
-            message: 'following user',
+            success: true,
+            message: `You have started following ${author.firstName}`,
           });
         });
       })
       .catch(() => res.status(400).json({
-        sucess: 'fail',
-        message: 'There happen to be an error in the server, please holdon'
+        sucess: false,
+        errors: 'There happen to be an error in the server, please holdon'
       }));
   }
 
@@ -80,19 +80,19 @@ export default class ArticleController {
       .then((follow) => {
         if (follow.length === 0) {
           return res.status(404).json({
-            status: 'fail',
-            message: 'You are not currenly following any user'
+            success: false,
+            errors: 'You currently do not have any follower'
           });
         }
         res.status(200).json({
-          status: 'success',
+          success: true,
           message: 'You are currently being followed by these user',
-          follower: follow,
+          follower: follow
         });
       })
       .catch(() => res.status(400).json({
-        sucess: 'fail',
-        message: 'There happen to be an error in the server, please holdon'
+        sucess: false,
+        errors: 'There happen to be an error in the server, please holdon'
       }));
   }
 
@@ -118,19 +118,19 @@ export default class ArticleController {
       .then((follow) => {
         if (follow.length === 0) {
           return res.status(404).json({
-            status: 'fail',
-            message: 'You currently do not have any follower'
+            success: false,
+            errors: 'You are not currently following any author'
           });
         }
         res.status(200).json({
-          status: 'success',
+          success: true,
           message: 'You currently follow these author',
           following: follow,
         });
       })
       .catch(() => res.status(400).json({
-        sucess: 'fail',
-        message: 'There happen to be an error in the server, please holdon'
+        sucess: false,
+        errors: 'There happen to be an error in the server, please holdon'
       }));
   }
 
@@ -146,8 +146,8 @@ export default class ArticleController {
       .then((foundFollowee) => {
         if (!foundFollowee) {
           return res.status(404).json({
-            status: 'fail',
-            message: 'You are not currently following this Author',
+            success: false,
+            errors: 'You are not currently following this Author',
           });
         }
         Follow.destroy({
@@ -158,14 +158,14 @@ export default class ArticleController {
         })
           .then(() => {
             res.status(200).json({
-              status: 'success',
+              success: true,
               message: `You have successfully unfollowed user with id ${authorsId}`,
             });
           });
       })
       .catch(() => res.status(400).json({
-        status: 'fail',
-        error: 'Article can not be deleted'
+        success: false,
+        errors: 'There happen to be an error in the server, please holdon'
       }));
   }
 }
