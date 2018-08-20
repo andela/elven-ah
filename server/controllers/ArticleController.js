@@ -1,9 +1,10 @@
+/* eslint-disable no-restricted-syntax */
 import models from '../models';
 import randomString from '../helpers/randomString';
 import dashReplace from '../helpers/replaceDash';
 import queryHelper from '../helpers/queryHelper';
 
-const { Article } = models;
+const { Article, Tag } = models;
 const error = {
   message: 'Request can not be processed at the moment, please try again shortly,',
   status: 400,
@@ -24,6 +25,7 @@ export default class ArticleController {
    */
   static articleResponse(article, statusCode, res) {
     const updatedAt = statusCode === 201 ? undefined : new Date(article.updatedAt).toLocaleString('en-GB', { hour12: true });
+    const tags = article.tags === undefined ? [] : article.tags;
     return res.status(statusCode).send({
       status: 'success',
       message: statusCode === 201 ? 'The article has been created successfully' : `The article with slug: ${article.slug} has been updated successfully`,
@@ -34,6 +36,7 @@ export default class ArticleController {
         title: article.title,
         body: article.body,
         imageUrl: article.imageUrl,
+        tags,
         createdAt: new Date(article.createdAt).toLocaleString('en-GB', { hour12: true }),
         updatedAt,
       },
@@ -50,13 +53,33 @@ export default class ArticleController {
     const { id: userId } = req.user;
     const slug = `${dashReplace(req.body.title).toLowerCase()}-${randomString(10)}`;
     const {
-      title, body, imageUrl, categoryId
+      title, body, imageUrl, categoryId, tags
     } = req.body;
 
     Article.create({
       slug, title, body, imageUrl, categoryId, userId,
     })
-      .then(newArticle => ArticleController.articleResponse(newArticle, 201, res))
+      .then((article) => {
+        if (tags !== undefined) {
+          const tagToLowerCase = tags.toLowerCase();
+          const splitTags = tagToLowerCase.split(',');
+          const tagsObjectsArray = [];
+          for (const value of splitTags) {
+            tagsObjectsArray.push({ title: value, articleId: article.id });
+          }
+          Tag.bulkCreate(tagsObjectsArray)
+            .then(() => Tag.findAll({
+              where: { articleId: article.id }
+            }))
+            .then((newTags) => {
+              article.tags = splitTags;
+              article.addTag(newTags);
+              return ArticleController.articleResponse(article, 201, res);
+            });
+        } else {
+          return ArticleController.articleResponse(article, 201, res);
+        }
+      })
       .catch(() => {
         res.status(400).json({
           status: 400,
