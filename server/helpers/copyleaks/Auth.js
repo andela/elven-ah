@@ -30,11 +30,13 @@ class Auth {
    * logs into the copyleaks api to get an access token
    */
   login() {
-    httpClient(this.options)
-      .then((response) => {
-        this.accessToken = response;
-      })
-      .catch(error => error);
+    return new Promise((resolve, reject) => {
+      httpClient(this.options)
+        .then((response) => {
+          resolve(this.accessToken = response);
+        })
+        .catch(error => reject(error));
+    });
   }
 }
 
