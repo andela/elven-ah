@@ -16,14 +16,14 @@ export default class FollowController {
   static createAuthorsFollower(req, res) {
     const { id: userId } = req.user;
     const authorsId = parseInt(req.params.id, 10);
+    if (authorsId === userId) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'You cannot follow yourself',
+      });
+    }
     User.findById(authorsId)
       .then((author) => {
-        if (authorsId === userId) {
-          return res.status(400).json({
-            status: 'fail',
-            message: 'You cannot follow yourself',
-          });
-        }
         if (!author) {
           return res.status(404).json({
             status: 'fail',
