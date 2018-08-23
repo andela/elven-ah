@@ -5,10 +5,11 @@ import ArticleValidation from '../middlewares/validations/ArticleValidation';
 import CommentValidation from '../middlewares/validations/CommentValidation';
 import CommentController from '../controllers/CommentController';
 import RatingController from '../controllers/RatingController';
+import plagiarismCheck from '../middlewares/plagiarismCheck';
 
 const articleRouter = Router();
 
-articleRouter.post('/', isLoggedIn, ArticleValidation.validateCreateArticle, ArticleController.createArticle);
+articleRouter.post('/', isLoggedIn, ArticleValidation.validateCreateArticle, plagiarismCheck, ArticleController.createArticle);
 
 articleRouter.put('/:slug', isLoggedIn, ArticleValidation.validateUpdateArticle, ArticleController.updateArticle);
 

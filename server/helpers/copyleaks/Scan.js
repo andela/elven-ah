@@ -7,7 +7,7 @@ class Scan {
   }
 
   /**
-   * @description - This method uploads a text of about 5,000 characters to
+   * @description - This method uploads a text of about 6,000 characters to
    * copyleaks api for plagiarism checks
    * @param {String} scanText - The text to be scanned
    */

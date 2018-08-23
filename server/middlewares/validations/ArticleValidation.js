@@ -20,6 +20,7 @@ export default class ArticleValidation {
       categoryId: 'required|integer|min:1|max:5',
       title: 'required|string',
       body: 'required|string',
+      isAttributed: 'required|boolean|in:true,false',
     };
 
     const validator = new Validator(req.body, articleProperties);
@@ -48,6 +49,7 @@ export default class ArticleValidation {
       categoryId: 'integer|min:1|max:5',
       title: 'string',
       body: 'string',
+      isAttributed: 'required|boolean',
     };
 
     const validator = new Validator(req.body, articleProperties);

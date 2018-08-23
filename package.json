@@ -8,7 +8,7 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "coveralls": "nyc --reporter=lcov --reporter=text-lcov npm test",
     "start": "babel-node server/index.js --presets babel-preset-env",
-    "dev": "nodemon server/index.js --exec babel-node --presets babel-preset-env",
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --exec babel-node --presets babel-preset-env",
     "migrate:test": "sequelize db:migrate:undo:all --env=test && sequelize db:migrate --env=test && sequelize db:seed:all --env=test",
     "migrate:dev": "sequelize db:migrate",
     "unmigrate:dev": "sequelize db:migrate:undo:all",

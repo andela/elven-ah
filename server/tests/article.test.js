@@ -261,6 +261,7 @@ describe('Test for Article Request', () => {
               title,
               body,
               categoryId,
+              isAttributed: 'true',
             })
             .end((err, res) => {
               res.status.should.eql(201);
@@ -439,6 +440,7 @@ describe('Test for Article Request', () => {
               title,
               body,
               categoryId,
+              isAttributed: 'true',
             })
             .end((err, res) => {
               res.status.should.eql(404);
@@ -455,6 +457,7 @@ describe('Test for Article Request', () => {
             .set('x-access-token', anotherToken)
             .send({
               title: 'A beautiful sunday morning',
+              isAttributed: 'true',
             })
             .end((err, res) => {
               res.status.should.eql(403);
@@ -471,6 +474,7 @@ describe('Test for Article Request', () => {
             .set('x-access-token', token)
             .send({
               title: 'A beautiful sunday morning',
+              isAttributed: 'true',
             })
             .end((err, res) => {
               res.status.should.eql(200);

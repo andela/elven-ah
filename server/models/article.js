@@ -1,6 +1,3 @@
-import Auth from '../helpers/copyleaks/Auth';
-import Scanner from '../helpers/copyleaks/Scan';
-
 export default (sequelize, DataTypes) => {
   const Article = sequelize.define('Article', {
     slug: {
@@ -24,17 +21,7 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-  }, {
-    hooks: {
-      beforeCreate: async (article) => {
-        const scanner = new Scanner(Auth.accesstoken);
-        const { body } = article.dataValues;
-        const processId = await scanner.uploadScan(body);
-        const result = await scanner.checkResult(processId);
-        console.log(result);
-      }
-    }
-  });
+  }, {});
   Article.associate = (models) => {
     Article.belongsTo(models.User, {
       foreignKey: 'userId',

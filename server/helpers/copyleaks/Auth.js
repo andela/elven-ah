@@ -1,6 +1,9 @@
 import httpClient from 'request-promise';
 import { } from 'dotenv/config';
 
+/**
+ * This class contains all the methods responsible for copyleaks authentication
+ */
 class Auth {
   constructor(email, apiKey) {
     this.options = {
@@ -16,20 +19,22 @@ class Auth {
     this.login();
   }
 
+  /**
+   * returns the access token gotten after login
+   */
   get accesstoken() {
     return this.accessToken.access_token;
   }
 
+  /**
+   * logs into the copyleaks api to get an access token
+   */
   login() {
     httpClient(this.options)
       .then((response) => {
         this.accessToken = response;
       })
       .catch(error => error);
-  }
-
-  validToken() {
-    return new Date(this.accessToken.expires).getTime() > new Date().getTime();
   }
 }
 
