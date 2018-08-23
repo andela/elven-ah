@@ -1,6 +1,6 @@
+import { } from 'dotenv/config';
 import Auth from '../helpers/copyleaks/Auth';
 import Scanner from '../helpers/copyleaks/Scan';
-import { } from 'dotenv/config';
 import Mailer from '../helpers/Mailer';
 import emails from '../helpers/emailMessages';
 
