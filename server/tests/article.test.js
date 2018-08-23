@@ -283,6 +283,7 @@ describe('Test for Article Request', () => {
               body,
               categoryId,
               tags,
+              isAttributed: 'true',
             })
             .end((err, res) => {
               res.status.should.eql(201);
@@ -304,6 +305,7 @@ describe('Test for Article Request', () => {
               title,
               body,
               categoryId,
+              isAttributed: 'true',
             })
             .end((err, res) => {
               res.status.should.eql(201);
