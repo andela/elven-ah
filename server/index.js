@@ -24,6 +24,9 @@ app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(express.static(`${__dirname}/public`));
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(
   session({
     secret: process.env.SESSION_KEY,
@@ -32,9 +35,6 @@ app.use(
     saveUninitialized: false,
   }),
 );
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use('/api', router);
 
