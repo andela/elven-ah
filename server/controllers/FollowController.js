@@ -6,7 +6,7 @@ const { Follow, User } = models;
  * user follwer and followee on the app
  * It is made up static methods which can be called from anywhere in the app.
  */
-export default class ArticleController {
+export default class FollowController {
   /**
    * Create a user follow and return the Data.
    * @param {object} req the request object
@@ -20,14 +20,14 @@ export default class ArticleController {
       .then((author) => {
         if (authorsId === userId) {
           return res.status(400).json({
-            success: false,
-            errors: 'You can not follow yourself',
+            status: 'fail',
+            message: 'You cannot follow yourself',
           });
         }
         if (!author) {
           return res.status(404).json({
-            success: false,
-            errors: 'The author You have selected does not exist'
+            status: 'fail',
+            message: 'The author You have selected does not exist'
           });
         }
         Follow.findOrCreate({
@@ -42,19 +42,19 @@ export default class ArticleController {
         }).spread((user, created) => {
           if (!created) {
             return res.status(409).json({
-              success: false,
-              errors: `You are already following ${author.firstName}`,
+              status: 'fail',
+              message: `You are already following ${author.firstName}`,
             });
           }
           return res.status(201).json({
-            success: true,
+            status: 'success',
             message: `You have started following ${author.firstName}`,
           });
         });
       })
       .catch(() => res.status(400).json({
-        sucess: false,
-        errors: 'There happen to be an error in the server, please holdon'
+        status: 'error',
+        message: 'There happen to be an error in the server, please hold on'
       }));
   }
 
@@ -77,22 +77,22 @@ export default class ArticleController {
         attributes: ['id', 'username', 'firstName', 'lastName', 'image'],
       }]
     })
-      .then((follow) => {
-        if (follow.length === 0) {
+      .then((followers) => {
+        if (followers.length === 0) {
           return res.status(404).json({
-            success: false,
-            errors: 'You currently do not have any follower'
+            status: 'fail',
+            message: 'You currently do not have any follower'
           });
         }
         res.status(200).json({
-          success: true,
-          message: 'You are currently being followed by these user',
-          follower: follow
+          status: 'success',
+          message: 'You are currently being followed by these users',
+          data: followers
         });
       })
       .catch(() => res.status(400).json({
-        sucess: false,
-        errors: 'There happen to be an error in the server, please holdon'
+        status: 'error',
+        message: 'There happen to be an error in the server, please hold on'
       }));
   }
 
@@ -115,22 +115,22 @@ export default class ArticleController {
         attributes: ['id', 'username', 'firstName', 'lastName', 'image'],
       }]
     })
-      .then((follow) => {
-        if (follow.length === 0) {
+      .then((following) => {
+        if (following.length === 0) {
           return res.status(404).json({
-            success: false,
-            errors: 'You are not currently following any author'
+            status: 'fail',
+            message: 'You are not currently following any author'
           });
         }
         res.status(200).json({
-          success: true,
-          message: 'You currently follow these author',
-          following: follow,
+          status: 'success',
+          message: 'You currently follow these authors',
+          data: following,
         });
       })
       .catch(() => res.status(400).json({
-        sucess: false,
-        errors: 'There happen to be an error in the server, please holdon'
+        status: 'error',
+        message: 'There happen to be an error in the server, please hold on'
       }));
   }
 
@@ -146,8 +146,8 @@ export default class ArticleController {
       .then((foundFollowee) => {
         if (!foundFollowee) {
           return res.status(404).json({
-            success: false,
-            errors: 'You are not currently following this Author',
+            status: 'fail',
+            message: 'You are not currently following this Author',
           });
         }
         Follow.destroy({
@@ -158,14 +158,14 @@ export default class ArticleController {
         })
           .then(() => {
             res.status(200).json({
-              success: true,
+              status: 'success',
               message: `You have successfully unfollowed user with id ${authorsId}`,
             });
           });
       })
       .catch(() => res.status(400).json({
-        success: false,
-        errors: 'There happen to be an error in the server, please holdon'
+        status: 'error',
+        message: 'There happen to be an error in the server, please hold on'
       }));
   }
 }

@@ -83,9 +83,9 @@ describe('Test for Authors Follow', () => {
             .end((err, res) => {
               res.status.should.eql(400);
               res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('errors').eql('You can not follow yourself');
+              res.body.should.have.property('message');
+              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('message').eql('You cannot follow yourself');
               done();
             });
         });
@@ -101,9 +101,9 @@ describe('Test for Authors Follow', () => {
             .end((err, res) => {
               res.status.should.eql(404);
               res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('errors').eql('The author You have selected does not exist');
+              res.body.should.have.property('message');
+              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('message').eql('The author You have selected does not exist');
               done();
             });
         });
@@ -120,7 +120,7 @@ describe('Test for Authors Follow', () => {
               res.status.should.eql(201);
               res.body.should.be.a('object');
               res.body.should.have.property('message');
-              res.body.should.have.property('success').eql(true);
+              res.body.should.have.property('status').eql('success');
               res.body.should.have.property('message').eql(`You have started following ${anotherUser.firstName}`);
               done();
             });
@@ -137,9 +137,9 @@ describe('Test for Authors Follow', () => {
             .end((err, res) => {
               res.status.should.eql(409);
               res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('errors').eql(`You are already following ${anotherUser.firstName}`);
+              res.body.should.have.property('message');
+              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('message').eql(`You are already following ${anotherUser.firstName}`);
               done();
             });
         });
@@ -177,9 +177,9 @@ describe('Test for Authors Follow', () => {
             .end((err, res) => {
               res.status.should.eql(404);
               res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('errors').eql('You currently do not have any follower');
+              res.body.should.have.property('message');
+              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('message').eql('You currently do not have any follower');
               done();
             });
         });
@@ -191,8 +191,8 @@ describe('Test for Authors Follow', () => {
               res.status.should.eql(200);
               res.body.should.be.a('object');
               res.body.should.have.property('message');
-              res.body.should.have.property('success').eql(true);
-              res.body.should.have.property('message').eql('You are currently being followed by these user');
+              res.body.should.have.property('status').eql('success');
+              res.body.should.have.property('message').eql('You are currently being followed by these users');
               done();
             });
         });
@@ -230,9 +230,9 @@ describe('Test for Authors Follow', () => {
             .end((err, res) => {
               res.status.should.eql(404);
               res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('errors').eql('You are not currently following any author');
+              res.body.should.have.property('message');
+              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('message').eql('You are not currently following any author');
               done();
             });
         });
@@ -244,8 +244,8 @@ describe('Test for Authors Follow', () => {
               res.status.should.eql(200);
               res.body.should.be.a('object');
               res.body.should.have.property('message');
-              res.body.should.have.property('success').eql(true);
-              res.body.should.have.property('message').eql('You currently follow these author');
+              res.body.should.have.property('status').eql('success');
+              res.body.should.have.property('message').eql('You currently follow these authors');
               done();
             });
         });
@@ -284,9 +284,9 @@ describe('Test for Authors Follow', () => {
             .end((err, res) => {
               res.status.should.eql(404);
               res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('errors').eql('You are not currently following this Author');
+              res.body.should.have.property('message');
+              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('message').eql('You are not currently following this Author');
               done();
             });
         });
@@ -299,7 +299,7 @@ describe('Test for Authors Follow', () => {
               res.status.should.eql(200);
               res.body.should.be.a('object');
               res.body.should.have.property('message');
-              res.body.should.have.property('success').eql(true);
+              res.body.should.have.property('status').eql('success');
               res.body.should.have.property('message').eql(`You have successfully unfollowed user with id ${authorsId}`);
               done();
             });
