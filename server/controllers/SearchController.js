@@ -15,67 +15,35 @@ class SearchController {
    */
   static async searchProcess(req, res, next) {
     const keyword = req.query.q;
-    if (keyword === undefined) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Please enter a search keyword'
-      });
-    }
-    if (keyword === '' || keyword == null) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Please enter a search keyword'
-      });
-    }
     try {
       const userSearch = await User.findAll({
-        where: {
-          $or: {
-            username: {
-              $like: `%${keyword}%`
-            },
-            firstName: {
-              $like: `%${keyword}%`
-            },
-            lastName: {
-              $like: `%${keyword}%`
-            },
-            email: {
-              $like: `%${keyword}%`
-            },
-          },
-        },
+        where: { $or: { username: { $ilike: `%${keyword}%` }, firstName: { $ilike: `%${keyword}%` }, lastName: { $ilike: `%${keyword}%` }, }, },
         order: [
           ['username', 'DESC']
         ],
       });
 
-      const articleSearch = await Article.findAll(Object.assign({}, queryHelper.allArticles,
-        {
-          where: {
-            $or: {
-              title: {
-                $like: `%${keyword}%`
-              },
-              body: {
-                $like: `%${keyword}%`
-              },
-            }
-          }
-        }));
+      const articleSearch = await Article
+        .findAll(
+          Object.assign({}, queryHelper.allArticles, {
+            where: { $or: { title: { $ilike: `%${keyword}%` }, body: { $ilike: `%${keyword}%` }, }, },
+            order: [
+              ['createdAt', 'DESC']
+            ],
+          })
+        );
 
-      const tagSearch = await Tag.findAll(Object.assign({}, queryHelper.allTags,
-        {
-          where: {
-            $or: {
-              title: {
-                $like: `%${keyword}%`
-              },
-            }
-          }
-        }));
+      const tagSearch = await Tag
+        .findAll(
+          Object.assign({}, queryHelper.allTags, {
+            where: { $or: { title: { $ilike: `%${keyword}%` }, } },
+            order: [
+              ['createdAt', 'DESC']
+            ],
+          })
+        );
 
-      return res.status(201).json({
+      return res.status(200).json({
         status: 'success',
         result: {
           userSearch,

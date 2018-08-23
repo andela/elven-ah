@@ -49,7 +49,7 @@ export default class ArticleController {
    * @param {object} res the response object
    * @returns {object} the article that was created.
    */
-  static async createArticle(req, res) {
+  static createArticle(req, res) {
     const { id: userId } = req.user;
     const slug = `${dashReplace(req.body.title).toLowerCase()}-${randomString(10)}`;
     const {
