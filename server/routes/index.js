@@ -3,15 +3,16 @@ import { Router } from 'express';
 import authRouter from './auth';
 import profileRouter from './profile';
 import articleRouter from './article';
-import isLoggedIn from '../middlewares/isLoggedIn';
 import userRouter from './users';
+import followRouter from './follow';
 
 const router = Router();
 
 router.use('/auth', authRouter);
-router.use('/user', isLoggedIn, profileRouter);
+router.use('/user', profileRouter);
 router.use('/users', userRouter);
 router.use('/articles', articleRouter);
+router.use('/user', followRouter);
 
 // Matches /api the API home route
 router.get('/*', (req, res) => {

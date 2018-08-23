@@ -67,6 +67,14 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'userId',
       as: 'ratings',
     });
+    User.hasMany(models.Follow, {
+      foreignKey: 'followingId',
+      onDelete: 'cascade'
+    });
+    User.hasMany(models.Follow, {
+      foreignKey: 'followerId',
+      onDelete: 'cascade'
+    });
   };
 
   return User;
