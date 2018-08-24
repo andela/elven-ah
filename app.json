@@ -1,0 +1,110 @@
+{
+  "name": "elven-ah",
+  "scripts": {
+  },
+  "env": {
+    "COPYLEAKS_EMAIL": {
+      "required": true
+    },
+    "COPYLEAKS_KEY": {
+      "required": true
+    },
+    "DB_HOST": {
+      "required": true
+    },
+    "DB_HOST_PROD": {
+      "required": true
+    },
+    "DB_NAME": {
+      "required": true
+    },
+    "DB_NAME_PROD": {
+      "required": true
+    },
+    "DB_PASSWORD": {
+      "required": true
+    },
+    "DB_PASSWORD_PROD": {
+      "required": true
+    },
+    "DB_PORT": {
+      "required": true
+    },
+    "DB_PORT_PROD": {
+      "required": true
+    },
+    "DB_USERNAME": {
+      "required": true
+    },
+    "DB_USERNAME_PROD": {
+      "required": true
+    },
+    "FACEBOOK_CLIENT_CALLBACK_URL": {
+      "required": true
+    },
+    "FACEBOOK_CLIENT_ID": {
+      "required": true
+    },
+    "FACEBOOK_CLIENT_SECRET": {
+      "required": true
+    },
+    "GOOGLE_CLIENT_CALLBACK_URL": {
+      "required": true
+    },
+    "GOOGLE_CLIENT_ID": {
+      "required": true
+    },
+    "GOOGLE_CLIENT_SECRET": {
+      "required": true
+    },
+    "PUSHER_APP_ID_DEV": {
+      "required": true
+    },
+    "PUSHER_APP_ID_PROD": {
+      "required": true
+    },
+    "PUSHER_CLUSTER_DEV": {
+      "required": true
+    },
+    "PUSHER_CLUSTER_PROD": {
+      "required": true
+    },
+    "PUSHER_KEY_DEV": {
+      "required": true
+    },
+    "PUSHER_KEY_PROD": {
+      "required": true
+    },
+    "PUSHER_SECRET_DEV": {
+      "required": true
+    },
+    "PUSHER_SECRET_PROD": {
+      "required": true
+    },
+    "SENDGRID_API_KEY": {
+      "required": true
+    },
+    "SESSION_KEY": {
+      "required": true
+    },
+    "SITE_ADMIN_EMAIL": {
+      "required": true
+    },
+    "TOKEN_SECRET": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
