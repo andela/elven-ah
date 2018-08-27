@@ -24,24 +24,20 @@ class SearchController {
       });
 
       const articleSearch = await Article
-        .findAll(
-          Object.assign({}, queryHelper.allArticles, {
-            where: { $or: { title: { $ilike: `%${keyword}%` }, body: { $ilike: `%${keyword}%` }, }, },
-            order: [
-              ['createdAt', 'DESC']
-            ],
-          })
-        );
+        .findAll(Object.assign({}, queryHelper.allArticles, {
+          where: { $or: { title: { $ilike: `%${keyword}%` }, body: { $ilike: `%${keyword}%` }, }, },
+          order: [
+            ['createdAt', 'DESC']
+          ],
+        }));
 
       const tagSearch = await Tag
-        .findAll(
-          Object.assign({}, queryHelper.allTags, {
-            where: { $or: { title: { $ilike: `%${keyword}%` }, } },
-            order: [
-              ['createdAt', 'DESC']
-            ],
-          })
-        );
+        .findAll(Object.assign({}, queryHelper.allTags, {
+          where: { $or: { title: { $ilike: `%${keyword}%` }, } },
+          order: [
+            ['createdAt', 'DESC']
+          ],
+        }));
 
       return res.status(200).json({
         status: 'success',
