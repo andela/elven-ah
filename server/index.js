@@ -30,9 +30,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.use(
   session({
     secret: process.env.SESSION_KEY,
