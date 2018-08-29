@@ -136,4 +136,27 @@ export default class NotificationController {
       where: [{ userId }, { channelId }]
     });
   }
+
+  /**
+  * Unsubscribes a user from a channel so that the user no longer gets notifications
+  * on that channel.
+  * @param {string} channelName the name of the channel the user intends to unsubscribe from
+  * @param {number} userId the id of the person to be unsubscribed
+  * @return {boolean} true if the user is successfully unsubscribed
+  */
+  static filterNotifications(data) {
+    const isNew = (subscription, notification) => notification.createdAt >= subscription.createdAt;
+    const user = data.dataValues;
+    const subscriptions = user.subscriptions.map((subscription) => {
+      const sub = subscription.dataValues;
+      const channel = sub.channel.dataValues;
+      const not = channel.notifications
+        .filter(notification => isNew(sub, notification));
+      channel.notifications = not;
+      sub.channel = channel;
+      return sub;
+    });
+    user.subscriptions = subscriptions;
+    return user;
+  }
 }

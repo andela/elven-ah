@@ -58,7 +58,7 @@ export default {
           include: [{
             model: Notification,
             as: 'notifications',
-            attributes: ['id', 'creator', 'channelId', 'articleSlug', 'eventType', 'resourceId', 'read', 'createdAt', 'updatedAt']
+            attributes: ['id', 'creator', 'channelId', 'articleSlug', 'eventType', 'resourceId', 'read', 'createdAt', 'updatedAt'],
           }],
         }],
       }
