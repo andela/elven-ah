@@ -4,8 +4,10 @@ import morgan from 'morgan';
 import passport from 'passport';
 import bodyParser from 'body-parser';
 import express from 'express';
+import path from 'path';
 import session from 'express-session';
 import cors from 'cors';
+
 import router from './routes';
 
 const env = process.env.NODE_ENV;
@@ -22,7 +24,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(methodOverride());
-app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -31,7 +34,7 @@ app.use(
   session({
     secret: process.env.SESSION_KEY,
     cookie: { maxAge: 60000 },
-    resave: false,
+    resave: true,
     saveUninitialized: false,
   }),
 );
@@ -57,8 +60,7 @@ app.use((err, req, res) => {
     },
   });
 });
-
 // finally, let's start our server...
-export const server = app.listen(PORT);
+app.listen(PORT);
 
 export default app;

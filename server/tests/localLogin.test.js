@@ -15,7 +15,7 @@ describe('User Login', () => {
       res.status.should.eql(403);
       res.body.should.be.an('object');
       res.body.should.have.property('status').eql('error');
-      res.body.should.have.property('errors');
+      res.body.should.have.property('message');
       done();
     });
   });
@@ -105,7 +105,7 @@ describe('User Login', () => {
       res.status.should.eql(404);
       res.body.should.be.an('object');
       res.body.should.have.property('status').eql('error');
-      res.body.should.have.property('errors');
+      res.body.should.have.property('message');
       done();
     });
   });
@@ -118,7 +118,7 @@ describe('User Login', () => {
       res.status.should.eql(401);
       res.body.should.be.an('object');
       res.body.should.have.property('status').eql('error');
-      res.body.should.have.property('errors');
+      res.body.should.have.property('message');
       done();
     });
   });

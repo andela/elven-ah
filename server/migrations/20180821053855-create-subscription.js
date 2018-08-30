@@ -1,21 +1,12 @@
+
+
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Comments', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Subscriptions', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER
-    },
-    articleId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-      references: {
-        model: 'Articles',
-        key: 'id',
-        as: 'articleId'
-      },
     },
     userId: {
       type: Sequelize.INTEGER,
@@ -28,21 +19,16 @@ module.exports = {
         as: 'userId'
       },
     },
-    parentId: {
+    channelId: {
       type: Sequelize.INTEGER,
-      allowNull: true,
-      defaultValue: null,
+      allowNull: false,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       references: {
-        model: 'Comments',
+        model: 'Channels',
         key: 'id',
-        as: 'parentId',
-      }
-    },
-    body: {
-      type: Sequelize.TEXT,
-      allowNull: false
+        as: 'channelId'
+      },
     },
     createdAt: {
       allowNull: false,
@@ -53,5 +39,5 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  down: queryInterface => queryInterface.dropTable('Comments')
+  down: queryInterface => queryInterface.dropTable('Subscriptions')
 };

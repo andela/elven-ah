@@ -56,8 +56,8 @@ describe('User signup', () => {
   it('should activate the user if inactivated, and valid token supplied', (done) => {
     chai.request(app).get(`/api/auth/verify?evc=${token}`).end((err, res) => {
       res.status.should.eql(200);
-      res.body.should.be.an('object').with.property('message').include('Account successfully verified.');
-      res.body.should.have.property('token');
+      res.body.should.be.an('object').with.property('message').include('Account successfully verified and logged in');
+      res.body.should.have.nested.property('user.token');
       done();
     });
   });

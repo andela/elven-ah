@@ -144,7 +144,7 @@ describe('Comment Tests', () => {
         .end((req, res) => {
           res.status.should.eql(400);
           res.body.should.be.an('object').with.property('status').eql('fail');
-          res.body.should.have.property('message').include('Unable to create comment because article does not exist.');
+          res.body.should.have.property('message').include('Unable to create comment because the article does not exist.');
           done();
         });
     });

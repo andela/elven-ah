@@ -1,5 +1,7 @@
 import models from '../models';
 import AuthController from './AuthController';
+import queryHelper from '../helpers/queryHelper';
+import NotificationController from './NotificationController';
 
 const { User } = models;
 /**
@@ -15,9 +17,10 @@ export default class ProfileController {
   * @returns {user} the user object
   */
   static getUserProfile(req, res, next) {
-    const { username } = req.user;
-    User.findOne({ where: { username }, attributes: ['firstName', 'lastName', 'email', 'username', 'bio', 'image'] })
-      .then((user) => {
+    const { id } = req.user;
+    User.findOne(Object.assign({}, queryHelper.userProfile, { where: { id } }))
+      .then((data) => {
+        const user = NotificationController.filterNotifications(data);
         res.status(200).json({
           status: 'success',
           user,

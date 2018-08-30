@@ -1,35 +1,42 @@
+
+
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Ratings', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Notifications', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    userId: {
+    creator: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    channelId: {
       type: Sequelize.INTEGER,
       allowNull: false,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       references: {
-        model: 'Users',
+        model: 'Channels',
         key: 'id',
-        as: 'userId'
+        as: 'channelId'
       },
     },
-    articleId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
-      references: {
-        model: 'Articles',
-        key: 'id',
-        as: 'articleId'
-      },
+    articleSlug: {
+      type: Sequelize.STRING,
+      allowNull: true
     },
-    value: {
+    eventType: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    resourceId: {
       type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    read: {
+      type: Sequelize.BOOLEAN,
       allowNull: false
     },
     createdAt: {
@@ -41,5 +48,5 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  down: queryInterface => queryInterface.dropTable('Ratings')
+  down: queryInterface => queryInterface.dropTable('Notifications')
 };

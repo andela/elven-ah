@@ -1,4 +1,5 @@
 import models from '../models';
+import NotificationController from './NotificationController';
 
 const { Follow, User } = models;
 /**
@@ -13,7 +14,7 @@ export default class FollowController {
    * @param {object} res the response object
    * @returns {object} a user follower was created.
    */
-  static createAuthorsFollower(req, res) {
+  static async createAuthorsFollower(req, res) {
     const { id: userId } = req.user;
     const authorsId = parseInt(req.params.id, 10);
     if (authorsId === userId) {
@@ -22,40 +23,49 @@ export default class FollowController {
         message: 'You cannot follow yourself',
       });
     }
-    User.findById(authorsId)
-      .then((author) => {
-        if (!author) {
-          return res.status(404).json({
-            status: 'fail',
-            message: 'The author You have selected does not exist'
-          });
-        }
-        Follow.findOrCreate({
-          where: {
-            followingId: authorsId,
-            followerId: userId
-          },
-          defaults: {
-            followerId: userId,
-            followingId: authorsId,
-          },
-        }).spread((user, created) => {
-          if (!created) {
-            return res.status(409).json({
-              status: 'fail',
-              message: `You are already following ${author.firstName}`,
-            });
-          }
-          return res.status(201).json({
-            status: 'success',
-            message: `You have started following ${author.firstName}`,
-          });
+    try {
+      const author = await User.findById(authorsId);
+      if (!author) {
+        return res.status(404).json({
+          status: 'fail',
+          message: 'The author You have selected does not exist'
         });
-      })
-      .catch(() => res.status(400).json({
+      }
+      const [follow, created] = await Follow.findOrCreate({
+        where: {
+          followingId: authorsId,
+          followerId: userId
+        },
+        defaults: {
+          followerId: userId,
+          followingId: authorsId,
+        },
+      });
+      if (!created) {
+        return res.status(409).json({
+          status: 'fail',
+          message: `You are already following ${author.firstName}`,
+        });
+      }
+      const channel = `user-${author.username}`;
+      const notificationInfo = {
+        userId,
+        resourceId: follow.id,
+        username: author.username,
+      };
+      await NotificationController.subscribe(channel, userId);
+      res.status(201).json({
+        status: 'success',
+        message: `You have started following ${author.firstName}`,
+      });
+      return NotificationController.notifyAuthor('followed', notificationInfo);
+    } catch (error) {
+      res.status(400).json({
         status: 'error',
-        message: 'There happen to be an error in the server, please hold on'
-      }));
+        message: 'There happen to be an error in the server, please hold on',
+        err: error.message
+      });
+    }
   }
 
   /**

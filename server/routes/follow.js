@@ -3,14 +3,14 @@ import { Router } from 'express';
 import FollowController from '../controllers/FollowController';
 import isLoggedIn from '../middlewares/isLoggedIn';
 
-const FollowRouter = Router();
+const followRouter = Router();
 
-FollowRouter.post('/follow/:id', isLoggedIn, FollowController.createAuthorsFollower);
+followRouter.post('/follow/:id', isLoggedIn, FollowController.createAuthorsFollower);
 
-FollowRouter.get('/follower', isLoggedIn, FollowController.getAuthorsFollowers);
+followRouter.get('/follower', isLoggedIn, FollowController.getAuthorsFollowers);
 
-FollowRouter.get('/following', isLoggedIn, FollowController.getAuthorsFollowee);
+followRouter.get('/following', isLoggedIn, FollowController.getAuthorsFollowee);
 
-FollowRouter.delete('/follow/:id', isLoggedIn, FollowController.unfollowAuthor);
+followRouter.delete('/follow/:id', isLoggedIn, FollowController.unfollowAuthor);
 
-export default FollowRouter;
+export default followRouter;

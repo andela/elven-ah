@@ -2,6 +2,7 @@ import models from '../models';
 import JwtHelper from '../helpers/JwtHelper';
 import Mailer from '../helpers/Mailer';
 import emails from '../helpers/emailMessages';
+import AuthController from './AuthController';
 
 const { User } = models;
 
@@ -15,16 +16,16 @@ class VerifyController {
    * @param {Object} user The user object to be compared
    * @param {String} email The email to be compared
    * @param {String} username The username to be compared
-   * @returns Returns a message object specifiying which property of
+   * @returns Returns a message object specifying which property of
    * the user is present in the user object
    */
 
   /**
-   * @description authenticate user with Google passport-Startegy
+   * @description authenticate user with Google passport-Strategy
    * @param {Object} user The user object to be compared
    * @param {String} email The email to be compared
    * @param {String} username The username to be compared
-   * @returns Returns a message object specifiying which property of
+   * @returns Returns a message object specifying which property of
    * the user is present in the user object
    */
   static verifyEmail(req, res) {
@@ -36,7 +37,7 @@ class VerifyController {
     Mailer.sendMail(msg)
       .then((response) => {
         if (response[0].statusCode === 202) {
-          return res.status(201).json({
+          res.status(201).json({
             status: 'success',
             message: req.emailVerificationMessage,
           });
@@ -71,11 +72,11 @@ class VerifyController {
   }
 
   /**
-   * @description authenticate user with Facebook passport-Startegy
+   * @description authenticate user with Facebook passport-Strategy
    * @param {Object} user The user object to be compared
    * @param {String} email The email to be compared
    * @param {String} username The username to be compared
-   * @returns Returns a message object specifiying which property of
+   * @returns Returns a message object specifying which property of
    * the user is present in the user object
    */
   static updateVerifiedStatus(decoded, req, res, next) {
@@ -90,19 +91,8 @@ class VerifyController {
             message: 'The account has already been verified.',
           });
         }
-        const { id, email, username } = user;
-        const loginToken = JwtHelper.createToken({
-          user: {
-            id,
-            email,
-            username,
-          }
-        }, '720h');
-        res.status(200).send({
-          status: 'success',
-          token: loginToken,
-          message: 'Account successfully verified.',
-        });
+        const status = { code: 200, message: 'Account successfully verified and logged in' };
+        AuthController.successResponse(status, user, res);
       })
       .catch(err => next(err));
   }
