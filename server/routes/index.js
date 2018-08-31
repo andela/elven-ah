@@ -6,6 +6,7 @@ import articleRouter from './article';
 import userRouter from './users';
 import followRouter from './follow';
 import searchRouter from './search';
+import payRouter from './pay';
 
 const router = Router();
 
@@ -15,6 +16,7 @@ router.use('/users', userRouter);
 router.use('/search', searchRouter);
 router.use('/articles', articleRouter);
 router.use('/user', followRouter);
+router.use('/pay', payRouter);
 
 // Matches /api the API home route
 router.get('/*', (req, res) => {

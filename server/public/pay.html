@@ -1,0 +1,39 @@
+<input type="submit" style="cursor:pointer;" value="Pay Now" id="submit" />
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ravesandboxapi.flutterwave.com/flwv3-pug/getpaidx/api/flwpbf-inline.js"></script>
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function (event) {
+    document.getElementById('submit').addEventListener('click', function () {
+
+      var flw_ref = "", chargeResponse = "", txxRef = "FDKHGK" + Math.random(),
+        API_publicKey = "FLWPUBK-570825cbb7fdcc706820706abef2c143-X";
+
+      getpaidSetup(
+        {
+          PBFPubKey: API_publicKey,
+          customer_email: "seayomi@gmail.com",
+          amount: 1,
+          customer_phone: "2348060094070",
+          currency: "USD",
+          payment_method: "both",
+          txref: txxRef,
+          meta: [{ metaname: "subscriptionID", metavalue: txxRef }],
+          onclose: function (response) {
+          },
+          callback: function (response) {
+            txref = response.tx.txRef, chargeResponse = response.tx.chargeResponseCode;
+            const userRef = response.tx.flwRef;
+            if (chargeResponse == "00" || chargeResponse == "0") {
+              window.location.href = `http://localhost:3000/api/pay?ref=${userRef}`;  //Add your failure page here
+
+            } else {
+              console.log('Error: Payment Not Successful!');
+            }
+          }
+        }
+      );
+    });
+  });
+</script>
