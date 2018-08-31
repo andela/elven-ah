@@ -79,11 +79,6 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'userId',
       as: 'subscriptions',
     });
-    User.belongsTo(models.Payment, {
-      foreignKey: 'paymentId',
-      as: 'payment',
-      onDelete: 'cascade'
-    });
   };
 
   return User;
