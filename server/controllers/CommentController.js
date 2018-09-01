@@ -19,7 +19,7 @@ export default class CommentController {
   static async createComment(req, res) {
     const { id: userId, username } = req.user;
     const { body } = req.body;
-    const parentId = req.query.id === undefined ? null : req.query.id;
+    let parentId = req.query.id === undefined ? null : req.query.id;
     const { slug } = req.params;
     const article = await CommentController.getArticleFromSlug(slug);
     if (article === null) {
@@ -28,6 +28,8 @@ export default class CommentController {
         message: 'Unable to create comment because the article does not exist.',
       });
     }
+    const parentComment = await Comment.findById(parentId);
+    if (JSON.parse(JSON.stringify(parentComment)) === null) parentId = null;
     const newComment = await Comment.create({
       articleId: article.id,
       userId,
