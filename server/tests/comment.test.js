@@ -141,7 +141,7 @@ describe('Comment Tests', () => {
         .end((req, res) => {
           res.status.should.eql(400);
           res.body.should.be.an('object').with.property('status').eql('fail');
-          res.body.should.have.property('message').include('Unable to create comment because the article does not exist.');
+          res.body.should.have.property('message').include('The article slug supplied is invalid.');
           done();
         });
     });
@@ -274,7 +274,7 @@ describe('Comment Tests', () => {
         .end((req, res) => {
           res.status.should.eql(400);
           res.body.should.be.an('object').with.property('status').include('fail');
-          res.body.should.have.property('message').include('Invalid comment id supplied.');
+          res.body.should.have.property('message').include('Please supply a valid comment id.');
           done();
         });
     });

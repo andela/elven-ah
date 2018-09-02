@@ -16,49 +16,49 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {object} the comment that was created.
    */
-  static async createComment(req, res) {
-    const { id: userId, username } = req.user;
-    const { body } = req.body;
-    let parentId = req.query.id === undefined ? null : req.query.id;
-    const { slug } = req.params;
-    const article = await CommentController.getArticleFromSlug(slug);
-    if (article === null) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Unable to create comment because the article does not exist.',
+  static async createComment(req, res, next) {
+    try {
+      const { id: userId, username } = req.user;
+      const { body } = req.body;
+      let parentId = req.query.id === undefined ? null : req.query.id;
+      const parentComment = await Comment.findById(parentId);
+      if (JSON.parse(JSON.stringify(parentComment)) === null) parentId = null;
+      const newComment = await Comment.create({
+        articleId: res.locals.article.id,
+        userId,
+        parentId,
+        body,
       });
+      const channel = `article-${res.locals.article.slug}`;
+      CommentController.commentResponse(res, newComment, res.locals.article.slug, username);
+      const subscription = await NotificationController.subscribe(channel, userId);
+      return NotificationController.notifyReaders(channel, 'commented', {
+        userId,
+        articleSlug: res.locals.article.slug,
+        channelId: subscription.channel.id,
+        resourceId: newComment.id,
+      });
+    } catch (error) {
+      next(error);
     }
-    const parentComment = await Comment.findById(parentId);
-    if (JSON.parse(JSON.stringify(parentComment)) === null) parentId = null;
-    const newComment = await Comment.create({
-      articleId: article.id,
-      userId,
-      parentId,
-      body,
-    });
-    const channel = `article-${slug}`;
-    CommentController.commentResponse(res, newComment, slug, username);
-    const subscription = await NotificationController.subscribe(channel, userId);
-    return NotificationController.notifyReaders(channel, 'commented', {
-      userId,
-      articleSlug: slug,
-      channelId: subscription.channel.id,
-      resourceId: newComment.id,
-    });
   }
 
   /**
-   * Get all comments with one level reply nesting.
+   * Get all comments in an article with one level reply nesting.
    * @param {object} req the request object
    * @param {object} res the response object
    * @returns {object} an object containing an array of all comments.
    */
-  static getComments(req, res) {
-    Comment.findAll({
-      include: [
-        { model: User, as: 'commenter' },
-      ]
-    }).then((comments) => {
+  static async getComments(req, res, next) {
+    try {
+      const comments = await Comment.findAll({
+        include: [
+          { model: User, as: 'commenter' },
+        ],
+        where: {
+          articleId: res.locals.article.id,
+        }
+      });
       const destructuredComments = comments.map(comment => Object.assign(
         {},
         {
@@ -79,12 +79,9 @@ export default class CommentController {
         status: 'success',
         comments: result,
       });
-    }).catch(() => {
-      res.status(400).json({
-        status: 'fail',
-        message: 'Unable to get comments.',
-      });
-    });
+    } catch (error) {
+      next(error);
+    }
   }
 
   /**
@@ -93,14 +90,21 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {object} an object containing an array of all comments.
    */
-  static getComment(req, res, next) {
-    Comment.findById((req.params.id), {
+  static async getComment(req, res, next) {
+    if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Please supply a valid comment id.',
+      });
+    }
+    const comment = await Comment.findById((req.params.id), {
       include: [
         { model: User, as: 'commenter' },
       ]
-    }).then((comment) => {
-      if (!comment) {
-        res.status(404).json({
+    });
+    try {
+      if (comment === null) {
+        return res.status(404).json({
           status: 'fail',
           message: 'Unable to get the comment with supplied id.',
         });
@@ -120,7 +124,9 @@ export default class CommentController {
           },
         }
       });
-    }).catch(err => next(err));
+    } catch (error) {
+      next(error);
+    }
   }
 
   /**
@@ -129,44 +135,48 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {object} the updated comment.
    */
-  static updateComment(req, res, next) {
-    Comment.findById(parseInt(req.params.id, 10))
-      .then((comment) => {
-        if (!comment) {
-          return res.status(404).json({
-            status: 'fail',
-            message: 'No comment found, please check the id supplied.',
-          });
+  static async updateComment(req, res, next) {
+    try {
+      if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Please supply a valid comment id.',
+        });
+      }
+      const comment = await Comment.findById(parseInt(req.params.id, 10));
+      if (comment === null) {
+        return res.status(404).json({
+          status: 'fail',
+          message: 'No comment found, please check the id supplied.',
+        });
+      }
+      let updatedComment = await Comment.update({
+        body: req.body.body,
+      }, {
+        returning: true,
+        where: { id: comment.dataValues.id },
+      });
+      updatedComment = updatedComment[1][0].dataValues;
+      res.status(200).json({
+        status: 'success',
+        comment: {
+          id: updatedComment.id,
+          parentId: updatedComment.parentId,
+          createdAt: new Date(updatedComment.createdAt).toLocaleString('en-GB', { hour12: true }),
+          updatedAt: new Date(updatedComment.updatedAt).toLocaleString('en-GB', { hour12: true }),
+          body: updatedComment.body,
+          author: updatedComment.author,
         }
-        Comment.update({
-          body: req.body.body,
-        }, {
-          returning: true,
-          where: { id: comment.id },
-        })
-          .then(([, [updatedComment]]) => {
-            res.status(200).json({
-              status: 'success',
-              comment: {
-                id: updatedComment.id,
-                parentId: updatedComment.parentId,
-                createdAt: new Date(updatedComment.createdAt).toLocaleString('en-GB', { hour12: true }),
-                updatedAt: new Date(updatedComment.updatedAt).toLocaleString('en-GB', { hour12: true }),
-                body: updatedComment.body,
-                author: updatedComment.author,
-              }
-            });
-            const { slug } = req.params;
-            return NotificationController.notifyOnUpdate('updated a comment', {
-              userId: req.user.id,
-              articleSlug: slug,
-              resourceId: updatedComment.id,
-            });
-          }).catch(() => res.status(400).json({
-            status: 'fail',
-            message: 'Unable to update comment',
-          }));
-      }).catch(err => next(err));
+      });
+      const { slug } = res.locals.article;
+      return NotificationController.notifyOnUpdate('updated a comment', {
+        userId: req.user.id,
+        articleSlug: slug,
+        resourceId: updatedComment.id,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
   /**
@@ -175,24 +185,29 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {null}
    */
-  static deleteComment(req, res) {
-    Comment.findById(parseInt(req.params.id, 10))
-      .then((comment) => {
-        if (!comment) {
-          return res.status(404).json({
-            status: 'fail',
-            message: 'No comment with the supplied id found.',
-          });
-        }
-        Comment.destroy({ where: { id: comment.id } })
-          .then(() => res.status(200).json({
-            status: 'success',
-            message: 'Comment deleted.'
-          }));
-      }).catch(() => res.status(400).json({
-        status: 'fail',
-        message: 'Invalid comment id supplied.',
-      }));
+  static async deleteComment(req, res, next) {
+    try {
+      if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Please supply a valid comment id.',
+        });
+      }
+      const comment = await Comment.findById(parseInt(req.params.id, 10));
+      if (comment === null) {
+        return res.status(404).json({
+          status: 'fail',
+          message: 'No comment with the supplied id found.',
+        });
+      }
+      await Comment.destroy({ where: { id: comment.id } });
+      res.status(200).json({
+        status: 'success',
+        message: 'Comment deleted.'
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
   /**
@@ -219,16 +234,19 @@ export default class CommentController {
    * @returns {promise} the article object found
    */
   static getArticleFromSlug(slug) {
-    return new Promise((resolve, reject) => {
-      Article.findOne({
-        where: { slug },
-        attributes: [
-          'id', 'title', 'userId', 'slug', 'body',
-          'imageUrl', 'categoryId', 'createdAt', 'updatedAt'
-        ],
-      })
-        .then(article => resolve(article))
-        .catch(err => reject(err));
+    return new Promise(async (resolve, reject) => {
+      try {
+        const article = await Article.findOne({
+          where: { slug },
+          attributes: [
+            'id', 'title', 'userId', 'slug', 'body',
+            'imageUrl', 'categoryId', 'createdAt', 'updatedAt'
+          ],
+        });
+        resolve(article);
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 

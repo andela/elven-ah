@@ -6,6 +6,7 @@ import CommentValidation from '../middlewares/validations/CommentValidation';
 import CommentController from '../controllers/CommentController';
 import RatingController from '../controllers/RatingController';
 import plagiarismCheck from '../middlewares/plagiarismCheck';
+import validateSlug from '../middlewares/validateSlug';
 
 const articleRouter = Router();
 
@@ -15,15 +16,15 @@ articleRouter.put('/:slug', isLoggedIn, ArticleValidation.validateUpdateArticle,
 
 articleRouter.delete('/:slug', isLoggedIn, ArticleController.removeArticle);
 
-articleRouter.post('/:slug/comments', isLoggedIn, CommentValidation.validateComment, CommentController.createComment);
+articleRouter.post('/:slug/comments', isLoggedIn, validateSlug, CommentValidation.validateComment, CommentController.createComment);
 
-articleRouter.get('/:slug/comments', isLoggedIn, CommentController.getComments);
+articleRouter.get('/:slug/comments', isLoggedIn, validateSlug, CommentController.getComments);
 
-articleRouter.get('/:slug/comments/:id', isLoggedIn, CommentController.getComment);
+articleRouter.get('/:slug/comments/:id', isLoggedIn, validateSlug, CommentController.getComment);
 
-articleRouter.put('/:slug/comments/:id', isLoggedIn, CommentValidation.validateComment, CommentController.updateComment);
+articleRouter.put('/:slug/comments/:id', isLoggedIn, validateSlug, CommentValidation.validateComment, CommentController.updateComment);
 
-articleRouter.delete('/:slug/comments/:id', isLoggedIn, CommentController.deleteComment);
+articleRouter.delete('/:slug/comments/:id', isLoggedIn, validateSlug, CommentController.deleteComment);
 
 articleRouter.post('/:author/:slug/:rating', isLoggedIn, RatingController.prepRating);
 
