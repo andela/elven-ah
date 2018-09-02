@@ -267,7 +267,7 @@ describe('Comment Tests', () => {
         });
     });
 
-    it('should throw an error when invalid comment id is supplied', (done) => {
+    it('should throw an error when supplied comment id is not a number', (done) => {
       chai.request(app)
         .delete(`/api/articles/${validSlug}/comments/rer`)
         .set('x-access-token', token)
@@ -275,6 +275,31 @@ describe('Comment Tests', () => {
           res.status.should.eql(400);
           res.body.should.be.an('object').with.property('status').include('fail');
           res.body.should.have.property('message').include('Please supply a valid comment id.');
+          done();
+        });
+    });
+
+    it('should throw an error when supplied comment id is a number, but does not exist in the db', (done) => {
+      chai.request(app)
+        .get(`/api/articles/${validSlug}/comments/900`)
+        .set('x-access-token', token)
+        .end((req, res) => {
+          res.status.should.eql(404);
+          res.body.should.be.an('object').with.property('status').include('fail');
+          res.body.should.have.property('message').include('Unable to get the comment with supplied id.');
+          done();
+        });
+    });
+
+    it('should throw an error when supplied comment id is a number, but does not exist in the db', (done) => {
+      chai.request(app)
+        .put(`/api/articles/${validSlug}/comments/900`)
+        .set('x-access-token', token)
+        .send({ body: 'UPDATED COMMENT' })
+        .end((req, res) => {
+          res.status.should.eql(404);
+          res.body.should.be.an('object').with.property('status').include('fail');
+          res.body.should.have.property('message').include('No comment found, please check the id supplied.');
           done();
         });
     });
