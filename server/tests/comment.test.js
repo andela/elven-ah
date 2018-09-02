@@ -88,6 +88,9 @@ describe('Comment Tests', () => {
     it('should ask the user to log in', (done) => {
       chai.request(app)
         .post(`/api/articles/${validSlug}/comments`)
+        .send({
+          body: 'I am a valid comment.',
+        })
         .end((req, res) => {
           res.status.should.eql(401);
           res.body.should.be.an('object').with.property('errors');
@@ -117,9 +120,6 @@ describe('Comment Tests', () => {
         .post(`/api/articles/${validSlug}/comments`)
         .set('x-access-token', token)
         .send({
-          articleId: validId,
-          userId: user.id,
-          parentId: null,
           body: 'I am a valid comment.',
         })
         .end((req, res) => {
@@ -136,9 +136,6 @@ describe('Comment Tests', () => {
         .post('/api/articles/invalid-slug-87123/comments')
         .set('x-access-token', token)
         .send({
-          articleId: validId,
-          userId: user.id,
-          parentId: null,
           body: 'I am a valid comment.',
         })
         .end((req, res) => {
@@ -150,15 +147,30 @@ describe('Comment Tests', () => {
     });
   });
 
+  describe('Comment reply creation with invalid parent id', () => {
+    it('should create the comment as a first level comment', (done) => {
+      chai.request(app)
+        .post(`/api/articles/${validSlug}/comments?id=-1`)
+        .set('x-access-token', token)
+        .send({
+          body: 'I am a valid comment.',
+        })
+        .end((req, res) => {
+          res.status.should.eql(201);
+          res.body.should.be.an('object').with.property('status').eql('success');
+          res.body.comment.should.have.property('article').include(validSlug);
+          res.body.comment.should.have.property('parentId').eql(null);
+          done();
+        });
+    });
+  });
+
   describe('Comment creation with valid token but no body', () => {
     it('should throw an error', (done) => {
       chai.request(app)
         .post(`/api/articles/${validSlug}/comments`)
         .set('x-access-token', token)
         .send({
-          articleSlug: validSlug,
-          author: user.id,
-          parentId: null,
         })
         .end((req, res) => {
           res.status.should.eql(400);
