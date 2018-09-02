@@ -5,18 +5,18 @@ import models from '../models';
 const { Payment } = models;
 const PUBLIC_KEY = process.env.RAVE_PUBLIC_KEY;
 const SECRET_KEY = process.env.RAVE_SECRET_KEY;
+const SUBSCRIPTION_RATE = parseInt(process.env.MONTHLY_SUBSCRIPTION_RATE, 10);
 /**
  * This class handles all payment process of the application
  */
 class PaymentController {
   /**
-   * @description Checks which property of the user exists already
-   * @param {Object} user The user object to be compared
-   * @param {String} email The email to be compared
-   * @param {String} username The username to be compared
-   * @returns Returns a message object specifying the state of
-   * the user account upgrade
-   */
+  * @description Validates the user payment information and upgrade if successful
+  * @param {object} req the request object
+  * @param {object} res the response object
+  * @returns Returns a message object specifying the state of
+  * the user account upgrade
+  */
 
   static ValidatePayment(req, res) {
     const rave = new RavePay(PUBLIC_KEY, SECRET_KEY, false);
@@ -28,7 +28,7 @@ class PaymentController {
       .then((response) => {
         const { id: userId, email } = req.user;
         const transactionValues = response.body.data;
-        const subscriptionType = transactionValues.amount == process.env.MONTHLY_SUBSCRIPTION_RATE ? 'month' : 'annual';
+        const subscriptionType = transactionValues.amount === SUBSCRIPTION_RATE ? 'month' : 'annual';
         if (transactionValues.status === 'successful' && transactionValues['customer.email'] === email) {
           return PaymentController.ProcessUpgrade({ userId, reference, subscriptionType }, res);
         }
@@ -37,11 +37,10 @@ class PaymentController {
           message: 'Your upgrade process failed. Kindly contact the helpdesk team.',
         });
       })
-      .catch((err) => {
+      .catch(() => {
         res.status(400).json({
           status: 'fail',
           message: 'Error from Payment Processor',
-          err: err.message,
         });
       });
   }
@@ -56,13 +55,18 @@ class PaymentController {
             transactionReference: reference,
             subscriptionType,
             dueDate: Date.now() + (30 * 86400000),
-          })
-            .then(() => { PaymentController.PaymentResponse(res); });
+          });
+          return PaymentController.PaymentResponse(res);
         }
-        Payment.update({ transactionReference: reference, subscriptionType, dueDate: Date.now() + (30 * 86400000) }, {
+        Payment.update({
+          transactionReference: reference,
+          subscriptionType,
+          dueDate: Date.now() + (30 * 86400000),
+        },
+        {
           where: { userId },
-        })
-          .then(() => { PaymentController.PaymentResponse(res); });
+        });
+        return PaymentController.PaymentResponse(res);
       })
       .catch(err => res.status(400).json({
         status: 'error',
