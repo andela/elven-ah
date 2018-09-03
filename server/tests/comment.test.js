@@ -88,6 +88,9 @@ describe('Comment Tests', () => {
     it('should ask the user to log in', (done) => {
       chai.request(app)
         .post(`/api/articles/${validSlug}/comments`)
+        .send({
+          body: 'I am a valid comment.',
+        })
         .end((req, res) => {
           res.status.should.eql(401);
           res.body.should.be.an('object').with.property('errors');
@@ -117,9 +120,6 @@ describe('Comment Tests', () => {
         .post(`/api/articles/${validSlug}/comments`)
         .set('x-access-token', token)
         .send({
-          articleId: validId,
-          userId: user.id,
-          parentId: null,
           body: 'I am a valid comment.',
         })
         .end((req, res) => {
@@ -136,15 +136,30 @@ describe('Comment Tests', () => {
         .post('/api/articles/invalid-slug-87123/comments')
         .set('x-access-token', token)
         .send({
-          articleId: validId,
-          userId: user.id,
-          parentId: null,
           body: 'I am a valid comment.',
         })
         .end((req, res) => {
           res.status.should.eql(400);
           res.body.should.be.an('object').with.property('status').eql('fail');
-          res.body.should.have.property('message').include('Unable to create comment because the article does not exist.');
+          res.body.should.have.property('message').include('The article slug supplied is invalid.');
+          done();
+        });
+    });
+  });
+
+  describe('Comment reply creation with invalid parent id', () => {
+    it('should create the comment as a first level comment', (done) => {
+      chai.request(app)
+        .post(`/api/articles/${validSlug}/comments?id=-1`)
+        .set('x-access-token', token)
+        .send({
+          body: 'I am a valid comment.',
+        })
+        .end((req, res) => {
+          res.status.should.eql(201);
+          res.body.should.be.an('object').with.property('status').eql('success');
+          res.body.comment.should.have.property('article').include(validSlug);
+          res.body.comment.should.have.property('parentId').eql(null);
           done();
         });
     });
@@ -156,9 +171,6 @@ describe('Comment Tests', () => {
         .post(`/api/articles/${validSlug}/comments`)
         .set('x-access-token', token)
         .send({
-          articleSlug: validSlug,
-          author: user.id,
-          parentId: null,
         })
         .end((req, res) => {
           res.status.should.eql(400);
@@ -255,14 +267,39 @@ describe('Comment Tests', () => {
         });
     });
 
-    it('should throw an error when invalid comment id is supplied', (done) => {
+    it('should throw an error when supplied comment id is not a number', (done) => {
       chai.request(app)
         .delete(`/api/articles/${validSlug}/comments/rer`)
         .set('x-access-token', token)
         .end((req, res) => {
           res.status.should.eql(400);
           res.body.should.be.an('object').with.property('status').include('fail');
-          res.body.should.have.property('message').include('Invalid comment id supplied.');
+          res.body.should.have.property('message').include('Please supply a valid comment id.');
+          done();
+        });
+    });
+
+    it('should throw an error when supplied comment id is a number, but does not exist in the db', (done) => {
+      chai.request(app)
+        .get(`/api/articles/${validSlug}/comments/900`)
+        .set('x-access-token', token)
+        .end((req, res) => {
+          res.status.should.eql(404);
+          res.body.should.be.an('object').with.property('status').include('fail');
+          res.body.should.have.property('message').include('Unable to get the comment with supplied id.');
+          done();
+        });
+    });
+
+    it('should throw an error when supplied comment id is a number, but does not exist in the db', (done) => {
+      chai.request(app)
+        .put(`/api/articles/${validSlug}/comments/900`)
+        .set('x-access-token', token)
+        .send({ body: 'UPDATED COMMENT' })
+        .end((req, res) => {
+          res.status.should.eql(404);
+          res.body.should.be.an('object').with.property('status').include('fail');
+          res.body.should.have.property('message').include('No comment found, please check the id supplied.');
           done();
         });
     });
