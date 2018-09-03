@@ -91,6 +91,8 @@ describe('Premium Account Upgrade', () => {
             res.should.have.status(400);
             res.body.should.be.a('object');
             res.body.should.have.property('status').equal('fail');
+            res.body.should.have.property('message').to.include('Your upgrade process failed. Kindly contact the helpdesk team.');
+
             done();
           });
       });
@@ -103,6 +105,7 @@ describe('Premium Account Upgrade', () => {
             res.should.have.status(200);
             res.body.should.be.a('object');
             res.body.should.have.property('status').equal('success');
+            res.body.should.have.property('message').to.include('You have been upgraded to a premium account.');
             done();
           });
       });

@@ -58,14 +58,14 @@ class PaymentController {
           });
           return PaymentController.PaymentResponse(res);
         }
-        Payment.update({
-          transactionReference: reference,
-          subscriptionType,
-          dueDate: Date.now() + (30 * 86400000),
-        },
-        {
-          where: { userId },
-        });
+        Payment.update(
+          {
+            transactionReference: reference,
+            subscriptionType,
+            dueDate: Date.now() + (30 * 86400000),
+          },
+          { where: { userId }, }
+        );
         return PaymentController.PaymentResponse(res);
       })
       .catch(err => res.status(400).json({
