@@ -36,12 +36,6 @@ class PaymentController {
           status: 'fail',
           message: 'Your upgrade process failed. Kindly contact the helpdesk team.',
         });
-      })
-      .catch(() => {
-        res.status(400).json({
-          status: 'fail',
-          message: 'Error from Payment Processor',
-        });
       });
   }
 
