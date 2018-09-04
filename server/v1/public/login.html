@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Authors' Haven | Login</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <section class="container">
+            <div class="header-brand">
+                <a href="index.html">Authors' Haven</a>
+            </div>
+            <nav>
+                <ul class="header-nav" role="navigation">
+                    <li class="nav-left"><a href="index.html">Home</a></li>
+                </ul>
+            </nav>
+        </section>
+    </header>
+    <div id="loader-wrapper"></div>
+    <main class="container" id="main">
+        <section class="form-card">
+            <div class="card-head primary">
+                Login to your Account
+            </div>
+            <form name="loginForm" action="">
+
+                    <div id="loginError"></div>
+
+                <div class="form-section">
+                    <input type="text" id="username" name="username" placeholder="Email or Username" required>
+                    <div id="emailError"></div>
+                </div>
+
+                <div class="form-section">
+                    <input type="password" id="password" name="password" placeholder="Password..." required>
+                    <div id="passwordError"></div>
+                </div>
+
+                <div class="form-section">
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
+        </section>
+
+    </main>
+    <section class="footer" id="footer">
+        <div class="container">
+            <p class="centered">
+            Copyright &copy;<script>document.write(new Date().getFullYear());</script> <a href="https://facebook.com/veraclins" target="_blank">Veraclins</a> | All rights reserved
+            </p>
+        </div>
+    </section>
+    <script src="https://js.pusher.com/4.2/pusher.min.js"></script>
+    <script src="app.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>
