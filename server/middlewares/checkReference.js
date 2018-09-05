@@ -8,7 +8,7 @@
   */
 const checkReference = (req, res, next) => {
   const reference = req.query.ref;
-  if (reference === undefined || reference === '' || reference == null) {
+  if (!reference) {
     return res.status(400).json({
       status: 'fail',
       message: 'No payment reference provided'

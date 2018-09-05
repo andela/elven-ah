@@ -1,14 +1,16 @@
-<input type="submit" style="cursor:pointer;" value="Pay Now" id="submit" />
+<input type="submit" style="cursor:pointer;" value="Pay for monthly" id="submit" />
+<input type="submit" style="cursor:pointer;" value="Pay for an article" id="submitArticle" />
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://ravesandboxapi.flutterwave.com/flwv3-pug/getpaidx/api/flwpbf-inline.js"></script>
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function (event) {
+    var flw_ref = "", chargeResponse = "", txxRef = "FDKHGK" + Math.random(),
+        API_publicKey = "FLWPUBK-570825cbb7fdcc706820706abef2c143-X";
+    
     document.getElementById('submit').addEventListener('click', function () {
 
-      var flw_ref = "", chargeResponse = "", txxRef = "FDKHGK" + Math.random(),
-        API_publicKey = "FLWPUBK-570825cbb7fdcc706820706abef2c143-X";
 
       getpaidSetup(
         {
@@ -26,7 +28,7 @@
             txref = response.tx.txRef, chargeResponse = response.tx.chargeResponseCode;
             const userRef = response.tx.flwRef;
             if (chargeResponse == "00" || chargeResponse == "0") {
-              window.location.href = `http://localhost:3000/api/pay?ref=${userRef}`;  //Add your failure page here
+              window.location.href = `http://localhost:3000/api/pay?ref=${userRef}&type=${'upgrade'}`;  //Add your failure page here
 
             } else {
               console.log('Error: Payment Not Successful!');
@@ -35,5 +37,32 @@
         }
       );
     });
+
+  document.getElementById('submitArticle').addEventListener('click', function () {
+  payForAnArticle(
+    {
+      PBFPubKey: API_publicKey,
+      customer_email: "testseeder@test.com",
+      amount: 0.05,
+      customer_phone: "2348060094070",
+      currency: "USD",
+      payment_method: "both",
+      txref: txxRef,
+      meta: [{ metaname: "subscriptionID", metavalue: txxRef }],
+      onclose: function (response) {
+      },
+    callback: function (response) {
+      txref = response.tx.txRef, chargeResponse = response.tx.chargeResponseCode;
+      const userRef = response.tx.flwRef;
+      if (chargeResponse == "00" || chargeResponse == "0") {
+        window.location.href = `http://localhost:3000/api/pay?ref=${userRef}&type=${'article'}&aId=${1}`;  //Add your failure page here
+
+      } else {
+        console.log('Error: Payment Not Successful!');
+      }
+    }
+  }
+);
+});
   });
 </script>
