@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/andela/elven-ah.svg?branch=develop)](https://travis-ci.org/andela/elven-ah) [![Maintainability](https://api.codeclimate.com/v1/badges/1f8d020bb8c10b194541/maintainability)](https://codeclimate.com/github/andela/elven-ah/maintainability) [![Coverage Status](https://coveralls.io/repos/github/andela/elven-ah/badge.svg?branch=develop)](https://coveralls.io/github/andela/elven-ah?branch=develop) 
+[![Build Status](https://travis-ci.org/andela/elven-ah.svg?branch=develop)](https://travis-ci.org/andela/elven-ah) [![Maintainability](https://api.codeclimate.com/v1/badges/1f8d020bb8c10b194541/maintainability)](https://codeclimate.com/github/andela/elven-ah/maintainability) [![Coverage Status](https://coveralls.io/repos/github/andela/elven-ah/badge.svg?branch=develop)](https://coveralls.io/github/andela/elven-ah?branch=develop)
 
 Authors Haven - A Social platform for the creative at heart.
 =======
@@ -15,7 +15,7 @@ This app can be run locally by following the following simple steps:
 - Clone the repo: Run `git clone https://github.com/andela/elven-ah.git` in the folder where you want the repo to be saved.
 - Navigate into the newly created folder and install the dependencies: `cd elven-ah && npm install`
 - Copy .env.example to .env: `cp .env.example .env`
-- Provision a PostreSQL database and add the credentials to the .env file. Also add your preferred port to the .env file
+- Provision a PostgreSQL database and add the credentials to the .env file. Also add your preferred port to the .env file
 - Supply other environment variables you may need.
 - Then start the server using any of the following:
   - `npm start` to start the server normally without automatic restarting.
@@ -180,7 +180,7 @@ Endpoints:
 
 ### Authentication:
 
-`POST /api/users/login`
+`POST /api/v1/users/login`
 
 Example request body:
 
@@ -199,7 +199,7 @@ Required fields: `email`, `password`
 
 ### Registration:
 
-`POST /api/users`
+`POST /api/v1/users`
 
 Example request body:
 
@@ -219,13 +219,13 @@ Required fields: `email`, `username`, `password`
 
 ### Get Current User
 
-`GET /api/user`
+`GET /api/v1/user`
 
 Authentication required, returns a User that's the current user
 
 ### Update User
 
-`PUT /api/user`
+`PUT /api/v1/user`
 
 Example request body:
 
@@ -245,13 +245,13 @@ Accepted fields: `email`, `username`, `password`, `image`, `bio`
 
 ### Get Profile
 
-`GET /api/profiles/:username`
+`GET /api/v1/profiles/:username`
 
 Authentication optional, returns a Profile
 
 ### Follow user
 
-`POST /api/profiles/:username/follow`
+`POST /api/v1/profiles/:username/follow`
 
 Authentication required, returns a Profile
 
@@ -259,7 +259,7 @@ No additional parameters required
 
 ### Unfollow user
 
-`DELETE /api/profiles/:username/follow`
+`DELETE /api/v1/profiles/:username/follow`
 
 Authentication required, returns a Profile
 
@@ -267,7 +267,7 @@ No additional parameters required
 
 ### List Articles
 
-`GET /api/articles`
+`GET /api/v1/articles`
 
 Returns most recent articles globally by default, provide `tag`, `author` or `favorited` query parameter to filter results
 
@@ -297,7 +297,7 @@ Authentication optional, will return multiple articles, ordered by most recent 
 
 ### Feed Articles
 
-`GET /api/articles/feed`
+`GET /api/v1/articles/feed`
 
 Can also take `limit` and `offset` query parameters like List Articles
 
@@ -305,13 +305,13 @@ Authentication required, will return multiple articles created by followed use
 
 ### Get Article
 
-`GET /api/articles/:slug`
+`GET /api/v1/articles/:slug`
 
 No authentication required, will return single article
 
 ### Create Article
 
-`POST /api/articles`
+`POST /api/v1/articles`
 
 Example request body:
 
@@ -334,7 +334,7 @@ Optional fields: `tagList` as an array of Strings
 
 ### Update Article
 
-`PUT /api/articles/:slug`
+`PUT /api/v1/articles/:slug`
 
 Example request body:
 
@@ -354,13 +354,13 @@ The `slug` also gets updated when the `title` is changed
 
 ### Delete Article
 
-`DELETE /api/articles/:slug`
+`DELETE /api/v1/articles/:slug`
 
 Authentication required
 
 ### Add Comments to an Article
 
-`POST /api/articles/:slug/comments`
+`POST /api/v1/articles/:slug/comments`
 
 Example request body:
 
@@ -377,26 +377,26 @@ Required field: `body`
 
 ### Get Comments from an Article
 
-`GET /api/articles/:slug/comments`
+`GET /api/v1/articles/:slug/comments`
 
 Authentication optional, returns multiple comments
 
 ### Delete Comment
 
-`DELETE /api/articles/:slug/comments/:id`
+`DELETE /api/v1/articles/:slug/comments/:id`
 
 Authentication required
 
 ### Favorite Article
 
-`POST /api/articles/:slug/favorite`
+`POST /api/v1/articles/:slug/favorite`
 
 Authentication required, returns the Article
 No additional parameters required
 
 ### Unfavorite Article
 
-`DELETE /api/articles/:slug/favorite`
+`DELETE /api/v1/articles/:slug/favorite`
 
 Authentication required, returns the Article
 
@@ -404,4 +404,8 @@ No additional parameters required
 
 ### Get Tags
 
-`GET /api/tags`
+`GET /api/v1/tags`
+
+## Documentation
+
+The API documentation can be found [here](https://elvenah.docs.apiary.io/)
