@@ -17,7 +17,9 @@ const user = {
 
 const badToken = 'odcjdcsdkjhshsdADDSKKSDKLKLSDKLSLKKLSDJKJKSJwqjkwkd3ndcjdbm';
 const expiresIn = 900;
-const paymentReference = 'FLW-MOCK-7c47a1e6a7eecca561c094e902347fd5';
+const oldPaymentReference = 'FLW-MOCK-7c47a1e6a7eecca561c094e902347fd5';
+const paymentReference = 'FLW-MOCK-7a0fc50b9d1cbdc6389a31b9f2416c11';
+const paymentReference2 = 'FLW-MOCK-ead540c457bd401e015ab6af8d0778a6';
 const badPaymentReference = 'FL-MOCK-7c47a1e6a7eecca561c094e902347';
 
 let token;
@@ -83,9 +85,37 @@ describe('Premium Account Upgrade', () => {
           });
       });
 
+      it('should fail on used payment reference for the article subscription process', (done) => {
+        chai.request(app)
+          .get(`/api/pay?ref=${oldPaymentReference}&type=${'article'}&aId=${1}`)
+          .set('x-access-token', token)
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('status').equal('fail');
+            res.body.should.have.property('message').to.include('This payment reference has already been used');
+
+            done();
+          });
+      });
+
+      it('should fail on used payment reference for the account upgrade subscription process', (done) => {
+        chai.request(app)
+          .get(`/api/pay?ref=${oldPaymentReference}&type=${'upgrade'}`)
+          .set('x-access-token', token)
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('status').equal('fail');
+            res.body.should.have.property('message').to.include('This payment reference has already been used');
+
+            done();
+          });
+      });
+
       it('should fail on invalid payment reference', (done) => {
         chai.request(app)
-          .get(`/api/pay?ref=${badPaymentReference}`)
+          .get(`/api/pay?ref=${badPaymentReference}&type=${'upgrade'}`)
           .set('x-access-token', token)
           .end((err, res) => {
             res.should.have.status(400);
@@ -99,13 +129,69 @@ describe('Premium Account Upgrade', () => {
 
       it('should upgrade user account when provided valid payment reference', (done) => {
         chai.request(app)
-          .get(`/api/pay?ref=${paymentReference}`)
+          .get(`/api/pay?ref=${paymentReference}&type=${'upgrade'}`)
           .set('x-access-token', token)
           .end((err, res) => {
             res.should.have.status(200);
             res.body.should.be.a('object');
             res.body.should.have.property('status').equal('success');
-            res.body.should.have.property('message').to.include('You have been upgraded to a premium account.');
+            res.body.should.have.property('message').to.include('Your account has been successfully ugraded to premium account');
+            done();
+          });
+      });
+
+      it('should fail on an empty article Id with invalid payment reference for the article subscription', (done) => {
+        chai.request(app)
+          .get(`/api/pay?ref=${badPaymentReference}&type=${'article'}&aId=`)
+          .set('x-access-token', token)
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('status').equal('fail');
+            res.body.should.have.property('message').to.include('Article Id cannot be empty!');
+
+            done();
+          });
+      });
+
+      it('should fail on an empty article Id with valid payment reference for the article subscription', (done) => {
+        chai.request(app)
+          .get(`/api/pay?ref=${paymentReference2}&type=${'article'}&aId=`)
+          .set('x-access-token', token)
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('status').equal('fail');
+            res.body.should.have.property('message').to.include('Article Id cannot be empty!');
+
+            done();
+          });
+      });
+
+      it('should pass on an article Id provided with valid payment reference for the article subscription', (done) => {
+        chai.request(app)
+          .get(`/api/pay?ref=${paymentReference2}&type=${'article'}&aId=${1}`)
+          .set('x-access-token', token)
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('status').equal('success');
+            res.body.should.have.property('message').to.include('You have been successfully subscribed to this article');
+
+            done();
+          });
+      });
+
+      it('should fail on invalid payment reference for the article subscription', (done) => {
+        chai.request(app)
+          .get(`/api/pay?ref=${badPaymentReference}&type=${'article'}&aId=${1}`)
+          .set('x-access-token', token)
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('status').equal('fail');
+            res.body.should.have.property('message').to.include('Your subscription for this article failed. Kindly contact our helpdesk team.');
+
             done();
           });
       });

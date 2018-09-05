@@ -46,12 +46,12 @@ class PaymentController {
         const transactionValues = response.body.data;
         const subscriptionType = transactionValues.amount === MONTHLY_SUBSCRIPTION_RATE ? 'month' : 'annual';
         if (transactionValues.status === 'successful' && transactionValues['customer.email'] === email) {
-          return PaymentController.accountUpgradeProcessor(
-            { userId, reference, subscriptionType }, res
-          );
+          return PaymentController
+            .accountUpgradeProcessor({ userId, reference, subscriptionType }, res);
         }
         const message = 'Your upgrade process failed. Kindly contact the helpdesk team.';
-        return PaymentController.failedPaymentResponse(message, res);
+        const statusCode = '400';
+        return PaymentController.failedPaymentResponse(message, res, statusCode);
       });
   }
 
@@ -73,11 +73,12 @@ class PaymentController {
     });
     if (createPaymentDetail) {
       PaymentController.userSubscriptionDetailUpdate();
-      const successMessage = 'Your account has been successfully ugraded to a premium one';
+      const successMessage = 'Your account has been successfully ugraded to premium account';
       return PaymentController.successPaymentResponse(successMessage, res);
     }
     const failedMessage = 'Your account upgrade failed. Kindly contact our helpdesk team.';
-    return PaymentController.failedPaymentResponse(failedMessage, res);
+    const statusCode = '400';
+    return PaymentController.failedPaymentResponse(failedMessage, res, statusCode);
   }
 
   /**
@@ -107,6 +108,12 @@ class PaymentController {
   static articleSubscriptionPayment(req, res) {
     const reference = req.query.ref;
     const articleId = req.query.aId;
+    if (!articleId) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Article Id cannot be empty!'
+      });
+    }
     const transactionReference = {
       flw_ref: reference,
     };
@@ -123,7 +130,8 @@ class PaymentController {
           return PaymentController.successPaymentResponse(successMessage, res);
         }
         const failedMessage = 'Your subscription for this article failed. Kindly contact our helpdesk team.';
-        return PaymentController.failedPaymentResponse(failedMessage, res);
+        const statusCode = '400';
+        return PaymentController.failedPaymentResponse(failedMessage, res, statusCode);
       });
   }
 
@@ -145,8 +153,8 @@ class PaymentController {
   * @param {string} message the response message
   * @param {object} res the response object
   */
-  static failedPaymentResponse(message, res) {
-    return res.status(200).send({
+  static failedPaymentResponse(message, res, statusCode) {
+    return res.status(statusCode).send({
       status: 'fail',
       message,
     });
