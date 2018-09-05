@@ -6,7 +6,8 @@ export default (sequelize, DataTypes) => {
     },
     transactionReference: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true,
     },
     subscriptionType: {
       type: DataTypes.STRING,
