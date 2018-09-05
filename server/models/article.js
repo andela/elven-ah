@@ -54,6 +54,12 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'categoryId',
       as: 'categories'
     });
+    Article.hasMany(models.ArticleSubscription, {
+      foreignKey: 'articleId',
+      as: 'articlesubscriptions',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    });
   };
   return Article;
 };

@@ -6,6 +6,6 @@ import checkReference from '../middlewares/checkReference';
 const payRouter = Router();
 
 // Search routes will be added here
-payRouter.get('/', isLoggedIn, checkReference, PaymentController.ValidatePayment);
+payRouter.get('/', isLoggedIn, checkReference, PaymentController.checkPaymentType);
 
 export default payRouter;

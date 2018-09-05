@@ -52,6 +52,10 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    subscriptionDueDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   });
 
   User.associate = (models) => {
@@ -78,6 +82,11 @@ export default (sequelize, DataTypes) => {
     User.hasMany(models.Subscription, {
       foreignKey: 'userId',
       as: 'subscriptions',
+    });
+    User.hasMany(models.ArticleSubscription, {
+      foreignKey: 'userId',
+      as: 'articlesubscriptions',
+      onDelete: 'CASCADE',
     });
   };
 
