@@ -154,6 +154,20 @@ describe('Premium Account Upgrade', () => {
           });
       });
 
+      it('should fail on an INVLAID article Id provided with valid payment reference for the article subscription', (done) => {
+        chai.request(app)
+          .get(`/api/pay?ref=${paymentReference2}&type=${'article'}&aId=${'inval'}`)
+          .set('x-access-token', token)
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('status').equal('fail');
+            res.body.should.have.property('message').to.include('Please supply a valid article id.');
+
+            done();
+          });
+      });
+
       it('should fail on an empty article Id with valid payment reference for the article subscription', (done) => {
         chai.request(app)
           .get(`/api/pay?ref=${paymentReference2}&type=${'article'}&aId=`)
@@ -170,7 +184,7 @@ describe('Premium Account Upgrade', () => {
 
       it('should pass on an article Id provided with valid payment reference for the article subscription', (done) => {
         chai.request(app)
-          .get(`/api/pay?ref=${paymentReference2}&type=${'article'}&aId=${1}`)
+          .get(`/api/pay?ref=${paymentReference2}&type=${'article'}&aId=${2}`)
           .set('x-access-token', token)
           .end((err, res) => {
             res.should.have.status(200);

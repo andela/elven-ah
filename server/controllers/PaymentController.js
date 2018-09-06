@@ -23,7 +23,7 @@ class PaymentController {
   static checkPaymentType(req, res) {
     const paymentType = req.query.type;
     return paymentType === 'upgrade'
-      ? PaymentController.accountUpgrade(req, res)
+      ? PaymentController.upgradeAccount(req, res)
       : PaymentController.articleSubscriptionPayment(req, res);
   }
 
@@ -35,7 +35,7 @@ class PaymentController {
   * the user account upgrade
   */
 
-  static accountUpgrade(req, res) {
+  static upgradeAccount(req, res) {
     const reference = req.query.ref;
     const transactionReference = {
       flw_ref: reference,
@@ -47,11 +47,10 @@ class PaymentController {
         const subscriptionType = transactionValues.amount === MONTHLY_SUBSCRIPTION_RATE ? 'month' : 'annual';
         if (transactionValues.status === 'successful' && transactionValues['customer.email'] === email) {
           return PaymentController
-            .accountUpgradeProcessor({ userId, reference, subscriptionType }, res);
+            .processAccountUpgrade({ userId, reference, subscriptionType }, res);
         }
         const message = 'Your upgrade process failed. Kindly contact the helpdesk team.';
-        const statusCode = '400';
-        return PaymentController.failedPaymentResponse(message, res, statusCode);
+        return PaymentController.failedPaymentResponse(message, res);
       });
   }
 
@@ -62,7 +61,7 @@ class PaymentController {
   * @returns Returns a message object specifying the state of
   * the user account upgrade
   */
-  static accountUpgradeProcessor(paymentInfo, res) {
+  static processAccountUpgrade(paymentInfo, res) {
     const { userId, reference, subscriptionType } = paymentInfo;
     const subscriptionDueDate = subscriptionType === 'month' ? Date.now() + (30 * 86400000) : Date.now() + (365 * 86400000);
     const createPaymentDetail = Payment.create({
@@ -72,13 +71,12 @@ class PaymentController {
       dueDate: subscriptionDueDate,
     });
     if (createPaymentDetail) {
-      PaymentController.userSubscriptionDetailUpdate();
+      PaymentController.userSubscriptionDetailUpdate(userId, subscriptionDueDate);
       const successMessage = 'Your account has been successfully ugraded to premium account';
       return PaymentController.successPaymentResponse(successMessage, res);
     }
     const failedMessage = 'Your account upgrade failed. Kindly contact our helpdesk team.';
-    const statusCode = '400';
-    return PaymentController.failedPaymentResponse(failedMessage, res, statusCode);
+    return PaymentController.failedPaymentResponse(failedMessage, res);
   }
 
   /**
@@ -107,11 +105,17 @@ class PaymentController {
 
   static articleSubscriptionPayment(req, res) {
     const reference = req.query.ref;
-    const articleId = req.query.aId;
-    if (!articleId) {
+    const { aId } = req.query;
+    if (!aId) {
       return res.status(400).json({
         status: 'fail',
         message: 'Article Id cannot be empty!'
+      });
+    }
+    if (Number.isNaN(parseFloat(aId))) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Please supply a valid article id.',
       });
     }
     const transactionReference = {
@@ -120,6 +124,7 @@ class PaymentController {
     rave.Status.requery(transactionReference)
       .then((response) => {
         const { id: userId, email } = req.user;
+        const articleId = parseInt(aId, 10);
         const transactionValues = response.body.data;
         if (transactionValues.status === 'successful' && transactionValues['customer.email'] === email) {
           ArticleSubscription.create({
@@ -130,13 +135,12 @@ class PaymentController {
           return PaymentController.successPaymentResponse(successMessage, res);
         }
         const failedMessage = 'Your subscription for this article failed. Kindly contact our helpdesk team.';
-        const statusCode = '400';
-        return PaymentController.failedPaymentResponse(failedMessage, res, statusCode);
+        return PaymentController.failedPaymentResponse(failedMessage, res);
       });
   }
 
   /**
-  * @description this updates the due date column on the user table
+  * @description sends success response message to the user on successful payment processes
   * @param {string} message the response message
   * @param {object} res the response object
   */
@@ -149,12 +153,12 @@ class PaymentController {
   }
 
   /**
-  * @description this updates the due date column on the user table
+  * @description sends failed response message to the user on successful payment processes
   * @param {string} message the response message
   * @param {object} res the response object
   */
-  static failedPaymentResponse(message, res, statusCode) {
-    return res.status(statusCode).send({
+  static failedPaymentResponse(message, res) {
+    return res.status(400).send({
       status: 'fail',
       message,
     });
