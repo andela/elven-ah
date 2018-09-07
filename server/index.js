@@ -8,7 +8,7 @@ import path from 'path';
 import session from 'express-session';
 import cors from 'cors';
 
-import router from './routes';
+import v1Router from './v1/routes';
 
 const env = process.env.NODE_ENV;
 
@@ -39,13 +39,13 @@ app.use(
   }),
 );
 
-app.use('/api', router);
+app.use('/api/v1', v1Router);
 
 // catch un-available routes
 app.all('*', (req, res) => {
   res.status(404).json({
     status: 'error',
-    message: 'Oh-oh! Seems like the page you requested does not exist. Please check the URL again.',
+    message: 'Oh-oh! Seems like the resource you requested does not exist. Please check the URL again.',
   });
 });
 
