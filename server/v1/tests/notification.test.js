@@ -37,17 +37,15 @@ describe('Notifications methods', () => {
   });
   describe('notifyAuthor method', () => {
     it('should create a notification in the db and return it', async () => {
-      const user = {
+      const data = {
         userId: 2,
-        channelId: 2,
         articleSlug: 'nothing-special-going-on-here',
         username: 'Sweetheart',
         resourceId: 3,
       };
-      const notification = await NotificationController.notifyAuthor('channel', user);
+      const notification = await NotificationController.notifyAuthor('channel', data);
       notification.should.be.a('object');
       notification.creator.should.eql(2);
-      notification.channelId.should.be.eql(2);
       notification.resourceId.should.be.eql(3);
     });
   });

@@ -87,10 +87,8 @@ describe('GET /api/v1/articles Tests a list of paginated articles', () => {
       .end((req, res) => {
         res.status.should.eql(404);
         res.body.should.be.a('object');
-        res.body.should.have.property('status').eql('fail');
-        res.body.should.have.property('errors');
-        res.body.errors.should.be.a('object');
-        res.body.errors.should.have.property('articles').include('No articles found.');
+        res.body.should.have.property('status').eql('error');
+        res.body.should.have.property('message');
         done();
       });
   });
@@ -128,9 +126,7 @@ describe('GET /api/v1/users/:username/articles Tests a list of paginated article
       .end((req, res) => {
         res.status.should.eql(400);
         res.body.should.be.a('object');
-        res.body.should.have.property('errors');
-        res.body.errors.should.be.a('object');
-        res.body.errors.should.have.property('userId').include('userId must be a number.');
+        res.body.should.have.property('message');
         done();
       });
   });
@@ -188,10 +184,8 @@ describe('GET /api/v1/users/:username/articles Tests a list of paginated article
       .end((req, res) => {
         res.status.should.eql(404);
         res.body.should.be.a('object');
-        res.body.should.have.property('status').eql('fail');
-        res.body.should.have.property('errors');
-        res.body.errors.should.be.a('object');
-        res.body.errors.should.have.property('articles').include('Articles not found for user with userId: 200.');
+        res.body.should.have.property('status').eql('error');
+        res.body.should.have.property('message');
         done();
       });
   });

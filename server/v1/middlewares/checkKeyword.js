@@ -10,7 +10,7 @@ const checkKeyword = (req, res, next) => {
   const keyword = req.query.q;
   if (keyword === undefined || keyword === '' || keyword == null) {
     return res.status(400).json({
-      status: 'fail',
+      status: 'error',
       message: 'Please enter a search keyword'
     });
   }

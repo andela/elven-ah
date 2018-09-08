@@ -71,9 +71,7 @@ export default class ProfileController {
         }
         return res.status(409).json({
           status: 'error',
-          errors: {
-            email: [`User with the email: ${email} already exists.`]
-          }
+          message: `User with the email: ${email} already exists.`,
         });
       });
   }

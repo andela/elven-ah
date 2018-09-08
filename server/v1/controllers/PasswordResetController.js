@@ -19,31 +19,28 @@ export default class PasswordResetController {
   * @param {object} req the request object
   * @param {object} res the response object
   */
-  static sendResetEmail(req, res, next) {
+  static sendResetEmail(req, res) {
     const { email } = req.body;
-
+    const url = req.get('origin')
+      ? `${req.protocol}://${req.get('origin')}/password/reset`
+      : `${req.protocol}://${req.get('host')}/api/v1/users/account/password/reset`;
     const token = JwtHelper.createToken({ email }, 1800);
 
     User.findOne({ where: { email } })
       .then((user) => {
         if (!user) {
           return res.status(404).send({
-            status: 'fail',
-            errors: {
-              email: [
-                'The email you provided does not exist, please check again.',
-              ],
-            },
+            status: 'error',
+            message: 'The email you provided does not exist, please check again.',
           });
         }
-        const passwordResetUrl = `${req.protocol}://${req.headers.host}/api/users/account/password/reset?tokenId=${token}`;
+        const passwordResetUrl = `${url}?tokenId=${token}`;
         const resetEmailMessage = emails.passwordReset(email, passwordResetUrl, user.firstName);
         const message = 'A password reset link has been sent to your email. Please check your email';
 
         // Send User Email Method Using SendGrid
         PasswordResetController.resetProcessEmail(req, res, resetEmailMessage, message);
-      })
-      .catch(err => next(err));
+      });
   }
 
   /**
@@ -53,11 +50,10 @@ export default class PasswordResetController {
   */
   static verifyPasswordResetToken(req, res) {
     const { email } = req.decoded;
-    const passwordUpdateToken = JwtHelper.createToken({ email }, 900);
+    const token = JwtHelper.createToken({ email }, 900);
     return res.status(200).send({
       status: 'success',
-      message: 'Please use the link below to change your password',
-      redirectUrl: `${req.protocol}://${req.headers.host}/api/users/account/password/reset?tokenId=${passwordUpdateToken}`,
+      token,
     });
   }
 
@@ -77,7 +73,7 @@ export default class PasswordResetController {
       }
     }).then((updatePassword) => {
       if (updatePassword) {
-        updatePassword.updateAttributes({
+        return updatePassword.updateAttributes({
           password: encryptedPassword,
         }).then((user) => {
           const resetConfirmMessage = emails.passwordResetConfirmation(email, user.firstName);
@@ -99,13 +95,13 @@ export default class PasswordResetController {
     Mailer.sendMail(emailMessage)
       .then((response) => {
         if (response[0].statusCode === 202) {
-          return res.status(201).json({
+          return res.status(200).json({
             status: 'success',
             message,
           });
         }
         return res.status(400).send({
-          status: 'fail',
+          status: 'error',
           message: 'Email could not be sent. Please try again',
         });
       })

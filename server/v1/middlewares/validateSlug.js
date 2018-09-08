@@ -5,7 +5,7 @@ const validateSlug = async (req, res, next) => {
   const article = await CommentController.getArticleFromSlug(slug);
   if (article === null) {
     return res.status(400).json({
-      status: 'fail',
+      status: 'error',
       message: 'The article slug supplied is invalid.',
     });
   }

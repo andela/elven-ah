@@ -19,53 +19,45 @@ export default class FollowController {
     const authorsId = parseInt(req.params.id, 10);
     if (authorsId === userId) {
       return res.status(400).json({
-        status: 'fail',
+        status: 'error',
         message: 'You cannot follow yourself',
       });
     }
-    try {
-      const author = await User.findById(authorsId);
-      if (!author) {
-        return res.status(404).json({
-          status: 'fail',
-          message: 'The author You have selected does not exist'
-        });
-      }
-      const [follow, created] = await Follow.findOrCreate({
-        where: {
-          followingId: authorsId,
-          followerId: userId
-        },
-        defaults: {
-          followerId: userId,
-          followingId: authorsId,
-        },
-      });
-      if (!created) {
-        return res.status(409).json({
-          status: 'fail',
-          message: `You are already following ${author.firstName}`,
-        });
-      }
-      const channel = `user-${author.username}`;
-      const notificationInfo = {
-        userId,
-        resourceId: follow.id,
-        username: author.username,
-      };
-      await NotificationController.subscribe(channel, userId);
-      res.status(201).json({
-        status: 'success',
-        message: `You have started following ${author.firstName}`,
-      });
-      return NotificationController.notifyAuthor('followed', notificationInfo);
-    } catch (error) {
-      res.status(400).json({
+    const author = await User.findById(authorsId);
+    if (!author) {
+      return res.status(404).json({
         status: 'error',
-        message: 'There happen to be an error in the server, please hold on',
-        err: error.message
+        message: 'The author You have selected does not exist'
       });
     }
+    const [follow, created] = await Follow.findOrCreate({
+      where: {
+        followingId: authorsId,
+        followerId: userId
+      },
+      defaults: {
+        followerId: userId,
+        followingId: authorsId,
+      },
+    });
+    if (!created) {
+      return res.status(409).json({
+        status: 'error',
+        message: `You are already following ${author.firstName}`,
+      });
+    }
+    const channel = `user-${author.username}`;
+    const notificationInfo = {
+      userId,
+      resourceId: follow.id,
+      username: author.username,
+    };
+    await NotificationController.subscribe(channel, userId);
+    res.status(201).json({
+      status: 'success',
+      message: `You have started following ${author.firstName}`,
+    });
+    return NotificationController.notifyAuthor('followed', notificationInfo);
   }
 
   /**
@@ -90,7 +82,7 @@ export default class FollowController {
       .then((followers) => {
         if (followers.length === 0) {
           return res.status(404).json({
-            status: 'fail',
+            status: 'error',
             message: 'You currently do not have any follower'
           });
         }
@@ -99,11 +91,7 @@ export default class FollowController {
           message: 'You are currently being followed by these users',
           data: followers
         });
-      })
-      .catch(() => res.status(400).json({
-        status: 'error',
-        message: 'There happen to be an error in the server, please hold on'
-      }));
+      });
   }
 
   /**
@@ -128,7 +116,7 @@ export default class FollowController {
       .then((following) => {
         if (following.length === 0) {
           return res.status(404).json({
-            status: 'fail',
+            status: 'error',
             message: 'You are not currently following any author'
           });
         }
@@ -137,11 +125,7 @@ export default class FollowController {
           message: 'You currently follow these authors',
           data: following,
         });
-      })
-      .catch(() => res.status(400).json({
-        status: 'error',
-        message: 'There happen to be an error in the server, please hold on'
-      }));
+      });
   }
 
   static unfollowAuthor(req, res) {
@@ -156,7 +140,7 @@ export default class FollowController {
       .then((foundFollowee) => {
         if (!foundFollowee) {
           return res.status(404).json({
-            status: 'fail',
+            status: 'error',
             message: 'You are not currently following this Author',
           });
         }
@@ -172,10 +156,6 @@ export default class FollowController {
               message: `You have successfully unfollowed user with id ${authorsId}`,
             });
           });
-      })
-      .catch(() => res.status(400).json({
-        status: 'error',
-        message: 'There happen to be an error in the server, please hold on'
-      }));
+      });
   }
 }

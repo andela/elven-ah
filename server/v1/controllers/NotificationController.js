@@ -60,15 +60,17 @@ export default class NotificationController {
     const channel = await Channel.findOne({
       where: [{ name: channelName }]
     });
-    const notification = await Notification.create({
-      creator: userId,
-      channelId: channel.id,
-      articleSlug,
-      eventType: event,
-      resourceId,
-    });
-    pusher.trigger(channelName, 'notification', notification.dataValues);
-    return notification.dataValues;
+    if (channel) {
+      const notification = await Notification.create({
+        creator: userId,
+        channelId: channel.id,
+        articleSlug,
+        eventType: event,
+        resourceId,
+      });
+      pusher.trigger(channelName, 'notification', notification.dataValues);
+      return notification.dataValues;
+    }
   }
 
   /**

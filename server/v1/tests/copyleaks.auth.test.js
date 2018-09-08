@@ -9,7 +9,7 @@ describe('Copyleaks authentication test', () => {
   before(async () => {
     result = await Auth.login();
   });
-  it('should log in successfully top the API when correct credentials are supplied', async () => {
+  it('should log in successfully to the API when correct credentials are supplied', async () => {
     result.should.be.an('object').with.property('access_token');
     result.should.be.an('object').with.property('.issued');
     result.should.be.an('object').with.property('.expires');

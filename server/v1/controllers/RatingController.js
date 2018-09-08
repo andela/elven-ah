@@ -16,11 +16,18 @@ export default class RatingController {
   */
   static prepRating(req, res) {
     const { id: userId, username } = req.user;
-    const { slug, rating, author } = req.params;
+    const { slug, author } = req.params;
+    const rating = parseInt(req.params.rating, 10);
+    if (!Number.isInteger(rating)) {
+      return res.status(400).send({
+        status: 'error',
+        message: 'Please supply a rating number between 1 and 5',
+      });
+    }
     if (username === author) {
       return res.status(403).send({
         status: 'error',
-        errors: 'You cannot rate your own article',
+        message: 'You cannot rate your own article',
       });
     }
     let value = rating < 1 ? 1 : rating;
@@ -37,7 +44,7 @@ export default class RatingController {
   */
   static rateArticle(ratingInfo, res) {
     const { slug } = ratingInfo;
-    Article.findOne({
+    return Article.findOne({
       where: { slug },
       attributes: ['id'],
     })
@@ -45,13 +52,11 @@ export default class RatingController {
         if (!article) {
           return res.status(404).send({
             status: 'error',
-            errors: {
-              article: ['No article with the given URL. Please check the URL again']
-            }
+            message: 'No article with the given URL. Please check the URL again',
           });
         }
         const { id: articleId } = article.dataValues;
-        RatingController.processTheRating(articleId, ratingInfo, res);
+        return RatingController.processTheRating(articleId, ratingInfo, res);
       });
   }
 
@@ -65,27 +70,39 @@ export default class RatingController {
   static async processTheRating(articleId, ratingInfo, res) {
     const { userId, value, slug } = ratingInfo;
     const channel = `article-${slug}`;
-    const rating = await Rating.findOne({ where: { articleId, userId } });
-    if (!rating) {
-      const newRating = await Rating.create({ userId, articleId, value });
-      RatingController.ratingResponse(newRating, res);
-      NotificationController.subscribe(channel, userId);
+    try {
+      const rating = await Rating.findOne({ where: { articleId, userId } });
+      if (!rating) {
+        const newRating = await Rating.create({ userId, articleId, value });
+        NotificationController.subscribe(channel, userId);
+        const notificationInfo = {
+          userId,
+          slug,
+          resourceId: newRating.id,
+          username: ratingInfo.author,
+        };
+        NotificationController.notifyAuthor('rated', notificationInfo);
+        return RatingController.ratingResponse(newRating, res);
+      }
+      const [, [updatedRating]] = await Rating.update({ value }, {
+        returning: true,
+        where: { articleId, userId },
+      });
+      await NotificationController.subscribe(channel, userId);
       const notificationInfo = {
         userId,
         slug,
-        resourceId: newRating.id,
+        resourceId: updatedRating.id,
         username: ratingInfo.author,
       };
-      return NotificationController.notifyAuthor('rated', notificationInfo);
+      NotificationController.notifyAuthor('rated', notificationInfo);
+      return RatingController.ratingResponse(updatedRating, res, true);
+    } catch (error) {
+      return res.status(500).send({
+        status: 'error',
+        message: 'Something is not quite right at the moment, please try again'
+      });
     }
-    const [, [updatedRating]] = await Rating.update({ value }, {
-      returning: true,
-      where: { articleId, userId },
-    });
-    RatingController.ratingResponse(updatedRating, res, true);
-    await NotificationController.subscribe(channel, userId);
-    ratingInfo.resourceId = updatedRating.id;
-    return NotificationController.notifyAuthor('rated', ratingInfo);
   }
 
   /**

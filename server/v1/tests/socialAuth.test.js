@@ -9,16 +9,6 @@ chai.should();
 chai.use(chaiHttp);
 
 describe('Test for Passport Authentication', () => {
-  it('should return 200 for successful authentication', (done) => {
-    chai.request(app).get('/api/v1/auth/mock').end((req, res) => {
-      res.status.should.eql(200);
-      res.body.should.be.a('object');
-      res.body.should.have.property('status');
-      res.body.should.have.property('message').to.include('Authors\' Haven API V1');
-      done();
-    });
-  });
-
   it('should return 400 for already used token params or invalid token', (done) => {
     chai.request(app).get('/api/v1/auth/google/callback?code=jhgjkhgkjhglkjhlkjhlk,jh').end((req, res) => {
       res.status.should.eql(400);

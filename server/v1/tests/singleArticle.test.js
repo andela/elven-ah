@@ -40,9 +40,7 @@ describe('GET /api/v1/articles/:slug Tests an article with the slug', () => {
       .end((req, res) => {
         res.status.should.eql(404);
         res.body.should.be.a('object');
-        res.body.should.have.property('errors');
-        res.body.errors.should.be.a('object');
-        res.body.errors.should.have.property('article').include('Article with slug: no-article-with-this-slug-exists-n8u39dnu93u not found.');
+        res.body.should.have.property('message');
         done();
       });
   });

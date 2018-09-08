@@ -91,8 +91,7 @@ describe('Comment Tests', () => {
         })
         .end((req, res) => {
           res.status.should.eql(401);
-          res.body.should.be.an('object').with.property('errors');
-          res.body.errors.should.be.an('object').with.property('token').include('You must be logged in to perform this operation');
+          res.body.should.be.an('object').with.property('message');
           done();
         });
     });
@@ -105,8 +104,7 @@ describe('Comment Tests', () => {
         .set('x-access-token', 'jsdlkfjsdkfjksdjflksajflk')
         .end((req, res) => {
           res.status.should.eql(401);
-          res.body.should.be.an('object').with.property('errors');
-          res.body.errors.should.be.an('object').with.property('token').include('Your access token is invalid or expired. Please login again');
+          res.body.should.be.an('object').with.property('message');
           done();
         });
     });
@@ -138,7 +136,7 @@ describe('Comment Tests', () => {
         })
         .end((req, res) => {
           res.status.should.eql(400);
-          res.body.should.be.an('object').with.property('status').eql('fail');
+          res.body.should.be.an('object').with.property('status').eql('error');
           res.body.should.have.property('message').include('The article slug supplied is invalid.');
           done();
         });
@@ -260,7 +258,7 @@ describe('Comment Tests', () => {
         .end((req, res) => {
           res.status.should.eql(200);
           res.body.should.be.an('object').with.property('status').include('success');
-          res.body.should.have.property('message').include('Comment deleted.');
+          res.body.should.have.property('message').include('Comment deleted successfully.');
           done();
         });
     });
@@ -271,7 +269,7 @@ describe('Comment Tests', () => {
         .set('x-access-token', token)
         .end((req, res) => {
           res.status.should.eql(400);
-          res.body.should.be.an('object').with.property('status').include('fail');
+          res.body.should.be.an('object').with.property('status').include('error');
           res.body.should.have.property('message').include('Please supply a valid comment id.');
           done();
         });
@@ -283,7 +281,7 @@ describe('Comment Tests', () => {
         .set('x-access-token', token)
         .end((req, res) => {
           res.status.should.eql(404);
-          res.body.should.be.an('object').with.property('status').include('fail');
+          res.body.should.be.an('object').with.property('status').include('error');
           res.body.should.have.property('message').include('Unable to get the comment with supplied id.');
           done();
         });
@@ -296,7 +294,7 @@ describe('Comment Tests', () => {
         .send({ body: 'UPDATED COMMENT' })
         .end((req, res) => {
           res.status.should.eql(404);
-          res.body.should.be.an('object').with.property('status').include('fail');
+          res.body.should.be.an('object').with.property('status').include('error');
           res.body.should.have.property('message').include('No comment found, please check the id supplied.');
           done();
         });
@@ -308,7 +306,7 @@ describe('Comment Tests', () => {
         .set('x-access-token', token)
         .end((req, res) => {
           res.status.should.eql(404);
-          res.body.should.be.an('object').with.property('status').include('fail');
+          res.body.should.be.an('object').with.property('status').include('error');
           res.body.should.have.property('message').include('No comment with the supplied id found.');
           done();
         });

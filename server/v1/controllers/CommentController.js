@@ -93,7 +93,7 @@ export default class CommentController {
   static async getComment(req, res, next) {
     if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
       return res.status(400).json({
-        status: 'fail',
+        status: 'error',
         message: 'Please supply a valid comment id.',
       });
     }
@@ -105,7 +105,7 @@ export default class CommentController {
     try {
       if (comment === null) {
         return res.status(404).json({
-          status: 'fail',
+          status: 'error',
           message: 'Unable to get the comment with supplied id.',
         });
       }
@@ -139,14 +139,14 @@ export default class CommentController {
     try {
       if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
         return res.status(400).json({
-          status: 'fail',
+          status: 'error',
           message: 'Please supply a valid comment id.',
         });
       }
       const comment = await Comment.findById(parseInt(req.params.id, 10));
       if (comment === null) {
         return res.status(404).json({
-          status: 'fail',
+          status: 'error',
           message: 'No comment found, please check the id supplied.',
         });
       }
@@ -185,29 +185,25 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {null}
    */
-  static async deleteComment(req, res, next) {
-    try {
-      if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
-        return res.status(400).json({
-          status: 'fail',
-          message: 'Please supply a valid comment id.',
-        });
-      }
-      const comment = await Comment.findById(parseInt(req.params.id, 10));
-      if (comment === null) {
-        return res.status(404).json({
-          status: 'fail',
-          message: 'No comment with the supplied id found.',
-        });
-      }
-      await Comment.destroy({ where: { id: comment.id } });
-      res.status(200).json({
-        status: 'success',
-        message: 'Comment deleted.'
+  static async deleteComment(req, res) {
+    if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Please supply a valid comment id.',
       });
-    } catch (error) {
-      next(error);
     }
+    const comment = await Comment.findById(parseInt(req.params.id, 10));
+    if (comment === null) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'No comment with the supplied id found.',
+      });
+    }
+    await Comment.destroy({ where: { id: comment.id } });
+    res.status(200).json({
+      status: 'success',
+      message: 'Comment deleted successfully.'
+    });
   }
 
   /**

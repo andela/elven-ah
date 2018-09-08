@@ -78,7 +78,7 @@ export default class AuthController {
     const {
       email, username, firstName, lastName, password,
     } = req.body;
-    User.findOrCreate({
+    return User.findOrCreate({
       where: {
         $or: [{
           email
@@ -96,13 +96,13 @@ export default class AuthController {
     }).spread((newUser, created) => {
       if (!created) {
         return res.status(409).json({
-          status: 'fail',
+          status: 'error',
           errors: AuthController.userExists(newUser, email, username),
         });
       }
       req.user = AuthController.stripeUser(newUser);
       req.emailVerificationMessage = 'User signup successful and verification email sent.';
-      next();
+      return next();
     });
   }
 
@@ -192,13 +192,12 @@ export default class AuthController {
     }
     if (!user) {
       return res.status(401).send({
-        status: 401,
-        success: false,
-        message: `${strategy} Authentication Failed`
+        status: 'error',
+        message: `${strategy} authentication failed. Please try again`
       });
     }
     const code = user.created ? 201 : 200;
-    const status = { code, message: `${strategy} Authentication succeeded` };
+    const status = { code, message: `${strategy} authentication successful` };
     return AuthController.successResponse(status, user, res);
   }
 
@@ -249,7 +248,7 @@ export default class AuthController {
     if (!passwordIsValid) {
       return {
         statusCode: 401,
-        message: `The ${credential} and/or password you entered is wrong.`,
+        message: `The ${credential} and/or password you entered is incorrect.`,
       };
     }
     return false;

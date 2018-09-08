@@ -107,15 +107,13 @@ export default class ArticleController {
       .then((foundArticle) => {
         if (!foundArticle) {
           return res.status(404).json({
-            status: 404,
-            success: false,
+            status: 'error',
             message: 'The specified article does not exist',
           });
         }
         if (foundArticle.userId !== id) {
           return res.status(403).json({
-            status: 403,
-            success: false,
+            status: 'error',
             message: 'You can only update an article that belongs to you',
           });
         }
@@ -139,8 +137,7 @@ export default class ArticleController {
           })
           .catch(() => {
             res.status(400).json({
-              status: 400,
-              success: false,
+              status: 'error',
               error: 'Article not successfully updated',
             });
           });
@@ -164,15 +161,13 @@ export default class ArticleController {
       .then((foundArticle) => {
         if (!foundArticle) {
           return res.status(404).json({
-            status: 404,
-            success: false,
+            status: 'error',
             message: 'The specified article does not exist',
           });
         }
         if (foundArticle.userId !== id) {
           return res.status(403).json({
-            status: 403,
-            success: false,
+            status: 'error',
             message: 'You can only delete an article that belongs to you',
           });
         }
@@ -181,8 +176,7 @@ export default class ArticleController {
         })
           .then(() => {
             res.status(200).json({
-              status: 200,
-              success: true,
+              status: 'success',
               message: `Article with slug: ${slug} has been successfully deleted`,
             });
             const name = `article-${slug}`;
@@ -190,8 +184,7 @@ export default class ArticleController {
           });
       })
       .catch(() => res.status(400).json({
-        status: 400,
-        success: false,
+        status: 'error',
         error: 'Article can not be deleted'
       }));
   }
@@ -227,8 +220,8 @@ export default class ArticleController {
     let { userId } = req.params;
     if (!/[0-9]/.test(userId)) {
       return res.status(400).json({
-        status: 'fail',
-        errors: { userId: ['userId must be a number.'] }
+        status: 'error',
+        message: 'userId must be a number.',
       });
     }
     userId = Number.parseInt(userId, 10);
@@ -259,10 +252,8 @@ export default class ArticleController {
           });
         }
         return res.status(404).json({
-          status: 'fail',
-          errors: {
-            article: [`Article with slug: ${slug} not found.`],
-          },
+          status: 'error',
+          message: `Article with slug: ${slug} not found.`,
         });
       })
       .catch(() => next(error));
@@ -286,17 +277,13 @@ export default class ArticleController {
     }
     if (!userId) {
       return res.status(404).json({
-        status: 'fail',
-        errors: {
-          articles: ['No articles found.'],
-        },
+        status: 'error',
+        message: 'No articles found.',
       });
     }
     return res.status(404).json({
-      status: 'fail',
-      errors: {
-        articles: [`Articles not found for user with userId: ${userId}.`],
-      },
+      status: 'error',
+      message: `Articles not found for user with id: ${userId}.`,
     });
   }
 }

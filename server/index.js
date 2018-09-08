@@ -54,10 +54,9 @@ app.all('*', (req, res) => {
 app.use((err, req, res) => {
   res.status(err.status || 500);
   res.json({
-    errors: {
-      message: err.message,
-      error: env === 'production' ? {} : err,
-    },
+    status: 'error',
+    message: err.message,
+    error: env === 'production' ? {} : err,
   });
 });
 // finally, let's start our server...

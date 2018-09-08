@@ -24,11 +24,18 @@ const emails = {
     html: `
             Hi, ${name},
             <br><br>
-            You requested a password reset for the selected ${email} as your email address for your
-            Authors' Haven account.<br>Click the link below to continue with this
-            request
+            You requested a password reset for your Authors' Haven account
+            <br>Click the link below to reset your password. This link is Valid for
+            thirty (30) minutes.
             <br><br>
             ${passwordResetUrl}
+            <br><br>
+            <strong>
+            If you did not request this change, ignore this message and your password
+            will not be changed.
+            </strong>
+            <br>
+            Cheers,
             <br><br>
             Sincerely,<br>
             The Authors' Haven team.
@@ -37,15 +44,14 @@ const emails = {
   passwordResetConfirmation: (email, name) => ({
     to: email,
     from: 'no-reply@authorshaven.com',
-    subject: 'Your Author\'s Haven passowrd has been changed',
+    subject: 'Author\'s Haven password changed successfully',
     html: `
             Hi, ${name},
             <br><br>
-            Your password has been changed for the account associated with ${email}.
+            Your Authors' Haven password has been changed successfully. You can login now with
+            your new password to continue enjoy great articles.
             <br>
-            <br >
-            If you did not make this change and believe your Author's Haven account has been compromised, 
-            please contact support@authorshaven.com
+            Cheers!
             <br><br>
             <br><br>
             Sincerely,<br>
