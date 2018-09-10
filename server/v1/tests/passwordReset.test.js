@@ -62,7 +62,7 @@ describe('Password reset', () => {
         email: 'seayomi@gmail.com',
       })
       .end((err, res) => {
-        res.should.have.status(201);
+        res.should.have.status(200);
         res.body.should.be.a('object');
         res.body.should.have.property('status').equal('success');
         res.body.should.have.property('message')
@@ -126,7 +126,7 @@ describe('Password reset', () => {
       .put(`/api/v1/users/account/password/reset?tokenId=${updateToken}`)
       .send({ password: 'Xolatqowb1', confirmPassword: 'Xolatqowb1' })
       .end((err, res) => {
-        res.should.have.status(201);
+        res.should.have.status(200);
         res.body.should.be.a('object');
         res.body.should.have.property('status').equal('success');
         done();

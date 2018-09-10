@@ -32,7 +32,7 @@ class VerifyController {
     const { email } = req.user || req.body;
     const hostUrl = req.get('origin')
       ? `${req.protocol}://${req.get('origin')}/auth/verify`
-      : `${req.protocol}://${req.get('host')}/api/v1//api/v1/auth/verify`;
+      : `${req.protocol}://${req.get('host')}/api/v1/auth/verify`;
     const payload = { email };
     const token = JwtHelper.createToken(payload, '24h');
     const url = `${hostUrl}?evc=${token}`;

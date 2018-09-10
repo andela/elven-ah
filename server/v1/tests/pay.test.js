@@ -15,7 +15,6 @@ const user = {
   email: 'testseeder@test.com',
 };
 
-const badToken = 'odcjdcsdkjhshsdADDSKKSDKLKLSDKLSLKKLSDJKJKSJwqjkwkd3ndcjdbm';
 const expiresIn = 900;
 const oldPaymentReference = 'FLW-MOCK-7c47a1e6a7eecca561c094e902347fd5';
 const paymentReference = 'FLW-MOCK-7a0fc50b9d1cbdc6389a31b9f2416c11';
@@ -39,22 +38,7 @@ describe('Premium Account Upgrade', () => {
           .end((err, res) => {
             res.status.should.eql(401);
             res.body.should.be.a('object');
-            res.body.should.have.property('errors');
-            res.body.errors.should.be.a('object');
-            res.body.errors.should.have.property('token').include('You must be logged in to perform this operation');
-            done();
-          });
-      });
-      it('should fail when a bad token is provided', (done) => {
-        chai.request(app)
-          .get('/api/v1/pay')
-          .set('x-access-token', badToken)
-          .end((err, res) => {
-            res.status.should.eql(401);
-            res.body.should.be.a('object');
-            res.body.should.have.property('errors');
-            res.body.errors.should.be.a('object');
-            res.body.errors.should.have.property('token').include('Your access token is invalid or expired. Please login again');
+            res.body.should.have.property('message');
             done();
           });
       });
