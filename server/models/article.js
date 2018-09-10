@@ -39,9 +39,10 @@ export default (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     });
-    Article.hasMany(models.Tag, {
+    Article.belongsToMany(models.Tag, {
+      through: 'ArticleTags',
+      as: 'tags',
       foreignKey: 'articleId',
-      as: 'tags'
     });
     Article.hasMany(models.Rating, {
       foreignKey: 'articleId',
@@ -52,6 +53,12 @@ export default (sequelize, DataTypes) => {
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',
       as: 'categories'
+    });
+    Article.hasMany(models.ArticleSubscription, {
+      foreignKey: 'articleId',
+      as: 'articlesubscriptions',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     });
   };
   return Article;
