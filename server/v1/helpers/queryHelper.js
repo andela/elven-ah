@@ -1,7 +1,7 @@
 import models from '../../models';
 
 const {
-  User, Rating, Tag, Article, Subscription, Channel, Notification
+  User, Rating, Tag, Article, Subscription, Channel, Notification, Follow
 } = models;
 
 /*
@@ -61,6 +61,29 @@ export default {
             attributes: ['id', 'creator', 'channelId', 'articleSlug', 'eventType', 'resourceId', 'read', 'createdAt', 'updatedAt'],
           }],
         }],
+      },
+      {
+        model: User,
+        as: 'followings',
+        attributes: ['id', 'username'],
+        through: {
+          model: Follow,
+          attributes: [],
+        }
+      },
+      {
+        model: User,
+        as: 'followers',
+        attributes: ['id', 'username'],
+        through: {
+          model: Follow,
+          attributes: [],
+        }
+      },
+      {
+        model: Article,
+        as: 'articles',
+        attributes: ['title', 'slug'],
       }
     ],
   },
