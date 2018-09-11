@@ -17,16 +17,19 @@ export default class ProfileController {
   * @returns {user} the user object
   */
   static getUserProfile(req, res, next) {
-    const { id } = req.user;
-    User.findOne(Object.assign({}, queryHelper.userProfile, { where: { id } }))
+    const { username: loggedInUser } = req.user;
+    const { username } = req.params;
+    return User.findOne(Object.assign({}, queryHelper.userProfile, { where: { username } }))
       .then((data) => {
-        const user = NotificationController.filterNotifications(data);
-        res.status(200).json({
-          status: 'success',
-          user,
-        });
-      })
-      .catch(err => next(err));
+        if (data) {
+          const user = NotificationController.filterNotifications(data, loggedInUser);
+          return res.status(200).json({
+            status: 'success',
+            user,
+          });
+        }
+        return next();
+      });
   }
 
   /**
@@ -35,20 +38,25 @@ export default class ProfileController {
   * @param {object} res the response object
   * @returns the updated user profile
   */
-  static updateUserProfile(req, res, next) {
+  static updateUserProfile(req, res) {
     const {
       email, firstName, lastName, bio, image
     } = req.body;
-    const { username } = req.user;
-    User.update({
-      email, firstName, lastName, bio, image
-    }, { returning: true, where: { username } })
-      .then(([, [user]]) => {
-        res.status(200).json({
+    const { username: loggedInUser } = req.user;
+    const { username } = req.params;
+    if (loggedInUser === username) {
+      return User.update({
+        email, firstName, lastName, bio, image
+      }, { returning: true, where: { username } })
+        .then(([, [user]]) => res.status(200).json({
           status: 'success',
           user: AuthController.stripeUser(user),
-        });
-      }).catch(err => next(err));
+        }));
+    }
+    return res.status(403).json({
+      status: 'error',
+      message: 'You can only edit your own profile',
+    });
   }
 
   /**

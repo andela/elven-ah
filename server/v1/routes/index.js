@@ -11,11 +11,11 @@ import payRouter from './pay';
 const v1Router = Router();
 
 v1Router.use('/auth', authRouter);
-v1Router.use('/user', profileRouter);
+v1Router.use('/users', followRouter);
 v1Router.use('/users', userRouter);
+v1Router.use('/users', profileRouter);
 v1Router.use('/search', searchRouter);
 v1Router.use('/articles', articleRouter);
-v1Router.use('/user', followRouter);
 v1Router.use('/pay', payRouter);
 
 

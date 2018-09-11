@@ -1,7 +1,7 @@
 import models from '../../models';
 
 const {
-  User, Rating, Tag, Article, Subscription, Channel, Notification, Follow
+  User, Rating, Tag, Article, Subscription, Comment, Channel, Notification, Follow
 } = models;
 
 /*
@@ -83,7 +83,12 @@ export default {
       {
         model: Article,
         as: 'articles',
-        attributes: ['title', 'slug'],
+        attributes: ['id', 'slug', 'title', 'body', 'createdAt'],
+        include: [
+          { model: Rating, as: 'ratings', attributes: ['value'] },
+          { model: Comment, as: 'comments', attributes: ['body', 'userId'] },
+          { model: Tag, as: 'tags', attributes: ['title'] },
+        ],
       }
     ],
   },

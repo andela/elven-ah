@@ -202,8 +202,7 @@ export default class ArticleController {
     Article.findAll(Object.assign({}, queryHelper.allArticles, { offset, limit }))
       .then((articles) => {
         ArticleController.sendPaginationResponse(res, articles, false);
-      })
-      .catch(() => next(error));
+      });
   }
 
   /**
@@ -229,8 +228,7 @@ export default class ArticleController {
       .findAll(Object.assign({}, queryHelper.allArticles, { where: { userId }, offset, limit }))
       .then((articles) => {
         ArticleController.sendPaginationResponse(res, articles, userId);
-      })
-      .catch(() => next(error));
+      });
   }
 
   /**
@@ -255,8 +253,7 @@ export default class ArticleController {
           status: 'error',
           message: `Article with slug: ${slug} not found.`,
         });
-      })
-      .catch(() => next(error));
+      });
   }
 
   /**

@@ -13,6 +13,7 @@
     "dev": "cross-env NODE_ENV=development nodemon server/index.js --exec babel-node --presets babel-preset-env",
     "migrate:test": "sequelize db:migrate:undo:all --env=test && sequelize db:migrate --env=test && sequelize db:seed:all --env=test",
     "migrate:dev": "sequelize db:migrate",
+    "migrate:reset": "npm run unmigrate:dev && npm run migrate:dev && npm run seed:all",
     "unmigrate:dev": "sequelize db:migrate:undo:all",
     "seed:all": "sequelize db:seed:all",
     "unseed:all": "sequelize db:seed:undo:all"

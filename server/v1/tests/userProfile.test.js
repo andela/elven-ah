@@ -16,9 +16,9 @@ const user = {
 const expiresIn = 3600;
 const userToken = JwtHelper.createToken({ user }, expiresIn);
 
-describe('GET /api/v1/user Tests for user view profile endpoint', () => {
+describe('GET /api/v1/users/:username Tests for user view profile endpoint', () => {
   it('should return 200 when the user is authenticated', (done) => {
-    chai.request(app).get('/api/v1/user')
+    chai.request(app).get('/api/v1/users/JohnAwesome')
       .set('x-access-token', userToken)
       .end((req, res) => {
         res.status.should.eql(200);
@@ -37,7 +37,7 @@ describe('GET /api/v1/user Tests for user view profile endpoint', () => {
   });
 
   it('should return 401 when the token is not provided', (done) => {
-    chai.request(app).get('/api/v1/user')
+    chai.request(app).get('/api/v1/users/JohnAwesome')
       .end((req, res) => {
         res.status.should.eql(401);
         res.body.should.be.a('object');
@@ -47,7 +47,7 @@ describe('GET /api/v1/user Tests for user view profile endpoint', () => {
   });
 });
 
-describe('PUT /api/v1/user Tests for user update profile endpoint', () => {
+describe('PUT /api/v1/users/:username Tests for user update profile endpoint', () => {
   before(() => {
     chai.request(app).post('/api/v1/auth/signup')
       .send({
@@ -62,7 +62,7 @@ describe('PUT /api/v1/user Tests for user update profile endpoint', () => {
   });
 
   it('should return 200 when a user provides valid properties to update their account', (done) => {
-    chai.request(app).put('/api/v1/user')
+    chai.request(app).put('/api/v1/users/JohnAwesome')
       .set('x-access-token', userToken)
       .send({
         firstName: 'John',
@@ -90,8 +90,30 @@ describe('PUT /api/v1/user Tests for user update profile endpoint', () => {
       });
   });
 
+  it('should return 409 if I try to update the profile of another user', (done) => {
+    chai.request(app).put('/api/v1/users/unique')
+      .set('x-access-token', userToken)
+      .send({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'johndoe@mail.com',
+        bio: `John Doe was born in 1977 when he arrived in Los Angeles. 
+        His previous life in Tennessee, 
+        Wisconsin & Baltimore was a great & fertile time but 
+        new music and social changes led him to events that created a life in art.`,
+        image: 'https://www.image.com/example/image/john'
+      })
+      .end((req, res) => {
+        res.status.should.eql(403);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status').eql('error');
+        res.body.should.have.property('message');
+        done();
+      });
+  });
+
   it('should return 400 when a user does not provide an email', (done) => {
-    chai.request(app).put('/api/v1/user')
+    chai.request(app).put('/api/v1/users/JohnAwesome')
       .set('x-access-token', userToken)
       .end((req, res) => {
         res.status.should.eql(400);
@@ -105,7 +127,7 @@ describe('PUT /api/v1/user Tests for user update profile endpoint', () => {
   });
 
   it('should return 400 when a user provides an image url that is not a valid url', (done) => {
-    chai.request(app).put('/api/v1/user')
+    chai.request(app).put('/api/v1/users/JohnAwesome')
       .set('x-access-token', userToken)
       .send({
         email: 'samuel@test.com',
@@ -123,7 +145,7 @@ describe('PUT /api/v1/user Tests for user update profile endpoint', () => {
   });
 
   it('should return 409 when a user provides an email that belongs to another user', (done) => {
-    chai.request(app).put('/api/v1/user')
+    chai.request(app).put('/api/v1/users/JohnAwesome')
       .set('x-access-token', userToken)
       .send({
         email: 'janeBlaise@gmail.com',

@@ -146,9 +146,13 @@ export default class NotificationController {
   * @param {number} userId the id of the person to be unsubscribed
   * @return {boolean} true if the user is successfully unsubscribed
   */
-  static filterNotifications(data) {
+  static filterNotifications(data, loggedInUser) {
     const isNew = (subscription, notification) => notification.createdAt >= subscription.createdAt;
     const user = data.dataValues;
+    if (user.username !== loggedInUser) {
+      user.subscriptions = undefined;
+      return user;
+    }
     const subscriptions = user.subscriptions.map((subscription) => {
       const sub = subscription.dataValues;
       const channel = sub.channel.dataValues;

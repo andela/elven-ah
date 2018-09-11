@@ -13,7 +13,12 @@ export default class Mailer {
   * @param {string} msg.text the plain text email body
   * @param {string} msg.html the HTML email body
   */
-  static sendMail(msg) {
-    return sgMail.send(msg);
+  static async sendMail(msg, next) {
+    try {
+      const response = await sgMail.send(msg);
+      return response;
+    } catch (error) {
+      return next(error);
+    }
   }
 }

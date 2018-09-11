@@ -102,31 +102,27 @@ export default class CommentController {
         { model: User, as: 'commenter' },
       ]
     });
-    try {
-      if (comment === null) {
-        return res.status(404).json({
-          status: 'error',
-          message: 'Unable to get the comment with supplied id.',
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        comment: {
-          id: comment.id,
-          parentId: comment.parentId,
-          createdAt: new Date(comment.createdAt).toLocaleString('en-GB', { hour12: true }),
-          updatedAt: new Date(comment.updatedAt).toLocaleString('en-GB', { hour12: true }),
-          body: comment.body,
-          author: {
-            username: comment.commenter.username,
-            bio: comment.commenter.bio,
-            image: comment.commenter.image,
-          },
-        }
+    if (comment === null) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Unable to get the comment with supplied id.',
       });
-    } catch (error) {
-      next(error);
     }
+    return res.status(200).json({
+      status: 'success',
+      comment: {
+        id: comment.id,
+        parentId: comment.parentId,
+        createdAt: new Date(comment.createdAt).toLocaleString('en-GB', { hour12: true }),
+        updatedAt: new Date(comment.updatedAt).toLocaleString('en-GB', { hour12: true }),
+        body: comment.body,
+        author: {
+          username: comment.commenter.username,
+          bio: comment.commenter.bio,
+          image: comment.commenter.image,
+        },
+      }
+    });
   }
 
   /**

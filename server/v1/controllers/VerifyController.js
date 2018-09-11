@@ -28,7 +28,7 @@ class VerifyController {
    * @returns Returns a message object specifying which property of
    * the user is present in the user object
    */
-  static verifyEmail(req, res) {
+  static verifyEmail(req, res, next) {
     const { email } = req.user || req.body;
     const hostUrl = req.get('origin')
       ? `${req.protocol}://${req.get('origin')}/auth/verify`
@@ -37,15 +37,18 @@ class VerifyController {
     const token = JwtHelper.createToken(payload, '24h');
     const url = `${hostUrl}?evc=${token}`;
     const msg = emails.emailVerification(email, url);
-    return Mailer.sendMail(msg)
+    return Mailer.sendMail(msg, next)
       .then((response) => {
-        if (response[0].statusCode === 202) {
+        if (response && response[0].statusCode === 202) {
           return res.status(201).json({
             status: 'success',
             message: req.emailVerificationMessage,
           });
         }
-        return res.status(400).send('Unable to send email');
+        return res.status(400).send({
+          status: 'error',
+          message: 'Unable to send email.'
+        });
       });
   }
 
