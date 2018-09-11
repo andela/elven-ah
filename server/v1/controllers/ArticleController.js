@@ -6,10 +6,6 @@ import queryHelper from '../helpers/queryHelper';
 import NotificationController from './NotificationController';
 
 const { Article, Tag, Channel } = models;
-const error = {
-  message: 'Request can not be processed at the moment, please try again shortly,',
-  status: 400,
-};
 
 /**
  * This class contains all the methods responsible for creating and querying
@@ -196,7 +192,7 @@ export default class ArticleController {
    * @param {Object} res The HTTP response object
    * @param {Object} next The next middleware to be called
    */
-  static getAllArticles(req, res, next) {
+  static getAllArticles(req, res) {
     const limit = req.query.limit || 100;
     const offset = req.query.offset || 0;
     Article.findAll(Object.assign({}, queryHelper.allArticles, { offset, limit }))
@@ -213,7 +209,7 @@ export default class ArticleController {
    * @param {Object} res The HTTP response object
    * @param {Object} next The next middleware to be called
    */
-  static getUserArticles(req, res, next) {
+  static getUserArticles(req, res) {
     const limit = req.query.limit || 100;
     const offset = req.query.offset || 0;
     let { userId } = req.params;
@@ -239,7 +235,7 @@ export default class ArticleController {
   * @param {Object} res The HTTP response object
   * @param {Object} next The next middleware to be called
   */
-  static getSingleArticle(req, res, next) {
+  static getSingleArticle(req, res) {
     const { slug } = req.params;
     Article.findOne(Object.assign({}, queryHelper.singleArticle, { where: { slug } }))
       .then((article) => {

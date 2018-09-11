@@ -90,7 +90,7 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {object} an object containing an array of all comments.
    */
-  static async getComment(req, res, next) {
+  static async getComment(req, res) {
     if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
       return res.status(400).json({
         status: 'error',
