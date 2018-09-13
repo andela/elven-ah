@@ -105,6 +105,6 @@ export default class PasswordResetController {
           message: 'Email could not be sent. Please try again',
         });
       })
-      .catch(err => console.log(err.message));
+      .catch(err => (err.message));
   }
 }
