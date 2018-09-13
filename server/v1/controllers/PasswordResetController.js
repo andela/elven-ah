@@ -19,7 +19,7 @@ export default class PasswordResetController {
   * @param {object} req the request object
   * @param {object} res the response object
   */
-  static sendResetEmail(req, res) {
+  static sendResetEmail(req, res, next) {
     const { email } = req.body;
     const url = req.get('origin')
       ? `${req.protocol}://${req.get('origin')}/password/reset`
@@ -39,7 +39,7 @@ export default class PasswordResetController {
         const message = 'A password reset link has been sent to your email. Please check your email';
 
         // Send User Email Method Using SendGrid
-        PasswordResetController.resetProcessEmail(res, resetEmailMessage, message);
+        PasswordResetController.resetProcessEmail(res, resetEmailMessage, message, next);
       });
   }
 
@@ -79,7 +79,7 @@ export default class PasswordResetController {
           const resetConfirmMessage = emails.passwordResetConfirmation(email, user.firstName);
           const message = 'Your Password has been updated successfully! You can login to enjoy stories accross the globe.';
           // Send User Email Method Using SendGrid
-          PasswordResetController.resetProcessEmail(res, resetConfirmMessage, message);
+          PasswordResetController.resetProcessEmail(res, resetConfirmMessage, message, next);
         });
       }
     })
@@ -91,10 +91,10 @@ export default class PasswordResetController {
   * @param {object} req the request object
   * @param {object} res the response object
   */
-  static resetProcessEmail(res, emailMessage, message) {
-    return Mailer.sendMail(emailMessage)
+  static resetProcessEmail(res, emailMessage, message, next) {
+    return Mailer.sendMail(emailMessage, next)
       .then((response) => {
-        if (response[0].statusCode === 202) {
+        if (response && response[0].statusCode === 202) {
           return res.status(200).json({
             status: 'success',
             message,
@@ -104,6 +104,7 @@ export default class PasswordResetController {
           status: 'error',
           message: 'Email could not be sent. Please try again',
         });
-      });
+      })
+      .catch(err => console.log(err.message));
   }
 }

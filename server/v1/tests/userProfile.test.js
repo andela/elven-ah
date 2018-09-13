@@ -35,6 +35,18 @@ describe('GET /api/v1/users/:username Tests for user view profile endpoint', () 
         done();
       });
   });
+  it('should return a user profile', (done) => {
+    chai.request(app).get('/api/v1/users/Sweetheart')
+      .set('x-access-token', userToken)
+      .end((req, res) => {
+        res.status.should.eql(200);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status').eql('success');
+        res.body.should.have.property('user');
+        res.body.user.should.be.a('object');
+        done();
+      });
+  });
 
   it('should return 401 when the token is not provided', (done) => {
     chai.request(app).get('/api/v1/users/JohnAwesome')

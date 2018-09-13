@@ -204,6 +204,17 @@ describe('Comment Tests', () => {
           done();
         });
     });
+    it('should fail if the id is invalid', (done) => {
+      chai.request(app)
+        .get(`/api/v1/articles/${validSlug}/comments/love`)
+        .set('x-access-token', token)
+        .end((req, res) => {
+          res.status.should.eql(400);
+          res.body.should.be.an('object').with.property('status').include('error');
+          res.body.should.have.property('message');
+          done();
+        });
+    });
   });
 
   describe('Update one comment', () => {
