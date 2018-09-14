@@ -16,7 +16,7 @@ const env = process.env.NODE_ENV;
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
 
 // Normal express config defaults
 app.use(morgan('dev'));
