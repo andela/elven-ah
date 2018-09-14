@@ -14,20 +14,14 @@ const checkToken = (req, res, next) => {
   const decoded = JwtHelper.verifyToken(req.query.tokenId);
   if (!token) {
     return res.status(401).send({
-      errors: {
-        token: [
-          'Invalid link. Either you check your email for the correct link or request a new password reset',
-        ],
-      },
+      status: 'error',
+      message: 'Please click the password reset link sent to your email',
     });
   }
   if (!decoded) {
     return res.status(401).send({
-      errors: {
-        token: [
-          'Password Reset link is invalid or has expired. Please request a new password reset.',
-        ],
-      },
+      status: 'error',
+      message: 'Password Reset link is invalid or has expired. Please request a new password reset.',
     });
   }
 

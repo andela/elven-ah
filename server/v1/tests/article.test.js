@@ -50,22 +50,7 @@ describe('Test for Article Request', () => {
             .end((err, res) => {
               res.status.should.eql(401);
               res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('You must be logged in to perform this operation');
-              done();
-            });
-        });
-        it('should return 401 for trying to create an article with an invalid token', (done) => {
-          chai.request(app)
-            .post('/api/v1/articles/')
-            .set('x-access-token', 'jsdlkfjsdkfjksdjflksajflk')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('Your access token is invalid or expired. Please login again');
+              res.body.should.have.property('message');
               done();
             });
         });
@@ -322,31 +307,6 @@ describe('Test for Article Request', () => {
       });
 
       describe('PUT /api/v1/articles/:slug', () => {
-        it('should return 401 for trying to update an article with no token', (done) => {
-          chai.request(app)
-            .put('/api/v1/articles/slug')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('You must be logged in to perform this operation');
-              done();
-            });
-        });
-        it('should return 401 for trying to update an article with an invalid token', (done) => {
-          chai.request(app)
-            .put('/api/v1/articles/slug')
-            .set('x-access-token', 'jsdlkfjsdkfjksdjflksajflk')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('Your access token is invalid or expired. Please login again');
-              done();
-            });
-        });
         it('should return 400 for trying to update an article by providing an INTEGER in body field', (done) => {
           chai.request(app)
             .put('/api/v1/articles/slug')
@@ -398,7 +358,7 @@ describe('Test for Article Request', () => {
               done();
             });
         });
-        it('should return 400 for trying to update an article by providing a STRING in CategoryId field', (done) => {
+        it('should return 400 for trying to update an article by providing a STRING in categoryId field', (done) => {
           chai.request(app)
             .put('/api/v1/articles/slug')
             .set('x-access-token', token)
@@ -447,9 +407,7 @@ describe('Test for Article Request', () => {
             .end((err, res) => {
               res.status.should.eql(404);
               res.body.should.be.a('object');
-              res.body.should.have.property('status').eql(404);
-              res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('message').eql('The specified article does not exist');
+              res.body.should.have.property('status').eql('error');
               done();
             });
         });
@@ -464,9 +422,8 @@ describe('Test for Article Request', () => {
             .end((err, res) => {
               res.status.should.eql(403);
               res.body.should.be.a('object');
-              res.body.should.have.property('status').eql(403);
-              res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('message').eql('You can only update an article that belongs to you');
+              res.body.should.have.property('status').eql('error');
+              res.body.should.have.property('message');
               done();
             });
         });
@@ -482,38 +439,12 @@ describe('Test for Article Request', () => {
               res.status.should.eql(200);
               res.body.should.be.a('object');
               res.body.should.have.property('status').eql('success');
-              res.body.should.have.property('message').eql('The article with slug: arts-is-wonderful-120794ujhd has been updated successfully');
               done();
             });
         });
       });
 
       describe('DELETE /api/v1/articles/:slug', () => {
-        it('should return 401 for trying to create an article with no token', (done) => {
-          chai.request(app)
-            .delete('/api/v1/articles/slug')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('You must be logged in to perform this operation');
-              done();
-            });
-        });
-        it('should return 401 for trying to create an article with an invalid token', (done) => {
-          chai.request(app)
-            .delete('/api/v1/articles/slug')
-            .set('x-access-token', 'jsdlkfjsdkfjksdjflksajflk')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('Your access token is invalid or expired. Please login again');
-              done();
-            });
-        });
         it('should return 404 for trying to delete an article that does not exist', (done) => {
           chai.request(app)
             .delete('/api/v1/articles/slug')
@@ -521,9 +452,8 @@ describe('Test for Article Request', () => {
             .end((err, res) => {
               res.status.should.eql(404);
               res.body.should.be.a('object');
-              res.body.should.have.property('status').eql(404);
-              res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('message').eql('The specified article does not exist');
+              res.body.should.have.property('status').eql('error');
+              res.body.should.have.property('message');
               done();
             });
         });
@@ -534,9 +464,8 @@ describe('Test for Article Request', () => {
             .end((err, res) => {
               res.status.should.eql(403);
               res.body.should.be.a('object');
-              res.body.should.have.property('status').eql(403);
-              res.body.should.have.property('success').eql(false);
-              res.body.should.have.property('message').eql('You can only delete an article that belongs to you');
+              res.body.should.have.property('status').eql('error');
+              res.body.should.have.property('message');
               done();
             });
         });
@@ -547,9 +476,8 @@ describe('Test for Article Request', () => {
             .end((err, res) => {
               res.status.should.eql(200);
               res.body.should.be.a('object');
-              res.body.should.have.property('status').eql(200);
-              res.body.should.have.property('success').eql(true);
-              res.body.should.have.property('message').eql('Article with slug: arts-is-wonderful-120794ujhd has been successfully deleted');
+              res.body.should.have.property('status').eql('success');
+              res.body.should.have.property('message');
               done();
             });
         });

@@ -37,10 +37,10 @@ describe('Test for Authors Follow', () => {
         done();
       });
 
-      describe('POST /api/v1/user/follow/:id', () => {
+      describe('POST /api/v1/users/follow/:id', () => {
         it('should return 401 for trying to follow a user with no token', (done) => {
           chai.request(app)
-            .post('/api/v1/user/follow/1')
+            .post('/api/v1/users/follow/1')
             .send({
               followerId: user.id,
               followingId: 1,
@@ -48,33 +48,14 @@ describe('Test for Authors Follow', () => {
             .end((err, res) => {
               res.status.should.eql(401);
               res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('You must be logged in to perform this operation');
-              done();
-            });
-        });
-        it('should return 401 for trying to follow a user with an invalid token', (done) => {
-          chai.request(app)
-            .post('/api/v1/user/follow/1')
-            .set('x-access-token', 'jsdlkfjsdkfjksdjflksajflk')
-            .send({
-              followerId: user.id,
-              followingId: 1,
-            })
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('Your access token is invalid or expired. Please login again');
+              res.body.should.have.property('message');
               done();
             });
         });
         it('should return 400 for trying to follow yourself', (done) => {
           const authorsId = 2;
           chai.request(app)
-            .post(`/api/v1/user/follow/${authorsId}`)
+            .post(`/api/v1/users/follow/${authorsId}`)
             .set('x-access-token', anotherToken)
             .send({
               followerId: user.id,
@@ -84,7 +65,7 @@ describe('Test for Authors Follow', () => {
               res.status.should.eql(400);
               res.body.should.be.a('object');
               res.body.should.have.property('message');
-              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('status').eql('error');
               res.body.should.have.property('message').eql('You cannot follow yourself');
               done();
             });
@@ -92,7 +73,7 @@ describe('Test for Authors Follow', () => {
         it('should return 404 for trying to follow a non existing author', (done) => {
           const authorsId = 100;
           chai.request(app)
-            .post(`/api/v1/user/follow/${authorsId}`)
+            .post(`/api/v1/users/follow/${authorsId}`)
             .set('x-access-token', token)
             .send({
               followerId: user.id,
@@ -102,7 +83,7 @@ describe('Test for Authors Follow', () => {
               res.status.should.eql(404);
               res.body.should.be.a('object');
               res.body.should.have.property('message');
-              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('status').eql('error');
               res.body.should.have.property('message').eql('The author You have selected does not exist');
               done();
             });
@@ -110,7 +91,7 @@ describe('Test for Authors Follow', () => {
         it('should return 201 for just following a user', (done) => {
           const authorsId = 2;
           chai.request(app)
-            .post(`/api/v1/user/follow/${authorsId}`)
+            .post(`/api/v1/users/follow/${authorsId}`)
             .set('x-access-token', token)
             .send({
               followerId: user.id,
@@ -128,7 +109,7 @@ describe('Test for Authors Follow', () => {
         it('should return 409 for trying to follow an author you are already following', (done) => {
           const authorsId = 2;
           chai.request(app)
-            .post(`/api/v1/user/follow/${authorsId}`)
+            .post(`/api/v1/users/follow/${authorsId}`)
             .set('x-access-token', token)
             .send({
               followerId: user.id,
@@ -138,54 +119,29 @@ describe('Test for Authors Follow', () => {
               res.status.should.eql(409);
               res.body.should.be.a('object');
               res.body.should.have.property('message');
-              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('status').eql('error');
               res.body.should.have.property('message').eql(`You are already following ${anotherUser.firstName}`);
               done();
             });
         });
       });
-      describe('GET /api/v1/user/follower/', () => {
-        it('should return 401 for trying to get list of all your followers with no token', (done) => {
-          chai.request(app)
-            .get('/api/v1/user/follower')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('You must be logged in to perform this operation');
-              done();
-            });
-        });
-        it('should return 401 for trying to get the list of all followers with an invalid token', (done) => {
-          chai.request(app)
-            .get('/api/v1/user/follower')
-            .set('x-access-token', 'jsdlkfjsdkfjksdjflksajflk')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('Your access token is invalid or expired. Please login again');
-              done();
-            });
-        });
+      describe('GET /api/v1/users/follower/', () => {
         it('should return 404 for trying to get the list of all your follower when none follows you', (done) => {
           chai.request(app)
-            .get('/api/v1/user/follower')
+            .get('/api/v1/users/follower')
             .set('x-access-token', token)
             .end((err, res) => {
               res.status.should.eql(404);
               res.body.should.be.a('object');
               res.body.should.have.property('message');
-              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('status').eql('error');
               res.body.should.have.property('message').eql('You currently do not have any follower');
               done();
             });
         });
         it('should return 200 for successfully retrieving the list of all your follower', (done) => {
           chai.request(app)
-            .get('/api/v1/user/follower')
+            .get('/api/v1/users/follower')
             .set('x-access-token', anotherToken)
             .end((err, res) => {
               res.status.should.eql(200);
@@ -197,48 +153,23 @@ describe('Test for Authors Follow', () => {
             });
         });
       });
-      describe('GET /api/v1/user/following/', () => {
-        it('should return 401 for trying to get list of the authors you currently with no token', (done) => {
-          chai.request(app)
-            .get('/api/v1/user/following')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('You must be logged in to perform this operation');
-              done();
-            });
-        });
-        it('should return 401 for trying to get the list of the authors you currently follow with an invalid token', (done) => {
-          chai.request(app)
-            .get('/api/v1/user/following')
-            .set('x-access-token', 'jsdlkfjsdkfjksdjflksajflk')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('Your access token is invalid or expired. Please login again');
-              done();
-            });
-        });
+      describe('GET /api/v1/users/following/', () => {
         it('should return 404 for trying to get the list of all the author you follow when you are not currently following any author', (done) => {
           chai.request(app)
-            .get('/api/v1/user/following')
+            .get('/api/v1/users/following')
             .set('x-access-token', anotherToken)
             .end((err, res) => {
               res.status.should.eql(404);
               res.body.should.be.a('object');
               res.body.should.have.property('message');
-              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('status').eql('error');
               res.body.should.have.property('message').eql('You are not currently following any author');
               done();
             });
         });
         it('should return 200 for successfully retrieving the list of all your follower', (done) => {
           chai.request(app)
-            .get('/api/v1/user/following')
+            .get('/api/v1/users/following')
             .set('x-access-token', token)
             .end((err, res) => {
               res.status.should.eql(200);
@@ -250,42 +181,17 @@ describe('Test for Authors Follow', () => {
             });
         });
       });
-      describe('DELETE /api/v1/user/follow/:id', () => {
-        it('should return 401 for trying to unfollow an author with no token', (done) => {
-          chai.request(app)
-            .delete('/api/v1/user/follow/1')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('You must be logged in to perform this operation');
-              done();
-            });
-        });
-        it('should return 401 for trying to unfollow an authoe with an invalid token', (done) => {
-          chai.request(app)
-            .delete('/api/v1/user/follow/1')
-            .set('x-access-token', 'jsdlkfjsdkfjksdjflksajflk')
-            .end((err, res) => {
-              res.status.should.eql(401);
-              res.body.should.be.a('object');
-              res.body.should.have.property('errors');
-              res.body.errors.should.be.a('object');
-              res.body.errors.should.have.property('token').include('Your access token is invalid or expired. Please login again');
-              done();
-            });
-        });
+      describe('DELETE /api/v1/users/follow/:id', () => {
         it('should return 404 for trying to unfollow an author that you currently do not follow', (done) => {
           const authorsId = 1;
           chai.request(app)
-            .delete(`/api/v1/user/follow/${authorsId}`)
+            .delete(`/api/v1/users/follow/${authorsId}`)
             .set('x-access-token', anotherToken)
             .end((err, res) => {
               res.status.should.eql(404);
               res.body.should.be.a('object');
               res.body.should.have.property('message');
-              res.body.should.have.property('status').eql('fail');
+              res.body.should.have.property('status').eql('error');
               res.body.should.have.property('message').eql('You are not currently following this Author');
               done();
             });
@@ -293,7 +199,7 @@ describe('Test for Authors Follow', () => {
         it('should return 200 for successfully unfollowing an author', (done) => {
           const authorsId = 2;
           chai.request(app)
-            .delete(`/api/v1/user/follow/${authorsId}`)
+            .delete(`/api/v1/users/follow/${authorsId}`)
             .set('x-access-token', token)
             .end((err, res) => {
               res.status.should.eql(200);

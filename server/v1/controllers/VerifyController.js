@@ -28,21 +28,27 @@ class VerifyController {
    * @returns Returns a message object specifying which property of
    * the user is present in the user object
    */
-  static verifyEmail(req, res) {
+  static verifyEmail(req, res, next) {
     const { email } = req.user || req.body;
+    const hostUrl = req.get('origin')
+      ? `${req.protocol}://${req.get('origin')}/auth/verify`
+      : `${req.protocol}://${req.get('host')}/api/v1/auth/verify`;
     const payload = { email };
     const token = JwtHelper.createToken(payload, '24h');
-    const url = `${req.protocol}://${req.get('host')}/api/auth/verify?evc=${token}`;
+    const url = `${hostUrl}?evc=${token}`;
     const msg = emails.emailVerification(email, url);
-    Mailer.sendMail(msg)
+    return Mailer.sendMail(msg, next)
       .then((response) => {
-        if (response[0].statusCode === 202) {
-          res.status(201).json({
+        if (response && response[0].statusCode === 202) {
+          return res.status(201).json({
             status: 'success',
             message: req.emailVerificationMessage,
           });
         }
-        res.status(400).send('Unable to send email');
+        return res.status(400).send({
+          status: 'error',
+          message: 'Unable to send email.'
+        });
       });
   }
 
@@ -51,24 +57,22 @@ class VerifyController {
    * @param {object} req the request object
    * @param {object} res the response object
    */
-  static activateUser(req, res, next) {
+  static activateUser(req, res) {
     const token = req.query.evc;
     if (token) {
       const decoded = JwtHelper.verifyToken(token);
       if (decoded) {
-        VerifyController.updateVerifiedStatus(decoded, req, res, next);
-      } else {
-        res.status(401).send({
-          status: 'fail',
-          message: 'This verification link is invalid or expired. Please try again'
-        });
+        return VerifyController.updateVerifiedStatus(decoded, res);
       }
-    } else {
-      res.status(401).send({
-        status: 'fail',
-        message: 'Please click the link sent to your email to verify your account.'
+      return res.status(401).send({
+        status: 'error',
+        message: 'This verification link is invalid or expired. Please try again'
       });
     }
+    return res.status(401).send({
+      status: 'error',
+      message: 'Please click the link sent to your email to verify your account.'
+    });
   }
 
   /**
@@ -79,8 +83,8 @@ class VerifyController {
    * @returns Returns a message object specifying which property of
    * the user is present in the user object
    */
-  static updateVerifiedStatus(decoded, req, res, next) {
-    User.update({ verified: true }, {
+  static updateVerifiedStatus(decoded, res) {
+    return User.update({ verified: true }, {
       returning: true,
       where: { email: decoded.email, verified: false }
     })
@@ -92,9 +96,8 @@ class VerifyController {
           });
         }
         const status = { code: 200, message: 'Account successfully verified and logged in' };
-        AuthController.successResponse(status, user, res);
-      })
-      .catch(err => next(err));
+        return AuthController.successResponse(status, user, res);
+      });
   }
 
   /**
@@ -103,24 +106,19 @@ class VerifyController {
    * @param {object} res the response object
    * @param {object} next the next middleware function
    */
-  static resendVerificationEmail(req, res, next) {
+  static resendVerificationEmail(req, res) {
     const { email } = req.body;
-    User.find({ where: { email, verified: false } })
+    return User.find({ where: { email, verified: false } })
       .then((user) => {
         if (user) {
           req.emailVerificationMessage = 'Email verification link re-sent successfully';
-          return VerifyController.verifyEmail(req, res, next);
+          return VerifyController.verifyEmail(req, res);
         }
         return res.status(400).json({
           status: 'error',
-          errors: {
-            user: [
-              'Invalid email or the account has already been verified.'
-            ],
-          },
+          message: 'The email is invalid or the account has already been verified.',
         });
-      })
-      .catch(err => next(err));
+      });
   }
 }
 

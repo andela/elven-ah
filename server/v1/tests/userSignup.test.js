@@ -78,7 +78,7 @@ describe('User signup', () => {
     });
   });
 
-  it('should fail if a user tries to verify without a token', (done) => {
+  it('should error if a user tries to verify without a token', (done) => {
     chai.request(app).get('/api/v1/auth/verify').end((err, res) => {
       res.status.should.eql(401);
       res.body.should.be.an('object').with.property('message').include('Please click the link sent to your email to verify your account.');
@@ -254,7 +254,7 @@ describe('User signup', () => {
     chai.request(app).post('/api/v1/auth/signup').send(userWithAlreadyUsedEmail).end((req, res) => {
       res.status.should.eql(409);
       res.body.should.be.a('object');
-      res.body.should.have.property('status').eql('fail');
+      res.body.should.have.property('status').eql('error');
       res.body.should.have.property('errors');
       res.body.errors.should.be.a('object');
       res.body.errors.should.have.property('email').include('User with email: testuser@test.com already exists.');
@@ -266,7 +266,7 @@ describe('User signup', () => {
     chai.request(app).post('/api/v1/auth/signup').send(user).end((req, res) => {
       res.status.should.eql(409);
       res.body.should.be.a('object');
-      res.body.should.have.property('status').eql('fail');
+      res.body.should.have.property('status').eql('error');
       res.body.should.have.property('errors');
       res.body.errors.should.be.a('object');
       res.body.errors.should.have.property('username').include('User with username: johnny already exists.');
@@ -278,7 +278,7 @@ describe('User signup', () => {
     chai.request(app).post('/api/v1/auth/signup').send(user).end((req, res) => {
       res.status.should.eql(409);
       res.body.should.be.a('object');
-      res.body.should.have.property('status').eql('fail');
+      res.body.should.have.property('status').eql('error');
       res.body.errors.should.have.property('username').include('User with username: johnny already exists.');
       res.body.errors.should.have.property('email').include('User with email: testuser@test.com already exists.');
       done();

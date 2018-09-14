@@ -14,11 +14,8 @@ const isLoggedIn = async (req, res, next) => {
   const token = req.headers['x-access-token'];
   if (!token) {
     return res.status(401).send({
-      errors: {
-        token: [
-          'You must be logged in to perform this operation',
-        ],
-      },
+      status: 'error',
+      message: 'You must be logged in to perform this operation',
     });
   }
   const decoded = await JwtHelper.verifyToken(token);
@@ -28,11 +25,8 @@ const isLoggedIn = async (req, res, next) => {
     return next();
   }
   return res.status(401).send({
-    errors: {
-      token: [
-        'Your access token is invalid or expired. Please login again',
-      ],
-    },
+    status: 'error',
+    message: 'Your access token is invalid or expired. Please login again',
   });
 };
 

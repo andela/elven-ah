@@ -1,97 +1,115 @@
 
 module.exports = {
-  up: queryInterface => queryInterface.bulkInsert('Channels', [
+  up: queryInterface => queryInterface.bulkInsert('Subscriptions', [
     {
-      name: 'user-unique',
+      userId: 1,
+      channelId: 1,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'user-simi',
+      userId: 2,
+      channelId: 2,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'user-oyomi',
+      userId: 3,
+      channelId: 3,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'user-JohnAwesome',
+      userId: 4,
+      channelId: 4,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'user-Sweetheart',
+      userId: 5,
+      channelId: 5,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'user-Hollyfield',
+      userId: 6,
+      channelId: 6,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'user-Jane345',
+      userId: 7,
+      channelId: 7,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-arts-is-wonderful-120794ujhd',
+      userId: 1,
+      channelId: 8,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-the-first-article-by-the-user',
+      userId: 1,
+      channelId: 9,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-the-second-article-by-the-user',
+      userId: 1,
+      channelId: 10,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-the-first-article-by-another-user',
+      userId: 2,
+      channelId: 11,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-the-second-article-by-another-user',
+      userId: 2,
+      channelId: 12,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-other-articles-by-other-users',
+      userId: 3,
+      channelId: 13,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-the-second-article-by-other-user',
+      userId: 3,
+      channelId: 14,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-unmissable-steps-before-74U33U38N3IHF1',
+      userId: 1,
+      channelId: 15,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-unmissable-steps-before-74U33U38N3IHF2',
+      userId: 1,
+      channelId: 16,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-unmissable-steps-before-74U33U38N3IHF3',
+      userId: 1,
+      channelId: 17,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     },
     {
-      name: 'article-unmissable-steps-before-74U33U38N3IHF4',
+      userId: 1,
+      channelId: 18,
       createdAt: '2018-08-01 21:54:49',
       updatedAt: '2018-08-04 21:54:49',
     }
   ]),
 
-  down: queryInterface => queryInterface.bulkDelete('Channels', null, {})
+  down: queryInterface => queryInterface.bulkDelete('Subscriptions', null, {})
 };

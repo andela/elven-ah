@@ -2,6 +2,7 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../..';
+import JwtHelper from '../helpers/JwtHelper';
 
 const { expect } = chai;
 chai.use(chaiHttp);
@@ -34,7 +35,7 @@ describe('Rating an article', () => {
       .set('x-access-token', token)
       .end((err, res) => {
         expect(res.status).to.be.equal(403);
-        expect(res.body).to.have.property('errors');
+        expect(res.body).to.have.property('message');
         done();
       });
   });
@@ -45,8 +46,30 @@ describe('Rating an article', () => {
       .set('x-access-token', token)
       .end((err, res) => {
         expect(res.status).to.be.equal(404);
-        expect(res.body).to.have.property('errors');
+        expect(res.body).to.have.property('message');
         done();
+      });
+  });
+
+  it('should return error if I try to rate an article with string rating', (done) => {
+    chai.request(app)
+      .post(`/api/v1/articles/${anotherUser}/the-first-article-by-another-user/love`)
+      .set('x-access-token', token)
+      .end((err, res) => {
+        expect(res.status).to.be.equal(400);
+        expect(res.body).to.have.property('message');
+        done();
+      });
+  });
+
+  it('should fail gracefully if there is a database error', async () => {
+    const badToken = await JwtHelper.createToken({ user: { id: 20, username: 'randomUser', email: 'random@random.com' } }, '72h');
+    chai.request(app)
+      .post(`/api/v1/articles/${anotherUser}/the-first-article-by-another-user/3`)
+      .set('x-access-token', badToken)
+      .end((err, res) => {
+        expect(res.status).to.be.equal(500);
+        expect(res.body).to.have.property('message');
       });
   });
 

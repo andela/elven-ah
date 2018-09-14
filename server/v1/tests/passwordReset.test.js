@@ -51,9 +51,7 @@ describe('Password reset', () => {
       .end((err, res) => {
         res.should.have.status(404);
         res.body.should.be.a('object');
-        res.body.should.have.property('status').equal('fail');
-        res.body.errors.should.have.property('email')
-          .include('The email you provided does not exist, please check again.');
+        res.body.should.have.property('status').equal('error');
         done();
       });
   });
@@ -64,7 +62,7 @@ describe('Password reset', () => {
         email: 'seayomi@gmail.com',
       })
       .end((err, res) => {
-        res.should.have.status(201);
+        res.should.have.status(200);
         res.body.should.be.a('object');
         res.body.should.have.property('status').equal('success');
         res.body.should.have.property('message')
@@ -72,23 +70,13 @@ describe('Password reset', () => {
         done();
       });
   });
-  it('should fail on token not provided while user access reset link', (done) => {
+  it('should fail if there is no reset token in the link', (done) => {
     chai.request(app)
       .get('/api/v1/users/account/password/reset')
       .end((err, res) => {
         res.should.have.status(401);
         res.body.should.be.a('object');
-        res.body.errors.should.have.property('token');
-        done();
-      });
-  });
-  it('should fail on bad token provided while user access reset link', (done) => {
-    chai.request(app)
-      .get(`/api/v1/users/account/password/reset?tokenId=${badToken}`)
-      .end((err, res) => {
-        res.should.have.status(401);
-        res.body.should.be.a('object');
-        res.body.errors.should.have.property('token');
+        res.body.should.have.property('message');
         done();
       });
   });
@@ -98,7 +86,7 @@ describe('Password reset', () => {
       .end((err, res) => {
         res.should.have.status(401);
         res.body.should.be.a('object');
-        res.body.errors.should.have.property('token');
+        res.body.should.have.property('status').eql('error');
         done();
       });
   });
@@ -108,7 +96,7 @@ describe('Password reset', () => {
       .end((err, res) => {
         res.should.have.status(401);
         res.body.should.be.a('object');
-        res.body.errors.should.have.property('token');
+        res.body.should.have.property('status').eql('error');
         done();
       });
   });
@@ -129,18 +117,7 @@ describe('Password reset', () => {
       .end((err, res) => {
         res.should.have.status(401);
         res.body.should.be.a('object');
-        res.body.errors.should.have.property('token');
-        done();
-      });
-  });
-  it('should fail on wrong token query parameter while a user access the reset link', (done) => {
-    chai.request(app)
-      .put(`/api/v1/users/account/password/reset?token=${badToken}`)
-      .send({ password: 'Xolatqowb1$', confirmPassword: 'Xolatqowb1$' })
-      .end((err, res) => {
-        res.should.have.status(401);
-        res.body.should.be.a('object');
-        res.body.errors.should.have.property('token');
+        res.body.should.have.property('status').eql('error');
         done();
       });
   });
@@ -149,7 +126,7 @@ describe('Password reset', () => {
       .put(`/api/v1/users/account/password/reset?tokenId=${updateToken}`)
       .send({ password: 'Xolatqowb1', confirmPassword: 'Xolatqowb1' })
       .end((err, res) => {
-        res.should.have.status(201);
+        res.should.have.status(200);
         res.body.should.be.a('object');
         res.body.should.have.property('status').equal('success');
         done();

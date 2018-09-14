@@ -60,7 +60,7 @@ export default (sequelize, DataTypes) => {
 
   User.associate = (models) => {
     User.hasMany(models.Article, {
-      foreignKey: 'articleId',
+      foreignKey: 'userId',
       as: 'articles',
     });
     User.hasMany(models.Comment, {
@@ -73,15 +73,28 @@ export default (sequelize, DataTypes) => {
     });
     User.hasMany(models.Follow, {
       foreignKey: 'followingId',
+      as: 'following',
       onDelete: 'cascade'
     });
     User.hasMany(models.Follow, {
       foreignKey: 'followerId',
+      as: 'follower',
       onDelete: 'cascade'
     });
     User.hasMany(models.Subscription, {
       foreignKey: 'userId',
       as: 'subscriptions',
+    });
+
+    User.belongsToMany(models.User, {
+      through: models.Follow,
+      foreignKey: 'followerId',
+      as: 'followers',
+    });
+    User.belongsToMany(models.User, {
+      through: models.Follow,
+      foreignKey: 'followingId',
+      as: 'followings',
     });
     User.hasMany(models.ArticleSubscription, {
       foreignKey: 'userId',

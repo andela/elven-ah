@@ -1,7 +1,7 @@
 import models from '../../models';
 import NotificationController from './NotificationController';
 
-const { Comment, User, Article } = models;
+const { Comment, User } = models;
 
 /**
  * This class contains all the methods responsible for creating and querying
@@ -49,39 +49,35 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {object} an object containing an array of all comments.
    */
-  static async getComments(req, res, next) {
-    try {
-      const comments = await Comment.findAll({
-        include: [
-          { model: User, as: 'commenter' },
-        ],
-        where: {
-          articleId: res.locals.article.id,
-        }
-      });
-      const destructuredComments = comments.map(comment => Object.assign(
-        {},
-        {
-          id: comment.id,
-          parentId: comment.parentId,
-          createdAt: new Date(comment.createdAt).toLocaleString('en-GB', { hour12: true }),
-          updatedAt: new Date(comment.updatedAt).toLocaleString('en-GB', { hour12: true }),
-          body: comment.body,
-          author: {
-            username: comment.commenter.username,
-            bio: comment.commenter.bio,
-            image: comment.commenter.image,
-          },
-        }
-      ));
-      const result = CommentController.nestComments(destructuredComments);
-      res.status(200).json({
-        status: 'success',
-        comments: result,
-      });
-    } catch (error) {
-      next(error);
-    }
+  static async getComments(req, res) {
+    const comments = await Comment.findAll({
+      include: [
+        { model: User, as: 'commenter' },
+      ],
+      where: {
+        articleId: res.locals.article.id,
+      }
+    });
+    const destructuredComments = comments.map(comment => Object.assign(
+      {},
+      {
+        id: comment.id,
+        parentId: comment.parentId,
+        createdAt: new Date(comment.createdAt).toLocaleString('en-GB', { hour12: true }),
+        updatedAt: new Date(comment.updatedAt).toLocaleString('en-GB', { hour12: true }),
+        body: comment.body,
+        author: {
+          username: comment.commenter.username,
+          bio: comment.commenter.bio,
+          image: comment.commenter.image,
+        },
+      }
+    ));
+    const result = CommentController.nestComments(destructuredComments);
+    res.status(200).json({
+      status: 'success',
+      comments: result,
+    });
   }
 
   /**
@@ -90,10 +86,10 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {object} an object containing an array of all comments.
    */
-  static async getComment(req, res, next) {
+  static async getComment(req, res) {
     if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
       return res.status(400).json({
-        status: 'fail',
+        status: 'error',
         message: 'Please supply a valid comment id.',
       });
     }
@@ -102,31 +98,27 @@ export default class CommentController {
         { model: User, as: 'commenter' },
       ]
     });
-    try {
-      if (comment === null) {
-        return res.status(404).json({
-          status: 'fail',
-          message: 'Unable to get the comment with supplied id.',
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        comment: {
-          id: comment.id,
-          parentId: comment.parentId,
-          createdAt: new Date(comment.createdAt).toLocaleString('en-GB', { hour12: true }),
-          updatedAt: new Date(comment.updatedAt).toLocaleString('en-GB', { hour12: true }),
-          body: comment.body,
-          author: {
-            username: comment.commenter.username,
-            bio: comment.commenter.bio,
-            image: comment.commenter.image,
-          },
-        }
+    if (comment === null) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Unable to get the comment with supplied id.',
       });
-    } catch (error) {
-      next(error);
     }
+    return res.status(200).json({
+      status: 'success',
+      comment: {
+        id: comment.id,
+        parentId: comment.parentId,
+        createdAt: new Date(comment.createdAt).toLocaleString('en-GB', { hour12: true }),
+        updatedAt: new Date(comment.updatedAt).toLocaleString('en-GB', { hour12: true }),
+        body: comment.body,
+        author: {
+          username: comment.commenter.username,
+          bio: comment.commenter.bio,
+          image: comment.commenter.image,
+        },
+      }
+    });
   }
 
   /**
@@ -139,14 +131,14 @@ export default class CommentController {
     try {
       if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
         return res.status(400).json({
-          status: 'fail',
+          status: 'error',
           message: 'Please supply a valid comment id.',
         });
       }
       const comment = await Comment.findById(parseInt(req.params.id, 10));
       if (comment === null) {
         return res.status(404).json({
-          status: 'fail',
+          status: 'error',
           message: 'No comment found, please check the id supplied.',
         });
       }
@@ -185,29 +177,25 @@ export default class CommentController {
    * @param {object} res the response object
    * @returns {null}
    */
-  static async deleteComment(req, res, next) {
-    try {
-      if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
-        return res.status(400).json({
-          status: 'fail',
-          message: 'Please supply a valid comment id.',
-        });
-      }
-      const comment = await Comment.findById(parseInt(req.params.id, 10));
-      if (comment === null) {
-        return res.status(404).json({
-          status: 'fail',
-          message: 'No comment with the supplied id found.',
-        });
-      }
-      await Comment.destroy({ where: { id: comment.id } });
-      res.status(200).json({
-        status: 'success',
-        message: 'Comment deleted.'
+  static async deleteComment(req, res) {
+    if (Number.isNaN(parseFloat(req.params.id)) || req.params.id < 1) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Please supply a valid comment id.',
       });
-    } catch (error) {
-      next(error);
     }
+    const comment = await Comment.findById(parseInt(req.params.id, 10));
+    if (comment === null) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'No comment with the supplied id found.',
+      });
+    }
+    await Comment.destroy({ where: { id: comment.id } });
+    res.status(200).json({
+      status: 'success',
+      message: 'Comment deleted successfully.'
+    });
   }
 
   /**
@@ -225,29 +213,6 @@ export default class CommentController {
       result.push(comment);
     });
     return result;
-  }
-
-  /**
-   * Return the article that has the supplied slug
-   * @param {object} req the request object
-   * @param {object} res the response object
-   * @returns {promise} the article object found
-   */
-  static getArticleFromSlug(slug) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const article = await Article.findOne({
-          where: { slug },
-          attributes: [
-            'id', 'title', 'userId', 'slug', 'body',
-            'imageUrl', 'categoryId', 'createdAt', 'updatedAt'
-          ],
-        });
-        resolve(article);
-      } catch (error) {
-        reject(error);
-      }
-    });
   }
 
   /**

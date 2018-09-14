@@ -22,7 +22,7 @@ const plagiarismCheck = async (req, res, next) => {
       const foundIn = response.results.filter(occurrence => occurrence.totalMatchedPercents >= 50);
       if (foundIn.length >= 1) {
         return res.status(451).send({
-          status: 'fail',
+          status: 'error',
           message: `The article cannot be created because more than 50% of the content was found elsewhere.
         Please attribute your sources and check the 'I have attributed all relevant sources' button to continue.`
         });

@@ -7,8 +7,8 @@ module.exports = {
       slug: 'arts-is-wonderful-120794ujhd',
       userId: 1,
       categoryId: 5,
-      createdAt: '2018-08-08 18:31:22.324',
-      updatedAt: '2018-08-08 18:31:22.324'
+      createdAt: '2018-07-08 18:31:22.324',
+      updatedAt: '2018-08-09 18:31:22.324'
     },
     {
       slug: 'the-first-article-by-the-user',

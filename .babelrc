@@ -3,10 +3,15 @@
   "sourceMaps": true,
     "retainLines": true,
     "env": {
-        "test": {
-            "plugins": [
-                "istanbul"
+      "test": {
+        "plugins": [
+          ["istanbul", {
+            "exclude": [
+              "**/server/v1/helpers/copyleaks/Scan.js",
+              "**/server/v1/middlewares/plagiarismCheck.js"
             ]
-        }
+          }]
+        ]
+      }
     }
 }

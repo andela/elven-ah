@@ -6,10 +6,6 @@ import queryHelper from '../helpers/queryHelper';
 import NotificationController from './NotificationController';
 
 const { Article, Tag, Channel } = models;
-const error = {
-  message: 'Request can not be processed at the moment, please try again shortly,',
-  status: 400,
-};
 
 /**
  * This class contains all the methods responsible for creating and querying
@@ -107,15 +103,13 @@ export default class ArticleController {
       .then((foundArticle) => {
         if (!foundArticle) {
           return res.status(404).json({
-            status: 404,
-            success: false,
+            status: 'error',
             message: 'The specified article does not exist',
           });
         }
         if (foundArticle.userId !== id) {
           return res.status(403).json({
-            status: 403,
-            success: false,
+            status: 'error',
             message: 'You can only update an article that belongs to you',
           });
         }
@@ -139,8 +133,7 @@ export default class ArticleController {
           })
           .catch(() => {
             res.status(400).json({
-              status: 400,
-              success: false,
+              status: 'error',
               error: 'Article not successfully updated',
             });
           });
@@ -164,15 +157,13 @@ export default class ArticleController {
       .then((foundArticle) => {
         if (!foundArticle) {
           return res.status(404).json({
-            status: 404,
-            success: false,
+            status: 'error',
             message: 'The specified article does not exist',
           });
         }
         if (foundArticle.userId !== id) {
           return res.status(403).json({
-            status: 403,
-            success: false,
+            status: 'error',
             message: 'You can only delete an article that belongs to you',
           });
         }
@@ -181,8 +172,7 @@ export default class ArticleController {
         })
           .then(() => {
             res.status(200).json({
-              status: 200,
-              success: true,
+              status: 'success',
               message: `Article with slug: ${slug} has been successfully deleted`,
             });
             const name = `article-${slug}`;
@@ -190,8 +180,7 @@ export default class ArticleController {
           });
       })
       .catch(() => res.status(400).json({
-        status: 400,
-        success: false,
+        status: 'error',
         error: 'Article can not be deleted'
       }));
   }
@@ -203,14 +192,13 @@ export default class ArticleController {
    * @param {Object} res The HTTP response object
    * @param {Object} next The next middleware to be called
    */
-  static getAllArticles(req, res, next) {
+  static getAllArticles(req, res) {
     const limit = req.query.limit || 100;
     const offset = req.query.offset || 0;
     Article.findAll(Object.assign({}, queryHelper.allArticles, { offset, limit }))
       .then((articles) => {
         ArticleController.sendPaginationResponse(res, articles, false);
-      })
-      .catch(() => next(error));
+      });
   }
 
   /**
@@ -221,14 +209,14 @@ export default class ArticleController {
    * @param {Object} res The HTTP response object
    * @param {Object} next The next middleware to be called
    */
-  static getUserArticles(req, res, next) {
+  static getUserArticles(req, res) {
     const limit = req.query.limit || 100;
     const offset = req.query.offset || 0;
     let { userId } = req.params;
     if (!/[0-9]/.test(userId)) {
       return res.status(400).json({
-        status: 'fail',
-        errors: { userId: ['userId must be a number.'] }
+        status: 'error',
+        message: 'userId must be a number.',
       });
     }
     userId = Number.parseInt(userId, 10);
@@ -236,8 +224,7 @@ export default class ArticleController {
       .findAll(Object.assign({}, queryHelper.allArticles, { where: { userId }, offset, limit }))
       .then((articles) => {
         ArticleController.sendPaginationResponse(res, articles, userId);
-      })
-      .catch(() => next(error));
+      });
   }
 
   /**
@@ -248,7 +235,7 @@ export default class ArticleController {
   * @param {Object} res The HTTP response object
   * @param {Object} next The next middleware to be called
   */
-  static getSingleArticle(req, res, next) {
+  static getSingleArticle(req, res) {
     const { slug } = req.params;
     Article.findOne(Object.assign({}, queryHelper.singleArticle, { where: { slug } }))
       .then((article) => {
@@ -259,13 +246,10 @@ export default class ArticleController {
           });
         }
         return res.status(404).json({
-          status: 'fail',
-          errors: {
-            article: [`Article with slug: ${slug} not found.`],
-          },
+          status: 'error',
+          message: `Article with slug: ${slug} not found.`,
         });
-      })
-      .catch(() => next(error));
+      });
   }
 
   /**
@@ -286,17 +270,13 @@ export default class ArticleController {
     }
     if (!userId) {
       return res.status(404).json({
-        status: 'fail',
-        errors: {
-          articles: ['No articles found.'],
-        },
+        status: 'error',
+        message: 'No articles found.',
       });
     }
     return res.status(404).json({
-      status: 'fail',
-      errors: {
-        articles: [`Articles not found for user with userId: ${userId}.`],
-      },
+      status: 'error',
+      message: `Articles not found for user with id: ${userId}.`,
     });
   }
 }
