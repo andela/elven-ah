@@ -71,11 +71,11 @@ export default class ArticleController {
         newArticle.tags = splitTags;
         newArticle.addTag(newTags);
       }
-      ArticleController.articleResponse(newArticle, 201, res);
       const articleChannel = `article-${slug}`;
-      return NotificationController.subscribe(articleChannel, userId);
+      NotificationController.subscribe(articleChannel, userId);
+      return ArticleController.articleResponse(newArticle, 201, res);
     } catch (err) {
-      res.status(400).json({
+      return res.status(400).json({
         status: 'error',
         message: 'Article was not successfully created',
         err: err.message,
