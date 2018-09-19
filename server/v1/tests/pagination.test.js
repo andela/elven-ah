@@ -24,10 +24,11 @@ describe('GET /api/v1/articles Tests a list of paginated articles', () => {
         res.body.articles[0].should.have.property('imageUrl');
         res.body.articles[0].should.have.property('createdAt');
         res.body.articles[0].should.have.property('updatedAt');
-        res.body.articles[0].should.have.property('User');
+        res.body.articles[0].should.have.property('author');
+        res.body.articles[0].should.have.property('comments');
         res.body.articles[0].should.have.property('tags');
         res.body.articles[0].should.have.property('ratings');
-        res.body.articles[0].User.should.be.a('object');
+        res.body.articles[0].author.should.be.a('object');
         res.body.articles[0].tags.should.be.a('array');
         res.body.articles[0].ratings.should.be.a('array');
         done();
@@ -111,10 +112,11 @@ describe('GET /api/v1/users/:username/articles Tests a list of paginated article
         res.body.articles[0].should.have.property('imageUrl');
         res.body.articles[0].should.have.property('createdAt');
         res.body.articles[0].should.have.property('updatedAt');
-        res.body.articles[0].should.have.property('User');
+        res.body.articles[0].should.have.property('author');
+        res.body.articles[0].should.have.property('comments');
         res.body.articles[0].should.have.property('tags');
         res.body.articles[0].should.have.property('ratings');
-        res.body.articles[0].User.should.be.a('object');
+        res.body.articles[0].author.should.be.a('object');
         res.body.articles[0].tags.should.be.a('array');
         res.body.articles[0].ratings.should.be.a('array');
         done();
