@@ -102,7 +102,6 @@ describe('Test for Authors Follow', () => {
               res.body.should.be.a('object');
               res.body.should.have.property('message');
               res.body.should.have.property('status').eql('success');
-              res.body.should.have.property('message').eql(`You have started following ${anotherUser.firstName}`);
               done();
             });
         });
@@ -120,7 +119,6 @@ describe('Test for Authors Follow', () => {
               res.body.should.be.a('object');
               res.body.should.have.property('message');
               res.body.should.have.property('status').eql('error');
-              res.body.should.have.property('message').eql(`You are already following ${anotherUser.firstName}`);
               done();
             });
         });

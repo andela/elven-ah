@@ -17,7 +17,7 @@ export default class ArticleValidation {
      */
   static validateCreateArticle(req, res, next) {
     const articleProperties = {
-      categoryId: 'required|integer|min:1|max:5',
+      categoryId: 'required|integer|min:1',
       title: 'required|string',
       body: 'required|string',
       isAttributed: 'required|boolean|in:true,false',
@@ -46,7 +46,7 @@ export default class ArticleValidation {
      */
   static validateUpdateArticle(req, res, next) {
     const articleProperties = {
-      categoryId: 'integer|min:1|max:5',
+      categoryId: 'integer|min:1',
       title: 'string',
       body: 'string',
       isAttributed: 'required|boolean',

@@ -9,7 +9,7 @@ chai.use(chaiHttp);
 
 describe('GET /api/v1/articles/:slug Tests an article with the slug', () => {
   it('should return 200 when an article with the slug is found', (done) => {
-    chai.request(app).get('/api/v1/articles/unmissable-steps-before-74U33U38N3IHF3')
+    chai.request(app).get('/api/v1/articles/unmissable-steps-before-74U33U38N3IHFe1')
       .end((req, res) => {
         res.status.should.eql(200);
         res.body.should.be.a('object');

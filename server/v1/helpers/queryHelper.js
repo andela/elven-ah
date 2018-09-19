@@ -17,7 +17,13 @@ export default {
       { model: User, as: 'author', attributes: ['username', 'firstName', 'lastName', 'bio', 'image'] },
       { model: Rating, as: 'ratings', attributes: ['id', 'userId', 'value', 'createdAt', 'updatedAt'] },
       { model: Tag, as: 'tags', attributes: ['id', 'articleId', 'title', 'createdAt', 'updatedAt'] },
-      { model: Comment, as: 'comments', attributes: ['id', 'body', 'createdAt', 'updatedAt'] },
+      {
+        model: Comment,
+        as: 'comments',
+        include: [
+          { model: User, as: 'commenter' },
+        ],
+      },
     ],
   },
   singleArticle: {
@@ -27,7 +33,13 @@ export default {
     attributes: ['id', 'slug', 'userId', 'categoryId', 'title', 'body', 'imageUrl', 'createdAt', 'updatedAt'],
     include: [
       { model: User, as: 'author', attributes: ['username', 'firstName', 'lastName', 'bio', 'image'] },
-      { model: Comment, as: 'comments', attributes: ['id', 'body', 'createdAt', 'updatedAt'] },
+      {
+        model: Comment,
+        as: 'comments',
+        include: [
+          { model: User, as: 'commenter' },
+        ],
+      },
       {
         model: Rating,
         as: 'ratings',
@@ -85,7 +97,7 @@ export default {
       {
         model: Article,
         as: 'articles',
-        attributes: ['id', 'slug', 'title', 'body', 'createdAt'],
+        attributes: ['id', 'slug', 'userId', 'categoryId', 'title', 'body', 'imageUrl', 'createdAt', 'updatedAt'],
         include: [
           { model: Rating, as: 'ratings', attributes: ['value'] },
           { model: Comment, as: 'comments', attributes: ['body', 'userId'] },

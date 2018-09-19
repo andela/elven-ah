@@ -55,7 +55,7 @@ export default (sequelize, DataTypes) => {
     subscriptionDueDate: {
       type: DataTypes.DATE,
       allowNull: true,
-    },
+    }
   });
 
   User.associate = (models) => {
