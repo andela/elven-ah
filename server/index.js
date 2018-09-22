@@ -56,7 +56,7 @@ app.use((err, req, res, next) => {
   res.send({
     status: 'error',
     message: err.message,
-    error: env === 'production' ? {} : err,
+    error: env === 'production' ? {} : next(err),
   });
 });
 // finally, let's start our server...

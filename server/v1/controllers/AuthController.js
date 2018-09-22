@@ -25,6 +25,11 @@ export default class AuthController {
     };
   }
 
+  /**
+   * @description creates a username from the firstName and a random set of strings
+   * @param {String} firstName The first name of the user from which the username will be generated
+   * @returns {String} Returns a username
+   */
   static createUsername(firstName) {
     return `${firstName}-${randomString(4)}`;
   }
