@@ -57,6 +57,17 @@ describe('GET /api/v1/users/:username Tests for user view profile endpoint', () 
         done();
       });
   });
+
+  it('should return 404 when a non-existent username is supplied', (done) => {
+    chai.request(app).get('/api/v1/users/jjahhshg')
+      .set('x-access-token', userToken)
+      .end((req, res) => {
+        res.status.should.eql(404);
+        res.body.should.be.an('object');
+        res.body.should.have.property('message').include('User with the supplied username does not exist.');
+        done();
+      });
+  });
 });
 
 describe('PUT /api/v1/users/:username Tests for user update profile endpoint', () => {
@@ -80,6 +91,7 @@ describe('PUT /api/v1/users/:username Tests for user update profile endpoint', (
         firstName: 'John',
         lastName: 'Doe',
         email: 'johndoe@mail.com',
+        username: 'JohnAwesome',
         bio: `John Doe was born in 1977 when he arrived in Los Angeles. 
         His previous life in Tennessee, 
         Wisconsin & Baltimore was a great & fertile time but 
@@ -109,6 +121,7 @@ describe('PUT /api/v1/users/:username Tests for user update profile endpoint', (
         firstName: 'John',
         lastName: 'Doe',
         email: 'johndoe@mail.com',
+        username: 'JohnAwesome',
         bio: `John Doe was born in 1977 when he arrived in Los Angeles. 
         His previous life in Tennessee, 
         Wisconsin & Baltimore was a great & fertile time but 
@@ -124,7 +137,7 @@ describe('PUT /api/v1/users/:username Tests for user update profile endpoint', (
       });
   });
 
-  it('should return 400 when a user does not provide an email', (done) => {
+  it('should return 400 when a user does not provide an email or username', (done) => {
     chai.request(app).put('/api/v1/users/JohnAwesome')
       .set('x-access-token', userToken)
       .end((req, res) => {
@@ -134,6 +147,7 @@ describe('PUT /api/v1/users/:username Tests for user update profile endpoint', (
         res.body.should.have.property('errors');
         res.body.errors.should.be.a('object');
         res.body.errors.should.have.property('email').include('The email field is required.');
+        res.body.errors.should.have.property('username').include('The username field is required.');
         done();
       });
   });
@@ -161,6 +175,7 @@ describe('PUT /api/v1/users/:username Tests for user update profile endpoint', (
       .set('x-access-token', userToken)
       .send({
         email: 'janeBlaise@gmail.com',
+        username: 'JohnAwesome'
       })
       .end((req, res) => {
         res.status.should.eql(409);
