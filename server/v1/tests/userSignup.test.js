@@ -4,6 +4,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../..';
 import JwtHelper from '../helpers/JwtHelper';
+import AuthController, {} from '../controllers/AuthController';
 
 chai.should();
 chai.use(chaiHttp);
@@ -232,5 +233,11 @@ describe('User signup', () => {
       res.body.errors.should.have.property('email').include('User with email: testuser@test.com already exists.');
       done();
     });
+  });
+
+  it('should automatically create a username for the user from their first name', () => {
+    const username = AuthController.createUsername(user.firstName);
+    username.should.be.a('string');
+    username.should.include('-');
   });
 });
