@@ -13,7 +13,6 @@ class UserValidation {
       firstName: 'required|alpha|min:2|max:100',
       lastName: 'required|alpha|min:2|max:100',
       email: 'required|email',
-      username: 'required|alpha_num|min:5|max:15',
       password: 'required|alpha_num|min:8|max:20',
       confirmPassword: 'required|alpha_num|min:8|max:20|same:password',
     };
