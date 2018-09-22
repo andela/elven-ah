@@ -16,7 +16,7 @@ export default class ProfileController {
   * @param {object} res the response object
   * @returns {user} the user object
   */
-  static getUserProfile(req, res, next) {
+  static getUserProfile(req, res) {
     const { username: loggedInUser } = req.user;
     const { username } = req.params;
     return User.findOne(Object.assign({}, queryHelper.userProfile, { where: { username } }))
@@ -28,7 +28,10 @@ export default class ProfileController {
             user,
           });
         }
-        return next();
+        res.status(404).json({
+          status: 'error',
+          message: 'User with the supplied username does not exist.'
+        });
       });
   }
 
@@ -40,14 +43,14 @@ export default class ProfileController {
   */
   static updateUserProfile(req, res) {
     const {
-      email, firstName, lastName, bio, image
+      email, firstName, lastName, bio, image, username
     } = req.body;
     const { username: loggedInUser } = req.user;
-    const { username } = req.params;
-    if (loggedInUser === username) {
+    const { username: userToUpdate } = req.params;
+    if (loggedInUser === userToUpdate) {
       return User.update({
-        email, firstName, lastName, bio, image
-      }, { returning: true, where: { username } })
+        email, firstName, lastName, bio, image, username,
+      }, { returning: true, where: { username: loggedInUser } })
         .then(([, [user]]) => res.status(200).json({
           status: 'success',
           user: AuthController.stripeUser(user),
