@@ -91,6 +91,7 @@ class UserValidation {
     const userUpdateProperties = {
       firstName: 'alpha|min:2|max:100',
       lastName: 'alpha|min:2|max:100',
+      username: 'required|alpha_num|min:5|max:105',
       email: 'required|email',
       bio: 'min:20|max:4000',
       image: 'url'
