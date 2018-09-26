@@ -41,12 +41,18 @@ export default class ProfileController {
   * @param {object} res the response object
   * @returns the updated user profile
   */
-  static updateUserProfile(req, res) {
+  static async updateUserProfile(req, res) {
     const {
       email, firstName, lastName, bio, image, username
     } = req.body;
     const { username: loggedInUser } = req.user;
     const { username: userToUpdate } = req.params;
+    if (await ProfileController.usernameExists(username) !== null && username !== loggedInUser) {
+      return res.status(409).json({
+        status: 'error',
+        message: 'The username already exists',
+      });
+    }
     if (loggedInUser === userToUpdate) {
       return User.update({
         email, firstName, lastName, bio, image, username,
@@ -60,6 +66,15 @@ export default class ProfileController {
       status: 'error',
       message: 'You can only edit your own profile',
     });
+  }
+
+  /**
+   * @description checks if new username exists in the db
+   * @param {string} username the new username
+   */
+  static async usernameExists(username) {
+    const existingUser = await User.findOne({ where: { username: `${username}` } });
+    return existingUser;
   }
 
   /**
