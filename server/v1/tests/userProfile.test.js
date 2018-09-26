@@ -174,8 +174,8 @@ describe('PUT /api/v1/users/:username Tests for user update profile endpoint', (
     chai.request(app).put('/api/v1/users/JohnAwesome')
       .set('x-access-token', userToken)
       .send({
-        email: 'janeBlaise@gmail.com',
-        username: 'JohnAwesome'
+        email: 'johndoe@mail.com',
+        username: 'oyomi'
       })
       .end((req, res) => {
         res.status.should.eql(409);
