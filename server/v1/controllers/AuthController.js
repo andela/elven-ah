@@ -88,7 +88,7 @@ export default class AuthController {
     const {
       email, firstName, lastName, password,
     } = req.body;
-    const username = AuthController.createUsername(firstName, lastName);
+    const username = AuthController.createUsername(firstName);
     return User.findOrCreate({
       where: { email },
       defaults: {
