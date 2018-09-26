@@ -17,6 +17,7 @@ class SearchController {
     const keyword = req.query.q;
     const userSearch = await User.findAll({
       where: { $or: { username: { $ilike: `%${keyword}%` }, firstName: { $ilike: `%${keyword}%` }, lastName: { $ilike: `%${keyword}%` }, }, },
+      attributes: { exclude: ['password'] },
       order: [
         ['username', 'DESC']
       ],
