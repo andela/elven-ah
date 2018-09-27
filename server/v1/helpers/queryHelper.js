@@ -21,7 +21,7 @@ export default {
         model: Comment,
         as: 'comments',
         include: [
-          { model: User, as: 'commenter' },
+          { model: User, as: 'commenter', attributes: ['username', 'firstName', 'lastName', 'bio', 'image'] },
         ],
       },
     ],
@@ -37,7 +37,7 @@ export default {
         model: Comment,
         as: 'comments',
         include: [
-          { model: User, as: 'commenter' },
+          { model: User, as: 'commenter', attributes: ['username', 'firstName', 'lastName', 'bio', 'image'] },
         ],
       },
       {
@@ -100,7 +100,13 @@ export default {
         attributes: ['id', 'slug', 'userId', 'categoryId', 'title', 'body', 'imageUrl', 'createdAt', 'updatedAt'],
         include: [
           { model: Rating, as: 'ratings', attributes: ['value'] },
-          { model: Comment, as: 'comments', attributes: ['body', 'userId'] },
+          {
+            model: Comment,
+            as: 'comments',
+            include: [
+              { model: User, as: 'commenter', attributes: ['username', 'firstName', 'lastName', 'bio', 'image'] },
+            ],
+          },
           { model: Tag, as: 'tags', attributes: ['title'] },
         ],
       }
