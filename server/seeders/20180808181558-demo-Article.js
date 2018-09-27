@@ -107,14 +107,14 @@ module.exports = {
     {
       title: 'arts is wonderful',
       body: 'lkjslkdjfkdjflk',
-      slug: 'arts-is-wonderful-120794ujhd',
+      slug: 'arts-is-wonderful-120794ujab',
       userId: 1,
       categoryId: 5,
       createdAt: '2018-07-08 18:31:22.324',
       updatedAt: '2018-08-09 18:31:22.324'
     },
     {
-      slug: 'the-first-article-by-the-user',
+      slug: 'the-first-article-by-the-usercd',
       userId: 1,
       categoryId: 2,
       title: 'The first article by the user',
@@ -123,7 +123,7 @@ module.exports = {
       updatedAt: '2018-08-04 21:54:49'
     },
     {
-      slug: 'the-second-article-by-the-user',
+      slug: 'the-second-article-by-the-useref',
       userId: 1,
       categoryId: 2,
       title: 'The second article by the user',
@@ -132,7 +132,7 @@ module.exports = {
       updatedAt: '2018-08-04 21:54:49'
     },
     {
-      slug: 'the-first-article-by-another-user',
+      slug: 'the-first-article-by-another-usergh',
       userId: 2,
       categoryId: 3,
       title: 'The first article by another user',
@@ -141,7 +141,7 @@ module.exports = {
       updatedAt: '2018-08-04 21:54:49'
     },
     {
-      slug: 'the-second-article-by-another-user',
+      slug: 'the-second-article-by-another-userij',
       userId: 2,
       categoryId: 2,
       title: 'The second article by another user',
@@ -150,7 +150,7 @@ module.exports = {
       updatedAt: '2018-08-04 21:54:49'
     },
     {
-      slug: 'other-articles-by-other-users',
+      slug: 'other-articles-by-other-userskl',
       userId: 3,
       categoryId: 2,
       title: 'Other articles by other users',
@@ -159,7 +159,7 @@ module.exports = {
       updatedAt: '2018-08-04 21:54:49'
     },
     {
-      slug: 'the-second-article-by-other-user',
+      slug: 'the-second-article-by-other-usermn',
       userId: 3,
       categoryId: 2,
       title: 'The second article by other user',
@@ -169,7 +169,7 @@ module.exports = {
     },
     {
       title: 'Unmissable steps before, during, and after user research',
-      slug: 'unmissable-steps-before-74U33U38N3IHF1',
+      slug: 'unmissable-steps-before-74U33U38N3IHop',
       userId: 1,
       categoryId: 2,
       body: 'As a UX designer, I’m expected to run research studies to mine meaningful insights for my products. <img src="https://images.unsplash.com/photo-1537883927710-61d5d1a2c1e9?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=0bf498a63b771656f26a8124eeb3e6be&auto=format&fit=crop&w=1868&q=80" /> I often conduct usability studies to get a pulse of what users think, need or expect from a new product. I was fortunate to work on consumer-facing as well as enterprise products, as a result of which, I gained a diverse experience relevant to conducting user studies in industrial settings. While the commercial products gave us the liberty to find and interview users in person, the enterprise products on the other hand make it difficult to find or access the right users, resulting in remote usability studies.',
@@ -179,7 +179,7 @@ module.exports = {
     },
     {
       title: 'Unmissable steps before, during, and after user research',
-      slug: 'unmissable-steps-before-74U33U38N3IHF2',
+      slug: 'unmissable-steps-before-74U33U38N3IHqr',
       userId: 1,
       categoryId: 1,
       body: ' <img src="https://images.unsplash.com/photo-1537964769190-561c0c37b043?ixlib=rb-0.3.5&s=5c6fad276a1cbb344dd7efb6d0688845&auto=format&fit=crop&w=934&q=80" /> As a UX designer, I’m expected to run research studies to mine meaningful insights for my products. I often conduct usability studies to get a pulse of what users think, need or expect from a new product. I was fortunate to work on consumer-facing as well as enterprise products, as a result of which, I gained a diverse experience relevant to conducting user studies in industrial settings. While the commercial products gave us the liberty to find and interview users in person, the enterprise products on the other hand make it difficult to find or access the right users, resulting in remote usability studies.',
@@ -189,7 +189,7 @@ module.exports = {
     },
     {
       title: 'Unmissable steps before, during, and after user research',
-      slug: 'unmissable-steps-before-74U33U38N3IHF3',
+      slug: 'unmissable-steps-before-74U33U38N3IHst',
       userId: 1,
       categoryId: 1,
       body: 'As a UX designer, I’m expected to run research studies to mine meaningful insights for my products. <img src="https://images.unsplash.com/photo-1537954406021-d821481dc0d9?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=0eb0e27031c32c088953a961c4e5d816&auto=format&fit=crop&w=1000&q=80" /> I often conduct usability studies to get a pulse of what users think, need or expect from a new product. I was fortunate to work on consumer-facing as well as enterprise products, as a result of which, I gained a diverse experience relevant to conducting user studies in industrial settings. While the commercial products gave us the liberty to find and interview users in person, the enterprise products on the other hand make it difficult to find or access the right users, resulting in remote usability studies.',
@@ -199,7 +199,7 @@ module.exports = {
     },
     {
       title: 'Unmissable steps before, during, and after user research',
-      slug: 'unmissable-steps-before-74U33U38N3IHF4',
+      slug: 'unmissable-steps-before-74U33U38N3IHuv',
       userId: 1,
       categoryId: 1,
       body: '<img src="https://images.unsplash.com/photo-1537891115166-4affb371bbd1?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=12e8833208e9f57f3421fad30f9af988&auto=format&fit=crop&w=2100&q=80" /> As a UX designer, I’m expected to run research studies to mine meaningful insights for my products. I often conduct usability studies to get a pulse of what users think, need or expect from a new product. I was fortunate to work on consumer-facing as well as enterprise products, as a result of which, I gained a diverse experience relevant to conducting user studies in industrial settings. While the commercial products gave us the liberty to find and interview users in person, the enterprise products on the other hand make it difficult to find or access the right users, resulting in remote usability studies.',
