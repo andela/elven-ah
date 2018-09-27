@@ -184,4 +184,18 @@ describe('PUT /api/v1/users/:username Tests for user update profile endpoint', (
         done();
       });
   });
+  it('should return 409 when a user wants to update to a username that belongs to another user', (done) => {
+    chai.request(app).put('/api/v1/users/JohnAwesome')
+      .set('x-access-token', userToken)
+      .send({
+        email: 'johndoe@mail.com',
+        username: 'oyomi'
+      })
+      .end((req, res) => {
+        res.status.should.eql(409);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status').eql('error');
+        done();
+      });
+  });
 });
