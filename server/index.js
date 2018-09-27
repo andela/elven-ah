@@ -51,12 +51,12 @@ app.all('*', (req, res) => {
 
 // Error handler
 // no stack traces leaked to user in production
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   res.status(err.status || 500);
-  res.json({
+  res.send({
     status: 'error',
     message: err.message,
-    error: env === 'production' ? {} : err,
+    error: env === 'production' ? {} : next(err),
   });
 });
 // finally, let's start our server...

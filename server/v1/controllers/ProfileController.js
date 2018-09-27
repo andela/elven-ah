@@ -16,7 +16,7 @@ export default class ProfileController {
   * @param {object} res the response object
   * @returns {user} the user object
   */
-  static getUserProfile(req, res, next) {
+  static getUserProfile(req, res) {
     const { username: loggedInUser } = req.user;
     const { username } = req.params;
     return User.findOne(Object.assign({}, queryHelper.userProfile, { where: { username } }))
@@ -28,7 +28,10 @@ export default class ProfileController {
             user,
           });
         }
-        return next();
+        res.status(404).json({
+          status: 'error',
+          message: 'User with the supplied username does not exist.'
+        });
       });
   }
 
@@ -38,16 +41,22 @@ export default class ProfileController {
   * @param {object} res the response object
   * @returns the updated user profile
   */
-  static updateUserProfile(req, res) {
+  static async updateUserProfile(req, res) {
     const {
-      email, firstName, lastName, bio, image
+      email, firstName, lastName, bio, image, username
     } = req.body;
     const { username: loggedInUser } = req.user;
-    const { username } = req.params;
-    if (loggedInUser === username) {
+    const { username: userToUpdate } = req.params;
+    if (await ProfileController.usernameExists(username) !== null && username !== loggedInUser) {
+      return res.status(409).json({
+        status: 'error',
+        message: 'The username already exists',
+      });
+    }
+    if (loggedInUser === userToUpdate) {
       return User.update({
-        email, firstName, lastName, bio, image
-      }, { returning: true, where: { username } })
+        email, firstName, lastName, bio, image, username,
+      }, { returning: true, where: { username: loggedInUser } })
         .then(([, [user]]) => res.status(200).json({
           status: 'success',
           user: AuthController.stripeUser(user),
@@ -57,6 +66,15 @@ export default class ProfileController {
       status: 'error',
       message: 'You can only edit your own profile',
     });
+  }
+
+  /**
+   * @description checks if new username exists in the db
+   * @param {string} username the new username
+   */
+  static async usernameExists(username) {
+    const existingUser = await User.findOne({ where: { username: `${username}` } });
+    return existingUser;
   }
 
   /**

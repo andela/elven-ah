@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import models from '../../models';
 import JwtHelper from '../helpers/JwtHelper';
 import NotificationController from './NotificationController';
+import randomString from '../helpers/randomString';
 
 const { User } = models;
 
@@ -22,6 +23,15 @@ export default class AuthController {
     return {
       id, email, username, firstName, lastName, bio, image
     };
+  }
+
+  /**
+   * @description creates a username from the firstName and a random set of strings
+   * @param {String} firstName The first name of the user from which the username will be generated
+   * @returns {String} Returns a username
+   */
+  static createUsername(firstName) {
+    return `${firstName}-${randomString(4)}`;
   }
 
   /**
@@ -76,16 +86,11 @@ export default class AuthController {
    */
   static signUpUser(req, res, next) {
     const {
-      email, username, firstName, lastName, password,
+      email, firstName, lastName, password,
     } = req.body;
+    const username = AuthController.createUsername(firstName);
     return User.findOrCreate({
-      where: {
-        $or: [{
-          email
-        }, {
-          username
-        }]
-      },
+      where: { email },
       defaults: {
         email,
         username,

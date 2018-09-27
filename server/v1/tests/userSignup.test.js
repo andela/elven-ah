@@ -4,6 +4,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../..';
 import JwtHelper from '../helpers/JwtHelper';
+import AuthController, {} from '../controllers/AuthController';
 
 chai.should();
 chai.use(chaiHttp);
@@ -11,7 +12,6 @@ chai.use(chaiHttp);
 const user = {
   firstName: 'John',
   lastName: 'Doe',
-  username: 'johnny',
   email: 'testuser@test.com',
   password: 'Qwertyui0p',
   confirmPassword: 'Qwertyui0p',
@@ -19,7 +19,6 @@ const user = {
 const userWithAlreadyUsedEmail = {
   firstName: 'John',
   lastName: 'Doe',
-  username: 'johnnyllllee',
   email: 'testuser@test.com',
   password: 'Qwertyui0p',
   confirmPassword: 'Qwertyui0p',
@@ -46,7 +45,7 @@ describe('User signup', () => {
   });
 
   it('should not re-send the verification email when requested by the user  if no email is sent', (done) => {
-    chai.request(app).post('/api/v1/auth/verify').send({ username: user.username }).end((err, res) => {
+    chai.request(app).post('/api/v1/auth/verify').send({ }).end((err, res) => {
       res.status.should.eql(400);
       res.body.should.be.an('object').with.property('errors');
       done();
@@ -89,7 +88,6 @@ describe('User signup', () => {
   it('should return 400 when a user does not provide a firstName', (done) => {
     chai.request(app).post('/api/v1/auth/signup').send({
       lastName: 'Yomi',
-      username: 'oyomi',
       email: 'johndoe@gmail.com',
       password: '8pcutTway',
       confirmPassword: '8pcutTway',
@@ -107,7 +105,6 @@ describe('User signup', () => {
   it('should return 400 when a user does not provide a lastName', (done) => {
     chai.request(app).post('/api/v1/auth/signup').send({
       firstName: 'Doe',
-      username: 'Johnny',
       email: 'johndoe@gmail.com',
       password: 'Opcut2way',
       confirmPassword: 'Opcut2way',
@@ -126,7 +123,6 @@ describe('User signup', () => {
     chai.request(app).post('/api/v1/auth/signup').send({
       firstName: 'John',
       lastName: 'Doe',
-      username: 'Johnny',
       password: 'Opcut2way',
       confirmPassword: 'Opcut2way',
     }).end((req, res) => {
@@ -140,30 +136,11 @@ describe('User signup', () => {
     });
   });
 
-  it('should return 400 when a user does not provide a username', (done) => {
-    chai.request(app).post('/api/v1/auth/signup').send({
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'johndoe@gmail.com',
-      password: 'Opcut2way',
-      confirmPassword: 'Opcut2way',
-    }).end((req, res) => {
-      res.status.should.eql(400);
-      res.body.should.be.a('object');
-      res.body.should.have.property('status').eql('error');
-      res.body.should.have.property('errors');
-      res.body.errors.should.be.a('object');
-      res.body.errors.should.have.property('username').include('The username field is required.');
-      done();
-    });
-  });
-
   it('should return 400 when a user does not provide a password', (done) => {
     chai.request(app).post('/api/v1/auth/signup').send({
       firstName: 'John',
       lastName: 'Doe',
       email: 'johndoe@gmail.com',
-      username: 'Johnny',
       confirmPassword: 'Opcut2way',
     }).end((req, res) => {
       res.status.should.eql(400);
@@ -181,7 +158,6 @@ describe('User signup', () => {
       firstName: 'John',
       lastName: 'Doe',
       email: 'johndoe@gmail.com',
-      username: 'Johnny',
       password: 'Opcut',
     }).end((req, res) => {
       res.status.should.eql(400);
@@ -199,7 +175,6 @@ describe('User signup', () => {
       firstName: 'John',
       lastName: 'Doe',
       email: 'johndoe@gmail.com',
-      username: 'Johnny',
       password: 'Opcutuyh',
       confirmPassword: 'Opcutuyh',
     }).end((req, res) => {
@@ -218,7 +193,6 @@ describe('User signup', () => {
       firstName: 'John',
       lastName: 'Doe',
       email: 'johndoe@gmail.com',
-      username: 'Johhny',
       password: 'Opcut2way',
     }).end((req, res) => {
       res.status.should.eql(400);
@@ -236,7 +210,6 @@ describe('User signup', () => {
       firstName: 'John',
       lastName: 'Doe',
       email: 'johndoe@gmail.com',
-      username: 'Johhny',
       password: 'Opcut2way',
       confirmPassword: 'Opcut2wau',
     }).end((req, res) => {
@@ -262,26 +235,9 @@ describe('User signup', () => {
     });
   });
 
-  it('should return 409 when a user with the username already exists', (done) => {
-    chai.request(app).post('/api/v1/auth/signup').send(user).end((req, res) => {
-      res.status.should.eql(409);
-      res.body.should.be.a('object');
-      res.body.should.have.property('status').eql('error');
-      res.body.should.have.property('errors');
-      res.body.errors.should.be.a('object');
-      res.body.errors.should.have.property('username').include('User with username: johnny already exists.');
-      done();
-    });
-  });
-
-  it('should return 409 when a user with the username and email already exists', (done) => {
-    chai.request(app).post('/api/v1/auth/signup').send(user).end((req, res) => {
-      res.status.should.eql(409);
-      res.body.should.be.a('object');
-      res.body.should.have.property('status').eql('error');
-      res.body.errors.should.have.property('username').include('User with username: johnny already exists.');
-      res.body.errors.should.have.property('email').include('User with email: testuser@test.com already exists.');
-      done();
-    });
+  it('should automatically create a username for the user from their first name', () => {
+    const username = AuthController.createUsername(user.firstName);
+    username.should.be.a('string');
+    username.should.include('-');
   });
 });
