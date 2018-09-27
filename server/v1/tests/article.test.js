@@ -29,6 +29,7 @@ const title = 'Ann mary$# is a teacher';
 const body = 'There is so much to learn in simulations';
 const categoryId = 1;
 const tags = 'tech,andela';
+let articleSlug;
 
 describe('Test for Article Request', () => {
   describe('login user', () => {
@@ -204,23 +205,6 @@ describe('Test for Article Request', () => {
               done();
             });
         });
-        it('should return 400 if categoryId specified is above the maximum provided', (done) => {
-          chai.request(app)
-            .post('/api/v1/articles/')
-            .set('x-access-token', token)
-            .send({
-              title,
-              categoryId: 100,
-              body,
-            })
-            .end((err, res) => {
-              res.status.should.eql(400);
-              res.body.should.be.a('object');
-              res.body.should.have.property('status').eql('error');
-              res.body.errors.categoryId[0].should.eql('The categoryId may not be greater than 5.');
-              done();
-            });
-        });
         it('should return 400 if categoryId specified is below the minimum provided', (done) => {
           chai.request(app)
             .post('/api/v1/articles/')
@@ -249,6 +233,7 @@ describe('Test for Article Request', () => {
               isAttributed: 'true',
             })
             .end((err, res) => {
+              ({ slug: articleSlug } = res.body.article);
               res.status.should.eql(201);
               res.body.should.be.a('object');
               res.body.should.have.property('status').eql('success');
@@ -375,23 +360,6 @@ describe('Test for Article Request', () => {
               done();
             });
         });
-        it('should return 400 if the categoryId specified is above the maximum provided', (done) => {
-          chai.request(app)
-            .put('/api/v1/articles/slug')
-            .set('x-access-token', token)
-            .send({
-              title,
-              categoryId: 108,
-              body,
-            })
-            .end((err, res) => {
-              res.status.should.eql(400);
-              res.body.should.be.a('object');
-              res.body.should.have.property('status').eql('error');
-              res.body.errors.categoryId[0].should.eql('The categoryId may not be greater than 5.');
-              done();
-            });
-        });
         it('should return 404 for trying to update an article that does not exist', (done) => {
           const slug = `${dashReplace(title)}-${randomString(10)}`;
           chai.request(app)
@@ -413,7 +381,7 @@ describe('Test for Article Request', () => {
         });
         it('should return 403 for trying to update an article belongs to another user', (done) => {
           chai.request(app)
-            .put('/api/v1/articles/arts-is-wonderful-120794ujhd')
+            .put(`/api/v1/articles/${articleSlug}`)
             .set('x-access-token', anotherToken)
             .send({
               title: 'A beautiful sunday morning',
@@ -429,7 +397,7 @@ describe('Test for Article Request', () => {
         });
         it('should return 200 for successfully updating an article', (done) => {
           chai.request(app)
-            .put('/api/v1/articles/arts-is-wonderful-120794ujhd')
+            .put(`/api/v1/articles/${articleSlug}`)
             .set('x-access-token', token)
             .send({
               title: 'A beautiful sunday morning',
@@ -459,7 +427,7 @@ describe('Test for Article Request', () => {
         });
         it('should return 403 for trying to delete an article belongs to another user', (done) => {
           chai.request(app)
-            .delete('/api/v1/articles/arts-is-wonderful-120794ujhd')
+            .delete(`/api/v1/articles/${articleSlug}`)
             .set('x-access-token', anotherToken)
             .end((err, res) => {
               res.status.should.eql(403);
@@ -471,7 +439,7 @@ describe('Test for Article Request', () => {
         });
         it('should return 200 for successfully deleting an article', (done) => {
           chai.request(app)
-            .delete('/api/v1/articles/arts-is-wonderful-120794ujhd')
+            .delete(`/api/v1/articles/${articleSlug}`)
             .set('x-access-token', token)
             .end((err, res) => {
               res.status.should.eql(200);

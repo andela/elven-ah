@@ -82,8 +82,7 @@ export default class PasswordResetController {
           PasswordResetController.resetProcessEmail(res, resetConfirmMessage, message, next);
         });
       }
-    })
-      .catch(err => next(err));
+    });
   }
 
   /**

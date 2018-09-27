@@ -1,19 +1,40 @@
 module.exports = {
   up: queryInterface => queryInterface.bulkInsert('Categories', [
     {
-      title: 'Arts',
+      title: 'Politics',
     },
     {
-      title: 'Media',
+      title: 'Design',
     },
     {
-      title: 'Religion',
+      title: 'Africa',
     },
     {
       title: 'Technology'
     },
     {
-      title: 'Commerce'
+      title: 'Culture'
+    },
+    {
+      title: 'Business'
+    },
+    {
+      title: 'Romance'
+    },
+    {
+      title: 'Health'
+    },
+    {
+      title: 'Style'
+    },
+    {
+      title: 'Travel'
+    },
+    {
+      title: 'DIY'
+    },
+    {
+      title: 'Opinion'
     }
   ]),
 
